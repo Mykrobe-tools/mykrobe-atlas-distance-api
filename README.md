@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.com/iqbal-lab-org/dist-api-prototype.svg?branch=master)](https://travis-ci.com/iqbal-lab-org/dist-api-prototype)
+
+# Sample usage
 ```shell script
 docker build -t dist .
 docker run --rm -it -p 8080:8080 --name dist dist
