@@ -15,9 +15,9 @@ class TestDefaultController(BaseTestCase):
 
         
         """
-        mock_node = MagicMock()
-        mock_node.nodes.filter.neighbors.match.return_value = []
-        with patch('swagger_server.controllers.default_controller.SampleNode', new=mock_node):
+        mock_db = MagicMock()
+        mock_db.cypher_query.return_value = ([], None)
+        with patch('swagger_server.controllers.default_controller.db', new=mock_db):
             response = self.client.open(
                 '/distance',
                 method='POST',
