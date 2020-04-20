@@ -1,30 +1,86 @@
 openapi: 3.0.1
 info:
   title: Distance API
-  version: 0.0.1
+  version: 1.0.0
+  description: An API for CRUD of the distances between samples and their nearest neighbours and
+               the distances between samples and their nearest phylo tree node
 servers:
-- url: https://mykro.be/
-- url: http://mykro.be/
+  - url: http://distance-api-service/api/v1/
 paths:
-  /distance:
-    post:
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Sample'
-        required: true
+  /samples:
+    get:
+      description: Returns a list of all the samples
       responses:
-        404:
-          description: Sample not found
-          content: {}
         200:
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiResponse'
-      x-codegen-request-body-name: sample
+                type: array
+                items:
+                  $ref: '#/components/schemas/Sample'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      description: Add a new sample. Duplicates are not allowed
+      requestBody:
+        description: Sample to be added
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Sample'
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sample'
+        409:
+          description: Already existed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /samples/{id}:
+    get:
+      description: Return a sample based on a sample ID.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sample'
+        404:
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 components:
   schemas:
     Sample:
@@ -32,12 +88,28 @@ components:
       properties:
         experiment_id:
           type: string
-    ApiResponse:
+        nearest_neighbours:
+          type: array
+          items:
+            $ref: '#/components/schemas/Neighbour'
+        nearest_leaf_node:
+          $ref: '#/components/schemas/Neighbour'
+    Neighbour:
       type: object
       properties:
-        type:
+        id:
           type: string
-        subType:
+        distance:
+          type: integer
+          format: int32
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
           type: string
-        result:
-          type: object
