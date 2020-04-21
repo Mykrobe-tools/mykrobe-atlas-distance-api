@@ -2,14 +2,16 @@ openapi: 3.0.1
 info:
   title: Distance API
   version: 1.0.0
-  description: An API for CRUD of the distances between samples and their nearest neighbours and
-               the distances between samples and their nearest phylo tree node
+  description:
+    An API for CRUD of two types of distances
+      <li> between a sample and its closest samples
+      <li> between a sample and its closest phylogenetic tree node
 servers:
-  - url: http://distance-api-service/api/v1/
+  - url: http://distance-api-service/api/v1
 paths:
   /samples:
     get:
-      description: Returns a list of all the samples
+      description: Returns the list of all the samples
       responses:
         200:
           description: OK
@@ -268,6 +270,8 @@ components:
   schemas:
     Sample:
       type: object
+      required:
+        - experiment_id
       properties:
         experiment_id:
           type: string
@@ -279,6 +283,9 @@ components:
           $ref: '#/components/schemas/Neighbour'
     Neighbour:
       type: object
+      required:
+        - id
+        - distance
       properties:
         id:
           type: string
