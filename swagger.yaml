@@ -36,7 +36,7 @@ paths:
               $ref: '#/components/schemas/Sample'
       responses:
         201:
-          description: Created
+          description: Created. Maybe partially satisfied, the response body contains the created resource.
           content:
             application/json:
               schema:
@@ -64,11 +64,164 @@ paths:
             type: string
       responses:
         200:
-          description: Found
+          description: OK
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Sample'
+        404:
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      description: Delete a sample based on a sample ID.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        204:
+          description: Deleted
+        404:
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /samples/{id}/nearest-neighbours:
+    get:
+      description: Return the list of nearest neighbours of a sample based on a sample ID.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Neighbour'
+        404:
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      description: Replace the list of nearest neighbours of a sample based on a sample ID.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: New list of nearest neighbours to replace old one.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/Neighbour'
+      responses:
+        200:
+          description: OK. Maybe partially satisfied, the response body contains the updated resource.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Neighbour'
+        404:
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /samples/{id}/nearest-leaf-node:
+    get:
+      description: Return the nearest leaf node of a sample based on a sample ID.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Neighbour'
+        404:
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      description: Replace the nearest leaf node of a sample based on a sample ID.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: New nearest leaf node to replace old one.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Neighbour'
+      responses:
+        200:
+          description: OK. Maybe partially satisfied, the response body contains the updated resource.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Neighbour'
         404:
           description: Not found
           content:
@@ -88,11 +241,11 @@ components:
       properties:
         experiment_id:
           type: string
-        nearest_neighbours:
+        nearest-neighbours:
           type: array
           items:
             $ref: '#/components/schemas/Neighbour'
-        nearest_leaf_node:
+        nearest-leaf-node:
           $ref: '#/components/schemas/Neighbour'
     Neighbour:
       type: object
