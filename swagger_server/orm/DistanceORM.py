@@ -1,4 +1,4 @@
-from neomodel import StructuredNode, StringProperty, Relationship, StructuredRel, IntegerProperty
+from neomodel import StructuredNode, StringProperty, Relationship, StructuredRel, IntegerProperty, RelationshipTo
 
 
 class DistanceRel(StructuredRel):
@@ -8,3 +8,4 @@ class DistanceRel(StructuredRel):
 class SampleNode(StructuredNode):
     name = StringProperty()
     neighbors = Relationship('SampleNode', 'NEIGHBOR', model=DistanceRel)
+    parent = RelationshipTo('SampleNode', 'PARENT')

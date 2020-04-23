@@ -14,20 +14,25 @@ class Sample(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, experiment_id: str=None):  # noqa: E501
+    def __init__(self, experiment_id: str=None, sub_type: str=None):  # noqa: E501
         """Sample - a model defined in Swagger
 
         :param experiment_id: The experiment_id of this Sample.  # noqa: E501
         :type experiment_id: str
+        :param sub_type: The sub_type of this Sample.  # noqa: E501
+        :type sub_type: str
         """
         self.swagger_types = {
-            'experiment_id': str
+            'experiment_id': str,
+            'sub_type': str
         }
 
         self.attribute_map = {
-            'experiment_id': 'experiment_id'
+            'experiment_id': 'experiment_id',
+            'sub_type': 'sub_type'
         }
         self._experiment_id = experiment_id
+        self._sub_type = sub_type
 
     @classmethod
     def from_dict(cls, dikt) -> 'Sample':
@@ -60,3 +65,24 @@ class Sample(Model):
         """
 
         self._experiment_id = experiment_id
+
+    @property
+    def sub_type(self) -> str:
+        """Gets the sub_type of this Sample.
+
+
+        :return: The sub_type of this Sample.
+        :rtype: str
+        """
+        return self._sub_type
+
+    @sub_type.setter
+    def sub_type(self, sub_type: str):
+        """Sets the sub_type of this Sample.
+
+
+        :param sub_type: The sub_type of this Sample.
+        :type sub_type: str
+        """
+
+        self._sub_type = sub_type

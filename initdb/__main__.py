@@ -15,6 +15,10 @@ config.DATABASE_URL = 'bolt://neo4j:@127.0.0.1:7687'
 config.ENCRYPTED_CONNECTION = False
 
 nodes = SampleNode.create(*[{'name': 's%d' % i} for i in range(N_NODES)])
+nodes[1].parent.connect(nodes[0])
+nodes[2].parent.connect(nodes[0])
+nodes[3].parent.connect(nodes[1])
+nodes[4].parent.connect(nodes[1])
 
 for i in range(N_NODES):
     rest = nodes[:i] + nodes[i+1:]
@@ -23,6 +27,6 @@ for i in range(N_NODES):
 
     for n2 in rest:
         query = f'MATCH (n1:SampleNode),(n2:SampleNode) WHERE n1.name="{node.name}" AND n2.name="{n2.name}" ' \
-                f'CREATE (n1)-[:NEIGHBOR {{dist: {random()}}}]->(n2) CREATE (n1)-[:PARENT]->(n2) ' \
+                f'CREATE (n1)-[:NEIGHBOR {{dist: {random()}}}]->(n2) ' \
                 f'RETURN n1,n2 '
         db.cypher_query(query)

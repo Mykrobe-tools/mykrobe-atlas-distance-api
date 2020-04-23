@@ -32,6 +32,8 @@ components:
       properties:
         experiment_id:
           type: string
+        sub_type:
+          type: string
     ApiResponse:
       type: object
       properties:
