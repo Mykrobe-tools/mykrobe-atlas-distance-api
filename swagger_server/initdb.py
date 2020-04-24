@@ -1,8 +1,8 @@
 from concurrent.futures.process import ProcessPoolExecutor
 from concurrent.futures.thread import ThreadPoolExecutor
-from random import sample, random, randrange
+from random import sample, randrange
 
-from neomodel import db, config
+from neomodel import config
 
 from swagger_server.orm.DistanceORM import SampleNode, LineageNode
 
@@ -20,11 +20,8 @@ def get_num_neighbors():
 
 def get_to_know(pair):
     node, neighbors = pair
-    for n2 in neighbors:
-        query = f'MATCH (n1:SampleNode),(n2:SampleNode) WHERE n1.name="{node.name}" AND n2.name="{n2.name}" ' \
-                f'CREATE (n1)-[:NEIGHBOR {{dist: {random()}}}]->(n2) ' \
-                f'RETURN n1,n2 '
-        db.cypher_query(query)
+    with ThreadPoolExecutor() as executor:
+        executor.map(lambda s: node.neighbors.connect(s), neighbors)
 
 
 def connect_with_lineage(pair):

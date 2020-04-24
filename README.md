@@ -10,7 +10,13 @@ chown 101:101 data
 ./scripts/run.sh
 ```
 
-## Init a toy graph
+## Load toy db
+```shell script
+cp backups/init.db.bak data/
+docker exec -ti dist neo4j-admin load --from=/data/init.db.bak
+```
+
+## Or init a toy graph (20 minutes on 8 CPUs)
 ```shell script
 docker exec -ti dist python3 -m swagger_server.initdb
 ```
