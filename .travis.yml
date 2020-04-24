@@ -4,8 +4,15 @@ python:
   - "3.6"
 # command to install dependencies
 install: pip install tox-travis
-# command to run tests
-script: tox
+
+jobs:
+  include:
+    - stage: setup
+      script:
+        - sed -i 's/#dbms\.security\.auth_enabled=false/dbms.security.auth_enabled=false/' /etc/neo4j/neo4j.conf
+        - sudo systemctl restart neo4j
+    - stage: test
+      script: tox
 
 services:
   - neo4j
