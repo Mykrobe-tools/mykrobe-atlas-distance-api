@@ -103,6 +103,8 @@ paths:
                 $ref: '#/components/schemas/Error'
   /samples/{id}/nearest-neighbours:
     get:
+      tags:
+        - distance
       description: Return the list of nearest neighbours of a sample based on a sample ID.
       parameters:
         - name: id
@@ -171,6 +173,8 @@ paths:
                 $ref: '#/components/schemas/Error'
   /samples/{id}/nearest-leaf-node:
     get:
+      tags:
+        - distance
       description: Return the nearest leaf node of a sample based on a sample ID.
       parameters:
         - name: id

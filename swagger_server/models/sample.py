@@ -6,6 +6,8 @@ from datetime import date, datetime  # noqa: F401
 from typing import List, Dict  # noqa: F401
 
 from swagger_server.models.base_model_ import Model
+from swagger_server.models.nearest_leaf import NearestLeaf  # noqa: F401,E501
+from swagger_server.models.neighbour import Neighbour  # noqa: F401,E501
 from swagger_server import util
 
 
@@ -14,25 +16,30 @@ class Sample(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, experiment_id: str=None, sub_type: str=None):  # noqa: E501
+    def __init__(self, experiment_id: str=None, nearest_neighbours: List[Neighbour]=None, nearest_leaf_node: NearestLeaf=None):  # noqa: E501
         """Sample - a model defined in Swagger
 
         :param experiment_id: The experiment_id of this Sample.  # noqa: E501
         :type experiment_id: str
-        :param sub_type: The sub_type of this Sample.  # noqa: E501
-        :type sub_type: str
+        :param nearest_neighbours: The nearest_neighbours of this Sample.  # noqa: E501
+        :type nearest_neighbours: List[Neighbour]
+        :param nearest_leaf_node: The nearest_leaf_node of this Sample.  # noqa: E501
+        :type nearest_leaf_node: NearestLeaf
         """
         self.swagger_types = {
             'experiment_id': str,
-            'sub_type': str
+            'nearest_neighbours': List[Neighbour],
+            'nearest_leaf_node': NearestLeaf
         }
 
         self.attribute_map = {
             'experiment_id': 'experiment_id',
-            'sub_type': 'sub_type'
+            'nearest_neighbours': 'nearest-neighbours',
+            'nearest_leaf_node': 'nearest-leaf-node'
         }
         self._experiment_id = experiment_id
-        self._sub_type = sub_type
+        self._nearest_neighbours = nearest_neighbours
+        self._nearest_leaf_node = nearest_leaf_node
 
     @classmethod
     def from_dict(cls, dikt) -> 'Sample':
@@ -63,26 +70,49 @@ class Sample(Model):
         :param experiment_id: The experiment_id of this Sample.
         :type experiment_id: str
         """
+        if experiment_id is None:
+            raise ValueError("Invalid value for `experiment_id`, must not be `None`")  # noqa: E501
 
         self._experiment_id = experiment_id
 
     @property
-    def sub_type(self) -> str:
-        """Gets the sub_type of this Sample.
+    def nearest_neighbours(self) -> List[Neighbour]:
+        """Gets the nearest_neighbours of this Sample.
 
 
-        :return: The sub_type of this Sample.
-        :rtype: str
+        :return: The nearest_neighbours of this Sample.
+        :rtype: List[Neighbour]
         """
-        return self._sub_type
+        return self._nearest_neighbours
 
-    @sub_type.setter
-    def sub_type(self, sub_type: str):
-        """Sets the sub_type of this Sample.
+    @nearest_neighbours.setter
+    def nearest_neighbours(self, nearest_neighbours: List[Neighbour]):
+        """Sets the nearest_neighbours of this Sample.
 
 
-        :param sub_type: The sub_type of this Sample.
-        :type sub_type: str
+        :param nearest_neighbours: The nearest_neighbours of this Sample.
+        :type nearest_neighbours: List[Neighbour]
         """
 
-        self._sub_type = sub_type
+        self._nearest_neighbours = nearest_neighbours
+
+    @property
+    def nearest_leaf_node(self) -> NearestLeaf:
+        """Gets the nearest_leaf_node of this Sample.
+
+
+        :return: The nearest_leaf_node of this Sample.
+        :rtype: NearestLeaf
+        """
+        return self._nearest_leaf_node
+
+    @nearest_leaf_node.setter
+    def nearest_leaf_node(self, nearest_leaf_node: NearestLeaf):
+        """Sets the nearest_leaf_node of this Sample.
+
+
+        :param nearest_leaf_node: The nearest_leaf_node of this Sample.
+        :type nearest_leaf_node: NearestLeaf
+        """
+
+        self._nearest_leaf_node = nearest_leaf_node

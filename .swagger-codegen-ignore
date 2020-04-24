@@ -29,4 +29,3 @@
 /.travis.yml
 /README.md
 /swagger_server/__main__.py
-/swagger_server/controllers/default_controller.py
