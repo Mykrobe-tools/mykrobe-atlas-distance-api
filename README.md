@@ -5,6 +5,8 @@
 ## Start the development server
 ```shell script
 docker build -t dist .
+mkdir data
+chown 101:101 data
 ./scripts/run.sh
 ```
 

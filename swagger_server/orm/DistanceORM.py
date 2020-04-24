@@ -8,4 +8,8 @@ class DistanceRel(StructuredRel):
 class SampleNode(StructuredNode):
     name = StringProperty()
     neighbors = Relationship('SampleNode', 'NEIGHBOR', model=DistanceRel)
-    parent = RelationshipTo('SampleNode', 'PARENT')
+    lineage = RelationshipTo('LineageNode', 'LINEAGE', model=DistanceRel)
+
+
+class LineageNode(StructuredNode):
+    name = StringProperty()
