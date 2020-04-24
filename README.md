@@ -29,13 +29,21 @@ docker exec -ti dist python3 -m swagger_server.initdb
 * Drag the nodes far away from each other for clarity. You can also set colors for them.
 
 ## Make a test request
+
+* Nearest neighbors
 ```shell script
-curl --request POST \
-  --url http://localhost:8080/api/v1/samples/s1/nearest-neighbours \
-  --header 'content-type: application/json' \
-  --data '{
-	"experiment_id": "s1"
-}'
+curl --request GET 'localhost:8080/api/v1/samples/s1/nearest-neighbours'
+# The result should be a JSON array of {experiement_id: str, distance: int}
+```
+
+* Nearest leaf in the phylogenetic tree
+```shell script
+curl --request GET 'localhost:8080/api/v1/samples/s1/nearest-leaf-node'
+# The result should look like
+# {
+#   "distance": 7,
+#   "leaf_id": "l857"
+# }
 ```
 
 ## Stop (& destroy) the development server
