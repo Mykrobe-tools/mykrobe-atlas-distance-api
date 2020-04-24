@@ -24,6 +24,7 @@
 
 /Dockerfile
 /requirements.txt
+/test-requirements.txt
 /.gitignore
 /.travis.yml
 /README.md

@@ -1,45 +1,370 @@
 openapi: 3.0.1
 info:
   title: Distance API
-  version: 0.0.1
+  version: 1.0.0
+  description:
+    <p>An API for CRUD of two types of distances
+      <li> between a sample and its closest samples
+      <li> between a sample and its closest phylogenetic tree node
+
+    <p>This API is intended to satisfy the following user stories
+      <li> as a user, I want to add my new sample and its close neighbours so that I can retrieve them later
+      <li> as a user, I want to query a sample for its close neighbours and its nearest node in a phylogenetic tree
+      <li> as a user, I want to query a sample for its close neighbours so that I can do my analysis
+      <li> as a user, I want to query a sample for its nearest node in a phylogenetic tree so that I can do my analysis
+      <li> as a user, I want to update a sample with new list of close neighbours so that they are correct
+      <li> as a user, I want to update a sample with new nearest leaf node in a phylogenetic tree so that it is correct
+      <li> as a user, I want to remove a sample so that it is no longer available to any users
+      <li> as a user, I want to add a new leaf node to the phylogenetic tree
+      <li> as a user, I want to remove a leaf node from the phylogenetic tree
+      <li> as a user, I want to query a tree node for a list of samples which have this as nearest tree node
 servers:
-- url: https://mykro.be/
-- url: http://mykro.be/
+  - url: http://distance-api-service/api/v1
 paths:
-  /distance:
+  /samples:
     post:
+      description: Add a new sample. Duplicates are not allowed
       requestBody:
+        description: Sample to be added
+        required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/Sample'
-        required: true
       responses:
-        404:
-          description: Sample not found
-          content: {}
+        201:
+          description: Created. Maybe partially satisfied, the response body contains the created resource.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sample'
+        409:
+          description: Already existed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /samples/{id}:
+    get:
+      description: Return a sample based on a sample ID.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
         200:
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiResponse'
-      x-codegen-request-body-name: sample
+                $ref: '#/components/schemas/Sample'
+        404:
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      description: Delete a sample based on a sample ID.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        204:
+          description: Deleted
+        404:
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /samples/{id}/nearest-neighbours:
+    get:
+      description: Return the list of nearest neighbours of a sample based on a sample ID.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Neighbour'
+        404:
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      description: Replace the list of nearest neighbours of a sample based on a sample ID.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: New list of nearest neighbours to replace old one.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/Neighbour'
+      responses:
+        200:
+          description: OK. Maybe partially satisfied, the response body contains the updated resource.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Neighbour'
+        404:
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /samples/{id}/nearest-leaf-node:
+    get:
+      description: Return the nearest leaf node of a sample based on a sample ID.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NearestLeaf'
+        404:
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      description: Replace the nearest leaf node of a sample based on a sample ID.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: New nearest leaf node to replace old one.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NearestLeaf'
+      responses:
+        200:
+          description: OK. Maybe partially satisfied, the response body contains the updated resource.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NearestLeaf'
+        404:
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /tree:
+    post:
+      description: Create a leaf node for the phylogenetic tree.
+      requestBody:
+        description: Leaf node to be added
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Leaf'
+      responses:
+        201:
+          description: Created. The response body contains the created resource.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Leaf'
+        409:
+          description: Already existed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /tree/{id}:
+    get:
+      description: Return the list of nearest samples of a tree node based on an ID.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Neighbour'
+        404:
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      description: Delete a leaf node based on an ID.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        204:
+          description: Deleted
+        404:
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 components:
   schemas:
     Sample:
       type: object
+      required:
+        - experiment_id
       properties:
         experiment_id:
           type: string
-        sub_type:
-          type: string
-    ApiResponse:
+        nearest-neighbours:
+          type: array
+          items:
+            $ref: '#/components/schemas/Neighbour'
+        nearest-leaf-node:
+          $ref: '#/components/schemas/NearestLeaf'
+    Neighbour:
       type: object
+      required:
+        - experiment_id
+        - distance
       properties:
-        type:
+        experiment_id:
           type: string
-        subType:
+        distance:
+          type: integer
+          format: int32
+    Leaf:
+      type: object
+      required:
+        - leaf_id
+      properties:
+        leaf_id:
           type: string
-        result:
-          type: object
+    NearestLeaf:
+      type: object
+      required:
+        - leaf_id
+        - distance
+      properties:
+        leaf_id:
+          type: string
+        distance:
+          type: integer
+          format: int32
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
