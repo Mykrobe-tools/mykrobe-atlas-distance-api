@@ -1,4 +1,4 @@
-connexion == 2.5.0
+connexion[swagger-ui] == 2.5.0
 neomodel == 3.3.2
 python_dateutil == 2.6.0
 setuptools >= 21.0.0

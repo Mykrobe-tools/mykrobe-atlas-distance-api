@@ -4,15 +4,12 @@ from __future__ import absolute_import
 
 import json
 from random import randrange
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 
 from hypothesis import given, strategies as st, assume
-from nose import with_setup
 
 from swagger_server.orm.DistanceORM import SampleNode, LineageNode
 from swagger_server.test import BaseTestCase
-
-REL_TYPES = ['nearest-neighbor', 'nearest-leaf-node']
 
 
 class TestDistanceController(BaseTestCase):

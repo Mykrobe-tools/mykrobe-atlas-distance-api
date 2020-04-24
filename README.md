@@ -31,7 +31,7 @@ docker exec -ti dist python3 -m swagger_server.initdb
 ## Make a test request
 ```shell script
 curl --request POST \
-  --url http://localhost:8080/distance \
+  --url http://localhost:8080/api/v1/samples/s1/nearest-neighbours \
   --header 'content-type: application/json' \
   --data '{
 	"experiment_id": "s1"
