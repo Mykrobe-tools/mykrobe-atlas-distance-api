@@ -13,7 +13,7 @@ class BaseTestCase(TestCase):
         # https://neo4j.com/developer/manage-multiple-databases/
 
         logging.getLogger('connexion.operation').setLevel('ERROR')
-        app = connexion.App(__name__, specification_dir='../swagger/')
+        app = connexion.App(__name__, specification_dir='../swagger/', options={'swagger_ui': False})
         app.app.json_encoder = JSONEncoder
         app.add_api('swagger.yaml')
         return app.app
