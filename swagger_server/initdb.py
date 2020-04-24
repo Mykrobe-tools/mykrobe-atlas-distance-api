@@ -21,13 +21,13 @@ def get_num_neighbors():
 def get_to_know(pair):
     node, neighbors = pair
     with ThreadPoolExecutor() as executor:
-        executor.map(lambda s: node.neighbors.connect(s), neighbors)
+        executor.map(lambda s: node.neighbors.connect(s, {'dist': randrange(10)}), neighbors)
 
 
 def connect_with_lineage(pair):
     leaf, samples = pair
     with ThreadPoolExecutor() as executor:
-        executor.map(lambda s: s.lineage.connect(leaf), samples)
+        executor.map(lambda s: s.lineage.connect(leaf, {'dist': randrange(10)}), samples)
 
 
 def main():
