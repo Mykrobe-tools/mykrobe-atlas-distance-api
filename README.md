@@ -10,9 +10,7 @@ docker build -t dist .
 
 ## Init a toy graph
 ```shell script
-docker exec -ti dist bash
-# In the container
-python3 -m initdb
+docker exec -ti dist python3 -m swagger_server.initdb
 ```
 
 ## View the toy graph
