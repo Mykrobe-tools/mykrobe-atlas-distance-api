@@ -6,3 +6,6 @@ python:
 install: pip install tox-travis
 # command to run tests
 script: tox
+
+services:
+  - neo4j
