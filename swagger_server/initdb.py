@@ -10,18 +10,21 @@ config.DATABASE_URL = 'bolt://neo4j:@127.0.0.1:7687'
 config.ENCRYPTED_CONNECTION = False
 
 
-N_NODES = 16_000
-N_LEAVES = 2000
+N_LEAVES = 2042
+
+
+def get_num_samples_per_leaf():
+    return randrange(5)
 
 
 def get_num_neighbors():
-    return randrange(95, 106)
+    return randrange(5, 16)
 
 
 def get_to_know(pair):
     node, neighbors = pair
     with ThreadPoolExecutor() as executor:
-        executor.map(lambda s: node.neighbors.connect(s, {'dist': randrange(10)}), neighbors)
+        executor.map(lambda s: node.neighbors.connect(s, {'dist': randrange(20)}), neighbors)
 
 
 def connect_with_lineage(pair):
@@ -31,10 +34,11 @@ def connect_with_lineage(pair):
 
 
 def main():
-    nodes = SampleNode.create(*[{'name': 's%d' % i} for i in range(N_NODES)])
+    with open('swagger_server/test/data/sample.list') as sample_list:
+        nodes = SampleNode.create(*[{'name': name} for name in sample_list])
     pairs = []
 
-    for i in range(N_NODES):
+    for i in range(len(nodes)):
         rest = nodes[:i] + nodes[i+1:]
         neighbors = sample(rest, get_num_neighbors())
         node = nodes[i]
@@ -44,13 +48,15 @@ def main():
     with ProcessPoolExecutor() as executor:
         executor.map(get_to_know, pairs)
 
-    leaves = LineageNode.create(*[{'name': 'l%d' % i} for i in range(N_LEAVES)])
+    leaves = LineageNode.create(*[{'name': f'leaf_{i}'.zfill(len(str(N_LEAVES)))} for i in range(N_LEAVES)])
     samples = SampleNode.nodes.all()
     pairs = []
 
     for leaf in leaves:
-        avg_samples_per_leaf = N_NODES / N_LEAVES
-        n_to_take_out = randrange(avg_samples_per_leaf - 1, avg_samples_per_leaf + 2)
+        if not samples:
+            break
+
+        n_to_take_out = get_num_samples_per_leaf()
         n_to_take_out = min(n_to_take_out, len(samples))
 
         took_out = []

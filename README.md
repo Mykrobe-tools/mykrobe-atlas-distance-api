@@ -15,6 +15,7 @@ If you want to restore the sample data, simply delete `./data` and run `./script
 ```shell script
 docker exec -ti dist bash -c "rm -r /data/databases/graph.db/*"
 docker exec -ti dist supervisorctl restart neo4j
+# Wait a few seconds
 docker exec -ti dist python3 -m swagger_server.initdb
 ```
 
