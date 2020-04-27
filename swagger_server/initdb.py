@@ -10,7 +10,7 @@ config.DATABASE_URL = 'bolt://neo4j:@127.0.0.1:7687'
 config.ENCRYPTED_CONNECTION = False
 
 
-N_LEAVES = 2042
+N_LEAVES = 2043
 
 
 def get_num_samples_per_leaf():
