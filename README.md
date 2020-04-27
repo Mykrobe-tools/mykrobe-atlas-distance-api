@@ -11,7 +11,7 @@ The script create a `./data` directory to persist Neo4j's data to the host machi
 
 If you want to restore the sample data, simply delete `./data` and run `./scripts/run.sh` again.
 
-## Init a new sample database (20 minutes on 8 CPUs)
+## Init a new sample database (20 seconds on 8 CPUs)
 ```shell script
 docker exec -ti dist bash -c "rm -r /data/databases/graph.db/*"
 docker exec -ti dist supervisorctl restart neo4j
