@@ -13,10 +13,17 @@ If you want to restore the sample data, simply delete `./data` and run `./script
 
 ## Init a new sample database (20 seconds on 8 CPUs)
 ```shell script
-docker exec -ti dist bash -c "rm -r /data/databases/graph.db/*"
-docker exec -ti dist supervisorctl restart neo4j
-# Wait a few seconds
-docker exec -ti dist python3 -m swagger_server.initdb
+./scripts/regenerate_db.sh
+```
+
+## Backup the current db
+```shell script
+./scripts/backup_db.sh # will dump to ./data/init.db.bak on host machine
+```
+
+## Tail application's logs
+```shell script
+./scripts/tail_app_logs.sh
 ```
 
 ## View the toy graph

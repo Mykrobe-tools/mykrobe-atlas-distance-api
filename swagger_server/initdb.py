@@ -35,7 +35,7 @@ def connect_with_lineage(pair):
 
 def main():
     with open('swagger_server/test/data/sample.list') as sample_list:
-        nodes = SampleNode.create(*[{'name': name} for name in sample_list])
+        nodes = SampleNode.create(*[{'name': name.rstrip()} for name in sample_list])
     pairs = []
 
     for i in range(len(nodes)):
