@@ -25,9 +25,11 @@ def samples_id_nearest_leaf_node_get(id):  # noqa: E501
         resp = NearestLeaf(leaf.name, distance=rel.dist)
 
         return resp, 200
-    except (SampleNode.DoesNotExist, LineageNode.DoesNotExist):
+    except (SampleNode.DoesNotExist, LineageNode.DoesNotExist) as e:
+        current_app.logger.error(e)
         return Error(404, "Not found"), 404
-    except:
+    except BaseException as e:
+        current_app.logger.error(e)
         return Error(500, "Unexpected error"), 500
 
 
@@ -50,7 +52,7 @@ def samples_id_nearest_neighbours_get(id):  # noqa: E501
         resp = [Neighbour(neighbors[i].name, distance=rels[i].dist) for i in range(len(neighbors))]
 
         return resp, 200
-    except (SampleNode.DoesNotExist, LineageNode.DoesNotExist) as e:
+    except SampleNode.DoesNotExist as e:
         current_app.logger.error(e)
         return Error(404, "Not found"), 404
     except BaseException as e:
