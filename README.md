@@ -5,21 +5,16 @@
 ## Start the development server
 ```shell script
 docker build -t dist .
-mkdir data
-chown 101:101 data
 ./scripts/run.sh
 ```
+The script create a `./data` directory to persist Neo4j's data to the host machine. The Docker image will load a sample database if the directory `./data/databases/graph.db` does not exist (for example, at first run).
 
-## Load toy db
-```shell script
-cp backups/init.db.bak data/
-docker exec -ti dist supervisorctl stop neo4j
-docker exec -ti dist neo4j-admin load --from=/data/init.db.bak
-docker exec -ti dist supervisorctl start neo4j
-```
+If you want to restore the sample data, simply delete `./data` and run `./scripts/run.sh` again.
 
-## Or init a toy graph (20 minutes on 8 CPUs)
+## Init a new sample database (20 minutes on 8 CPUs)
 ```shell script
+docker exec -ti dist bash -c "rm -r /data/databases/graph.db/*"
+docker exec -ti dist supervisorctl restart neo4j
 docker exec -ti dist python3 -m swagger_server.initdb
 ```
 
