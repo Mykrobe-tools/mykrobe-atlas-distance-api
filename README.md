@@ -13,7 +13,9 @@ chown 101:101 data
 ## Load toy db
 ```shell script
 cp backups/init.db.bak data/
+docker exec -ti dist supervisorctl stop neo4j
 docker exec -ti dist neo4j-admin load --from=/data/init.db.bak
+docker exec -ti dist supervisorctl start neo4j
 ```
 
 ## Or init a toy graph (20 minutes on 8 CPUs)
