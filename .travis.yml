@@ -23,4 +23,4 @@ before_script:
   - sudo sed -i 's/#dbms\.security\.auth_enabled=false/dbms.security.auth_enabled=false/' /etc/neo4j/neo4j.conf
   - sudo systemctl restart neo4j
 
-script: pytest
+script: nosetests
