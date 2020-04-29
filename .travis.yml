@@ -14,10 +14,12 @@ addons:
 services:
   - neo4j
 
-install: pip install tox-travis
+install:
+  - pip install -r requirements.txt
+  - pip install -r test-requirements.txt
 
 before_script:
   - sudo sed -i 's/#dbms\.security\.auth_enabled=false/dbms.security.auth_enabled=false/' /etc/neo4j/neo4j.conf
   - sudo systemctl restart neo4j
 
-script: tox
+script: pytest

@@ -60,8 +60,7 @@ docker stop dist
 
 ## Run tests
 ```shell script
-pip3 install tox
-tox
+pytest
 ```
 
 ## Run individual tests

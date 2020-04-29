@@ -10,6 +10,8 @@ servers:
 paths:
   /samples:
     post:
+      tags:
+      - sample
       description: Add a new sample. Duplicates are not allowed
       operationId: samples_post
       requestBody:
@@ -39,7 +41,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-      x-openapi-router-controller: swagger_server.controllers.default_controller
+      x-openapi-router-controller: swagger_server.controllers.sample_controller
   /samples/{id}:
     get:
       description: Return a sample based on a sample ID.

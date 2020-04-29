@@ -69,21 +69,6 @@ def samples_id_nearest_neighbours_put(body, id):  # noqa: E501
     return 'do some magic!'
 
 
-def samples_post(body):  # noqa: E501
-    """samples_post
-
-    Add a new sample. Duplicates are not allowed # noqa: E501
-
-    :param body: Sample to be added
-    :type body: dict | bytes
-
-    :rtype: Sample
-    """
-    if connexion.request.is_json:
-        body = Sample.from_dict(connexion.request.get_json())  # noqa: E501
-    return 'do some magic!'
-
-
 def tree_id_delete(id):  # noqa: E501
     """tree_id_delete
 

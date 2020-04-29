@@ -23,6 +23,8 @@ servers:
 paths:
   /samples:
     post:
+      tags:
+        - sample
       description: Add a new sample. Duplicates are not allowed
       requestBody:
         description: Sample to be added
