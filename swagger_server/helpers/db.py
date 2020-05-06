@@ -24,3 +24,6 @@ class Database(local):
         if not cls.db:
             cls.db = Database()
         return cls.db
+
+    def close(self):
+        self.driver.close()

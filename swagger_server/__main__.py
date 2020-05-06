@@ -16,6 +16,8 @@ def main():
     app.add_api('swagger.yaml', arguments={'title': 'Distance API'})
     app.run(port=8080, debug=os.environ.get('DEBUG'))
 
+    db.Database.get().close()
+
 
 if __name__ == '__main__':
     main()

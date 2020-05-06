@@ -92,9 +92,6 @@ class TestDistanceController(BaseTestCase):
         )
 
     def setUp(self):
-        db.URI = "bolt://localhost:7687"
-        db.ENCRYPTED = False
-
         self.dist = 10
         self.neighbour_dists = [randrange(10), randrange(10)]
         query = 'create ' \
