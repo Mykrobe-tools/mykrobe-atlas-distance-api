@@ -6,7 +6,7 @@ python:
 addons:
   apt:
     sources:
-      - sourceline: 'deb https://debian.neo4j.com stable 3.5'
+      - sourceline: 'deb https://debian.neo4j.com stable 4.0'
         key_url: 'https://debian.neo4j.com/neotechnology.gpg.key'
     packages:
       - neo4j
