@@ -8,7 +8,7 @@ from unittest.mock import patch
 
 from hypothesis import given, strategies as st, assume
 
-from swagger_server.orm.DistanceORM import SampleNode, LineageNode
+from swagger_server.helpers import db
 from swagger_server.test import BaseTestCase
 
 
@@ -19,7 +19,7 @@ class TestDistanceController(BaseTestCase):
         st.just('nearest-neighbours')
     ), sample=st.text())
     def test_non_existing_sample(self, sub_type, sample):
-        assume(sample != self.node.name)
+        assume(sample != self.node['name'])
 
         response = self.request("surely not in db", sub_type)
 
@@ -33,30 +33,39 @@ class TestDistanceController(BaseTestCase):
         )
 
     def test_nearest_leaf(self):
-        response = self.request(self.node.name, 'nearest-leaf-node')
+        response = self.request(self.node['name'], 'nearest-leaf-node')
 
         self.assert200(response)
         self.assertDictEqual(
             json.loads(response.data.decode()),
             {
-                'leaf_id': self.leaf.name,
+                'leaf_id': self.leaf['name'],
                 'distance': self.dist
             }
         )
 
     def test_nearest_neighbors(self):
-        response = self.request(self.node.name, 'nearest-neighbours')
+        response = self.request(self.node['name'], 'nearest-neighbours')
 
         self.assert200(response)
 
         actual = json.loads(response.data.decode())
         expected = [{
-            'experiment_id': n.name,
-            'distance': self.node.neighbors.relationship(n).dist
-        } for n in self.neighbours]
+            'experiment_id': n['name'],
+            'distance': d
+        } for n, d in zip(self.neighbours, self.neighbour_dists)]
 
         for a in actual:
             self.assertIn(a, expected)
+
+    def test_no_neighbor(self):
+        response = self.request(self.isolated_node_name, 'nearest-neighbours')
+
+        self.assert200(response)
+
+        actual = json.loads(response.data.decode())
+        expected = []
+        assert actual == expected
 
     @given(sub_type=st.one_of(
         st.just('nearest-leaf-node'),
@@ -65,7 +74,7 @@ class TestDistanceController(BaseTestCase):
     def test_unexpected_error(self, sub_type):
         with patch('swagger_server.controllers.distance_controller.Neighbour', side_effect=ValueError),\
              patch('swagger_server.controllers.distance_controller.NearestLeaf', side_effect=ValueError):
-            response = self.request(self.node.name, sub_type)
+            response = self.request(self.node['name'], sub_type)
 
         self.assert500(response)
         self.assertDictEqual(
@@ -83,24 +92,33 @@ class TestDistanceController(BaseTestCase):
         )
 
     def setUp(self):
-        self.node = SampleNode(name='test node')
-        self.node.save()
-
-        self.neighbours = SampleNode.create(*[{'name': 'test neighbour %d' % i} for i in range(2)])
-        for n in self.neighbours:
-            self.node.neighbors.connect(n, {'dist': randrange(10)})
-
-        self.leaf = LineageNode(name='test leaf')
-        self.leaf.save()
+        db.URI = "bolt://localhost:7687"
+        db.ENCRYPTED = False
 
         self.dist = 10
-        self.node.lineage.connect(self.leaf, {'dist': self.dist})
+        self.neighbour_dists = [randrange(10), randrange(10)]
+        query = 'create ' \
+                '(a:SampleNode {{name: "test node"}}),' \
+                '(b:SampleNode {{name: "test neighbour 1"}}),' \
+                '(c:SampleNode {{name: "test neighbour 2"}}),' \
+                '(d:LineageNode {{name: "test leaf"}}),' \
+                '(a)-[:NEIGHBOUR {{dist: {d1}}}]->(b), (a)-[:NEIGHBOUR {{dist: {d2}}}]->(c),' \
+                '(a)-[:LINEAGE {{dist: {d3}}}]->(d) ' \
+                'return a,b,c,d'
+        rows = db.Database.get().query(query.format(d1=self.neighbour_dists[0], d2=self.neighbour_dists[1], d3=self.dist)).values()
+        self.node = rows[0][0]
+        self.neighbours = rows[0][1:3]
+        self.leaf = rows[0][3]
+
+        self.isolated_node_name = 'isolated'
+        db.Database.get().query(f'create (n:SampleNode {{name: "{self.isolated_node_name}"}})')
 
     def tearDown(self):
-        for n in self.neighbours:
-            n.delete()
-        self.leaf.delete()
-        self.node.delete()
+        query = 'match (a {{name: "{name}"}})-[r1:NEIGHBOUR]->(b), (a)-[r2:LINEAGE]->(c) delete r1,r2,a,b,c'.format(
+            name=self.node['name'])
+        db.Database.get().query(query)
+
+        db.Database.get().query(f'match (n:SampleNode {{name: "{self.isolated_node_name}"}}) delete n')
 
 
 if __name__ == '__main__':
