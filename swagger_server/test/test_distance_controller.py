@@ -115,14 +115,6 @@ class TestDistanceController(BaseTestCase):
         cls.isolated_node_name = 'isolated'
         db.Database.get().query(f'create (n:SampleNode {{name: "{cls.isolated_node_name}"}})')
 
-    @classmethod
-    def tearDownClass(cls):
-        query = 'match (a {{name: "{name}"}})-[r1:NEIGHBOUR]->(b), (a)-[r2:LINEAGE]->(c) delete r1,r2,a,b,c'.format(
-            name=cls.node['name'])
-        db.Database.get().query(query)
-
-        db.Database.get().query(f'match (n:SampleNode {{name: "{cls.isolated_node_name}"}}) delete n')
-
 
 if __name__ == '__main__':
     import unittest

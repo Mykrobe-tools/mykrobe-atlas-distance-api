@@ -19,6 +19,10 @@ class BaseTestCase(TestCase):
         db.URI = "bolt://localhost:7687"
         db.ENCRYPTED = False
 
+    @classmethod
+    def tearDownClass(cls):
+        db.Database.get().query('MATCH (n) DETACH DELETE n')
+
     def create_app(self):
         logging.getLogger('connexion.operation').setLevel('ERROR')
         app = connexion.App(__name__, specification_dir='../swagger/', options={'swagger_ui': False})
