@@ -1,4 +1,4 @@
-FROM neo4j:3.5
+FROM neo4j
 
 RUN apt update
 RUN apt install -y --no-install-recommends python3-pip python3-setuptools curl unzip sed

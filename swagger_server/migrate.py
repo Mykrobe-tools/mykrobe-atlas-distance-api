@@ -1,12 +1,21 @@
-from neomodel import config, db
+from neo4j import GraphDatabase
 
-config.DATABASE_URL = 'bolt://neo4j:@127.0.0.1:7687'
-config.ENCRYPTED_CONNECTION = False
+uri = "bolt://localhost:7687"
+driver = GraphDatabase.driver(uri, encrypted=False)
+
+
+def unique_sample_names(tx):
+    tx.run('CREATE CONSTRAINT ON (a:SampleNode) ASSERT a.name IS UNIQUE')
+
+
+def unique_lineage_names(tx):
+    tx.run('CREATE CONSTRAINT ON (a:LineageNode) ASSERT a.name IS UNIQUE')
 
 
 def main():
-    db.cypher_query('CREATE CONSTRAINT ON (a:SampleNode) ASSERT a.name IS UNIQUE')
-    db.cypher_query('CREATE CONSTRAINT ON (a:LineageNode) ASSERT a.name IS UNIQUE')
+    with driver.session() as s:
+        s.write_transaction(unique_sample_names)
+        s.write_transaction(unique_lineage_names)
 
 
 if __name__ == '__main__':

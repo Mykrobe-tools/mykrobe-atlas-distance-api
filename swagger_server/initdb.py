@@ -1,13 +1,9 @@
-from concurrent.futures.process import ProcessPoolExecutor
-from concurrent.futures.thread import ThreadPoolExecutor
 from random import sample, randrange
 
-from neomodel import config
+from swagger_server.helpers import db
 
-from swagger_server.orm.DistanceORM import SampleNode, LineageNode
-
-config.DATABASE_URL = 'bolt://neo4j:@127.0.0.1:7687'
-config.ENCRYPTED_CONNECTION = False
+db.URI = "bolt://localhost:7687"
+db.ENCRYPTED = False
 
 
 N_LEAVES = 2043
@@ -23,19 +19,43 @@ def get_num_neighbors():
 
 def get_to_know(pair):
     node, neighbors = pair
-    with ThreadPoolExecutor() as executor:
-        executor.map(lambda s: node.neighbors.connect(s, {'dist': randrange(20)}), neighbors)
+    neighbour_names = [n['name'] for n in neighbors]
+
+    query = f'MATCH (a),(b) WHERE a.name=\'{node["name"]}\' AND b.name in {neighbour_names} ' \
+            f'CREATE (a)-[:NEIGHBOUR {{ dist: {randrange(20)} }}]->(b)'
+    db.Database.get().query(query)
 
 
 def connect_with_lineage(pair):
     leaf, samples = pair
-    with ThreadPoolExecutor() as executor:
-        executor.map(lambda s: s.lineage.connect(leaf, {'dist': randrange(10)}), samples)
+    sample_names = [n['name'] for n in samples]
+
+    query = f'MATCH (a),(b) WHERE a.name=\'{leaf["name"]}\' AND b.name in {sample_names} ' \
+            f'CREATE (b)-[:LINEAGE {{ dist: {randrange(10)} }}]->(a)'
+    db.Database.get().query(query)
+
+
+def create_nodes(names):
+    variables = [f'n{i}' for i in range(len(names))]
+    props = [f'{{name:"{name}"}}' for name in names]
+    nodes = [f'({v}:SampleNode {p})' for v, p in zip(variables, props)]
+
+    query = 'CREATE ' + ','.join(nodes) + ' RETURN ' + ','.join(variables)
+    return db.Database.get().query(query).values()[0]
+
+
+def create_leaves():
+    variables = [f'n{i}' for i in range(N_LEAVES)]
+    props = [f'{{ name: "leaf_{str(i).zfill(len(str(N_LEAVES)))}" }}' for i in range(N_LEAVES)]
+    nodes = [f'({v}:LineageNode {p})' for v, p in zip(variables, props)]
+
+    query = 'CREATE ' + ','.join(nodes) + ' RETURN ' + ','.join(variables)
+    return db.Database.get().query(query).values()[0]
 
 
 def main():
     with open('swagger_server/test/data/sample.list') as sample_list:
-        nodes = SampleNode.create(*[{'name': name.rstrip()} for name in sample_list])
+        nodes = create_nodes([name.rstrip() for name in sample_list])
     pairs = []
 
     for i in range(len(nodes)):
@@ -45,32 +65,31 @@ def main():
 
         pairs.append((node, neighbors))
 
-    with ProcessPoolExecutor() as executor:
-        executor.map(get_to_know, pairs)
+    for p in pairs:
+        get_to_know(p)
 
-    leaves = LineageNode.create(*[{'name': f'leaf_{i}'.zfill(len(str(N_LEAVES)))} for i in range(N_LEAVES)])
-    samples = SampleNode.nodes.all()
+    leaves = create_leaves()
     pairs = []
 
     for leaf in leaves:
-        if not samples:
+        if not nodes:
             break
 
         n_to_take_out = get_num_samples_per_leaf()
-        n_to_take_out = min(n_to_take_out, len(samples))
+        n_to_take_out = min(n_to_take_out, len(nodes))
 
         took_out = []
         for _ in range(n_to_take_out):
-            took_out.append(samples.pop(randrange(len(samples))))
+            took_out.append(nodes.pop(randrange(len(nodes))))
 
         pairs.append((leaf, took_out))
 
     # Leftover samples
-    if samples:
-        pairs[-1] = (pairs[-1][0], pairs[-1][1] + samples)
+    if nodes:
+        pairs[-1] = (pairs[-1][0], pairs[-1][1] + nodes)
 
-    with ProcessPoolExecutor() as executor:
-        executor.map(connect_with_lineage, pairs)
+    for p in pairs:
+        connect_with_lineage(p)
 
 
 if __name__ == '__main__':
