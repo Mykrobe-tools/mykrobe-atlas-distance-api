@@ -1,4 +1,5 @@
 import logging
+import os
 import subprocess
 from time import sleep
 
@@ -17,21 +18,6 @@ class BaseTestCase(TestCase):
     def setUpClass(cls):
         db.URI = "bolt://localhost:7687"
         db.ENCRYPTED = False
-
-        print('creating db')
-        subprocess.run(['docker', 'run', '--rm', '-d',
-                        '-p', '7474:7474', '-p', '7687:7687',
-                        '-e', 'NEO4J_AUTH=none',
-                        '--name', cls.docker_container_name,
-                        'neo4j'])
-
-        print('waiting for db to be up')
-        sleep(5)
-
-    @classmethod
-    def tearDownClass(cls):
-        print('shutting down db')
-        subprocess.run(['docker', 'stop', cls.docker_container_name])
 
     def create_app(self):
         logging.getLogger('connexion.operation').setLevel('ERROR')

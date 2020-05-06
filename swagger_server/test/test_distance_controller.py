@@ -93,9 +93,12 @@ class TestDistanceController(BaseTestCase):
             method='GET'
         )
 
-    def setUp(self):
-        self.dist = 10
-        self.neighbour_dists = [randrange(10), randrange(10)]
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+
+        cls.dist = 10
+        cls.neighbour_dists = [randrange(10), randrange(10)]
         query = 'create ' \
                 '(a:SampleNode {{name: "test node"}}),' \
                 '(b:SampleNode {{name: "test neighbour 1"}}),' \
@@ -104,20 +107,21 @@ class TestDistanceController(BaseTestCase):
                 '(a)-[:NEIGHBOUR {{dist: {d1}}}]->(b), (a)-[:NEIGHBOUR {{dist: {d2}}}]->(c),' \
                 '(a)-[:LINEAGE {{dist: {d3}}}]->(d) ' \
                 'return a,b,c,d'
-        rows = db.Database.get().query(query.format(d1=self.neighbour_dists[0], d2=self.neighbour_dists[1], d3=self.dist)).values()
-        self.node = rows[0][0]
-        self.neighbours = rows[0][1:3]
-        self.leaf = rows[0][3]
+        rows = db.Database.get().query(query.format(d1=cls.neighbour_dists[0], d2=cls.neighbour_dists[1], d3=cls.dist)).values()
+        cls.node = rows[0][0]
+        cls.neighbours = rows[0][1:3]
+        cls.leaf = rows[0][3]
 
-        self.isolated_node_name = 'isolated'
-        db.Database.get().query(f'create (n:SampleNode {{name: "{self.isolated_node_name}"}})')
+        cls.isolated_node_name = 'isolated'
+        db.Database.get().query(f'create (n:SampleNode {{name: "{cls.isolated_node_name}"}})')
 
-    def tearDown(self):
+    @classmethod
+    def tearDownClass(cls):
         query = 'match (a {{name: "{name}"}})-[r1:NEIGHBOUR]->(b), (a)-[r2:LINEAGE]->(c) delete r1,r2,a,b,c'.format(
-            name=self.node['name'])
+            name=cls.node['name'])
         db.Database.get().query(query)
 
-        db.Database.get().query(f'match (n:SampleNode {{name: "{self.isolated_node_name}"}}) delete n')
+        db.Database.get().query(f'match (n:SampleNode {{name: "{cls.isolated_node_name}"}}) delete n')
 
 
 if __name__ == '__main__':
