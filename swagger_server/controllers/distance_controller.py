@@ -22,8 +22,9 @@ def samples_id_nearest_leaf_node_get(id):  # noqa: E501
                                          f'n,r,m').values()
 
         if not result:
-            current_app.logger.error({'error': 'empty result', 'method': samples_id_nearest_leaf_node_get.__name__,
-                                      'id': id, 'result': result})
+            if current_app.config['DEBUG']:
+                current_app.logger.debug({'error': 'empty result', 'method': samples_id_nearest_leaf_node_get.__name__,
+                                          'id': id, 'result': result})
             return Error(404, "Not found"), 404
 
         rel = result[0][1]
@@ -53,8 +54,9 @@ def samples_id_nearest_neighbours_get(id):  # noqa: E501
             f'n,r,m').values()
 
         if not result:
-            current_app.logger.error({'error': 'empty result', 'method': samples_id_nearest_neighbours_get.__name__,
-                                      'id': id, 'result': result})
+            if current_app.config['DEBUG']:
+                current_app.logger.debug({'error': 'empty result', 'method': samples_id_nearest_neighbours_get.__name__,
+                                         'id': id, 'result': result})
             return Error(404, "Not found"), 404
 
         rels = [r[1] for r in result if r[1]]

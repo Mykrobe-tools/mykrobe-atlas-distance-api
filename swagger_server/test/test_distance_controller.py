@@ -3,6 +3,7 @@
 from __future__ import absolute_import
 
 import json
+import logging
 from random import randrange
 from unittest.mock import patch
 
@@ -73,7 +74,8 @@ class TestDistanceController(BaseTestCase):
     ))
     def test_unexpected_error(self, sub_type):
         with patch('swagger_server.controllers.distance_controller.Neighbour', side_effect=ValueError),\
-             patch('swagger_server.controllers.distance_controller.NearestLeaf', side_effect=ValueError):
+             patch('swagger_server.controllers.distance_controller.NearestLeaf', side_effect=ValueError),\
+             self.assertLogs(level=logging.ERROR):
             response = self.request(self.node['name'], sub_type)
 
         self.assert500(response)
