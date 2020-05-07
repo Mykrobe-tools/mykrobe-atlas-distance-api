@@ -5,6 +5,7 @@ from flask_testing import TestCase
 
 from swagger_server.encoder import JSONEncoder
 from swagger_server.helpers import db
+from swagger_server.migrate import migrate
 
 
 class BaseTestCase(TestCase):
@@ -15,6 +16,8 @@ class BaseTestCase(TestCase):
     def setUpClass(cls):
         db.URI = "bolt://localhost:7687"
         db.ENCRYPTED = False
+
+        migrate(db.Database.get().driver)
 
     @classmethod
     def tearDownClass(cls):
