@@ -15,12 +15,12 @@ samples_post_body_st = st.fixed_dictionaries({
     'experiment_id': experiment_id_st,
     'nearest-neighbours': st.lists(elements=st.fixed_dictionaries({
         'experiment_id': experiment_id_st,
-        'distance': st.integers(min_value=-2 << 31, max_value=(2 << 31)-1)
+        'distance': st.integers(min_value=-2 ** 63, max_value=(2 ** 63)-1)
     }), min_size=1),
-    # 'nearest-leaf-node': st.fixed_dictionaries({
-    #     'leaf_id': experiment_id_st,
-    #     'distance': st.integers(min_value=-2 << 31, max_value=(2 << 31)-1)
-    # })
+    'nearest-leaf-node': st.fixed_dictionaries({
+        'leaf_id': experiment_id_st,
+        'distance': st.integers(min_value=-2 ** 63, max_value=(2 ** 63)-1)
+    })
 })
 
 

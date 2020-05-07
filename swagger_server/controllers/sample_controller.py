@@ -3,7 +3,7 @@ from neobolt.exceptions import ConstraintError
 
 from swagger_server.helpers import db
 from swagger_server.helpers.controller_helpers import handle_500
-from swagger_server.models import Neighbour
+from swagger_server.models import Neighbour, NearestLeaf
 from swagger_server.models.sample import Sample  # noqa: E501
 
 
@@ -43,15 +43,25 @@ def samples_post(body):  # noqa: E501
             to_create.append(f'{",".join(rel_patterns)}')
             to_return += neighbour_variables + rel_variables
 
+        if body.nearest_leaf_node:
+            leaf_var = 'l'
+            lineage_rel_var = 'r'
+            to_create.append(f'({leaf_var}:LineageNode {{name: "{body.nearest_leaf_node.leaf_id}"}})')
+            to_create.append(f'({node_variable})-[{lineage_rel_var}:LINEAGE {{dist: {body.nearest_leaf_node.distance}}}]->({leaf_var})')
+            to_return += [leaf_var, lineage_rel_var]
+
         to_create = ','.join(to_create)
         to_return = ','.join(to_return)
         query = f'CREATE {to_create} RETURN {to_return}'
 
         rows = db.Database.get().query(query).values()
         neighbour_cols = rows[0][1:1+len(neighbour_variables)]
-        rel_cols = rows[0][1+len(neighbour_variables):]
+        rel_cols = rows[0][1+len(neighbour_variables):-2]
         neighbour_objs = [Neighbour(n['name'], r['dist']) for n, r in zip(neighbour_cols, rel_cols)]
-        sample = Sample(rows[0][0]['name'], neighbour_objs)
+        leaf = None
+        if body.nearest_leaf_node:
+            leaf = NearestLeaf(rows[0][-2]['name'], rows[0][-1]['dist'])
+        sample = Sample(rows[0][0]['name'], neighbour_objs, leaf)
 
         return sample, 201
     except ConstraintError as e:
