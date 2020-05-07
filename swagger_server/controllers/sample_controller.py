@@ -23,11 +23,11 @@ def samples_post(body):  # noqa: E501
 
     try:
         node_variable = 'n'
-        if not body.nearest_neighbours:
-            query = f'CREATE ({node_variable}:SampleNode {{ name: "{body.experiment_id}" }}) RETURN {node_variable}'
-            rows = db.Database.get().query(query).values()
-            sample = Sample(rows[0][0]['name'])
-        else:
+        neighbour_variables = []
+        to_create = [f'({node_variable}:SampleNode {{ name: "{body.experiment_id}" }})']
+        to_return = [node_variable]
+
+        if body.nearest_neighbours:
             neighbours = body.nearest_neighbours
             dists = [n.distance for n in neighbours]
 
@@ -39,17 +39,19 @@ def samples_post(body):  # noqa: E501
             rel_patterns = [f'({node_variable})-[{r}:NEIGHBOUR {{dist: {d}}}]->({v})'
                             for r, v, d in zip(rel_variables, neighbour_variables, dists)]
 
-            query = f'CREATE ' \
-                    f'({node_variable}:SampleNode {{ name: "{body.experiment_id}" }}),' \
-                    f'{",".join(neighbour_patterns)},' \
-                    f'{",".join(rel_patterns)} ' \
-                    f'RETURN {node_variable},{",".join(neighbour_variables)},{",".join(rel_variables)}'
+            to_create.append(f'{",".join(neighbour_patterns)}')
+            to_create.append(f'{",".join(rel_patterns)}')
+            to_return += neighbour_variables + rel_variables
 
-            rows = db.Database.get().query(query).values()
-            neighbour_cols = rows[0][1:1+len(neighbour_variables)]
-            rel_cols = rows[0][1+len(neighbour_variables):]
-            neighbour_objs = [Neighbour(n['name'], r['dist']) for n, r in zip(neighbour_cols, rel_cols)]
-            sample = Sample(rows[0][0]['name'], neighbour_objs)
+        to_create = ','.join(to_create)
+        to_return = ','.join(to_return)
+        query = f'CREATE {to_create} RETURN {to_return}'
+
+        rows = db.Database.get().query(query).values()
+        neighbour_cols = rows[0][1:1+len(neighbour_variables)]
+        rel_cols = rows[0][1+len(neighbour_variables):]
+        neighbour_objs = [Neighbour(n['name'], r['dist']) for n, r in zip(neighbour_cols, rel_cols)]
+        sample = Sample(rows[0][0]['name'], neighbour_objs)
 
         return sample, 201
     except ConstraintError as e:

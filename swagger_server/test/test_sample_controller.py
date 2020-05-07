@@ -17,6 +17,10 @@ samples_post_body_st = st.fixed_dictionaries({
         'experiment_id': experiment_id_st,
         'distance': st.integers(min_value=-2 << 31, max_value=(2 << 31)-1)
     }), min_size=1),
+    # 'nearest-leaf-node': st.fixed_dictionaries({
+    #     'leaf_id': experiment_id_st,
+    #     'distance': st.integers(min_value=-2 << 31, max_value=(2 << 31)-1)
+    # })
 })
 
 
@@ -38,7 +42,7 @@ class TestSampleController(BaseTestCase):
         self.assertEqual(response.status_code, 201)
 
         expected_resp = body.copy()
-        expected_resp.pop('nearest-neighbours', None)
+        expected_resp['nearest-neighbours'] = []
         self.assertDictEqual(
             json.loads(response.data.decode('utf-8')),
             expected_resp
