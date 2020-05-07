@@ -1,7 +1,4 @@
 import logging
-import os
-import subprocess
-from time import sleep
 
 import connexion
 from flask_testing import TestCase
