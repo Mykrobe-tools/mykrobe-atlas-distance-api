@@ -4,7 +4,7 @@ from __future__ import absolute_import
 
 import json
 
-from hypothesis import given, strategies as st, assume
+from hypothesis import given, strategies as st, assume, settings, HealthCheck
 
 from swagger_server.helpers import db
 from swagger_server.test import BaseTestCase
@@ -80,6 +80,37 @@ class TestSampleController(BaseTestCase):
 
                 self.assertIn(neighbour['name'], neighbour_dists)
                 self.assertEqual(rel['dist'], neighbour_dists[neighbour['name']])
+
+    @settings(suppress_health_check=(HealthCheck.filter_too_much, HealthCheck.too_slow))
+    @given(body=samples_post_body_st)
+    @cleanup_each_example
+    def test_creating_duplicated_samples(self, body):
+        experiment_ids = [body['experiment_id']] + [x['experiment_id'] for x in body.get('nearest-neighbours', [])]
+        assume(len(set(experiment_ids)) < len(experiment_ids))
+
+        response = self.request(body)
+
+        self.assertEqual(response.status_code, 409)
+
+        rows = self.get_nodes_and_relationships(body['experiment_id'])
+        self.assertEqual(len(rows), 0)
+
+    @settings(suppress_health_check=(HealthCheck.filter_too_much, HealthCheck.too_slow))
+    @given(body=samples_post_body_st, existed=experiment_id_st)
+    @cleanup_each_example
+    def test_creating_existed_samples(self, body, existed):
+        experiment_ids = [body['experiment_id']] + [x['experiment_id'] for x in body.get('nearest-neighbours', [])]
+        assume(len(set(experiment_ids)) == len(experiment_ids))
+        assume(existed in experiment_ids)
+
+        db.Database.get().query(f'CREATE (:SampleNode {{name: "{existed}"}})')
+
+        response = self.request(body)
+
+        self.assertEqual(response.status_code, 409)
+
+        rows = self.get_nodes_and_relationships(body['experiment_id'])
+        self.assertIn(len(rows), [0, 1])
 
     def request(self, body):
         return self.client.open(
