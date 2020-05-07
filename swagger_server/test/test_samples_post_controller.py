@@ -24,7 +24,7 @@ samples_post_body_st = st.fixed_dictionaries({
 })
 
 
-class TestSampleController(BaseTestCase):
+class TestSamplesPostController(BaseTestCase):
 
     @given(body=st.one_of(
         st.fixed_dictionaries({

@@ -5,7 +5,6 @@ from swagger_server.models.error import Error  # noqa: E501
 from swagger_server.models.leaf import Leaf  # noqa: E501
 from swagger_server.models.nearest_leaf import NearestLeaf  # noqa: E501
 from swagger_server.models.neighbour import Neighbour  # noqa: E501
-from swagger_server.models.sample import Sample  # noqa: E501
 from swagger_server import util
 
 
@@ -18,19 +17,6 @@ def samples_id_delete(id):  # noqa: E501
     :type id: str
 
     :rtype: None
-    """
-    return 'do some magic!'
-
-
-def samples_id_get(id):  # noqa: E501
-    """samples_id_get
-
-    Return a sample based on a sample ID. # noqa: E501
-
-    :param id: 
-    :type id: str
-
-    :rtype: Sample
     """
     return 'do some magic!'
 
