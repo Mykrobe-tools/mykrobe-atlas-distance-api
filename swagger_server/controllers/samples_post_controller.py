@@ -3,7 +3,7 @@ from neobolt.exceptions import ConstraintError
 
 from swagger_server.helpers import db
 from swagger_server.helpers.controller_helpers import handle_500
-from swagger_server.models import Neighbour, NearestLeaf
+from swagger_server.models import Neighbour, NearestLeaf, Error
 from swagger_server.models.sample import Sample  # noqa: E501
 
 
@@ -67,4 +67,4 @@ def samples_post(body):  # noqa: E501
     except ConstraintError as e:
         if 'already exist' not in str(e):
             raise
-        return 'Already existed', 409
+        return Error(409, 'Already existed'), 409

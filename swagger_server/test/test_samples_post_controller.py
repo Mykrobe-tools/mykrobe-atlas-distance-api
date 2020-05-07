@@ -7,10 +7,10 @@ import json
 from hypothesis import given, strategies as st, assume, settings, HealthCheck
 
 from swagger_server.helpers import db
+from swagger_server.models import Error
 from swagger_server.test import BaseTestCase
-from swagger_server.test.utils import cleanup_each_example
+from swagger_server.test.utils import cleanup_each_example, experiment_id_st
 
-experiment_id_st = st.text(alphabet=st.characters(whitelist_categories=('L', 'N')), min_size=1)
 samples_post_body_st = st.fixed_dictionaries({
     'experiment_id': experiment_id_st,
     'nearest-neighbours': st.lists(elements=st.fixed_dictionaries({
@@ -108,6 +108,10 @@ class TestSamplesPostController(BaseTestCase):
         response = self.request(body)
 
         self.assertEqual(response.status_code, 409)
+        self.assertDictEqual(
+            json.loads(response.data.decode('utf-8')),
+            Error(409, 'Already existed').to_dict()
+        )
 
         rows = self.get_nodes_and_relationships(body['experiment_id'])
         self.assertIn(len(rows), [0, 1])
@@ -127,10 +131,6 @@ class TestSamplesPostController(BaseTestCase):
             f'OPTIONAL MATCH (n)-[r:NEIGHBOUR]->(m:SampleNode) '
             'RETURN n,r,m'
         ).values()
-
-    @classmethod
-    def setUpClass(cls):
-        super().setUpClass()
 
 
 if __name__ == '__main__':
