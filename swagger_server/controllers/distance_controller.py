@@ -62,7 +62,7 @@ def samples_id_nearest_neighbours_get(id):  # noqa: E501
         rels = [r[1] for r in result if r[1]]
         neighbors = [r[2] for r in result if r[2]]
 
-        resp = [Neighbour(neighbors[i]['name'], distance=rels[i]['dist']) for i in range(len(neighbors))]
+        resp = [Neighbour(r[2]['name'], r[1]['dist']) for r in result if r[1] and r[2]]
         return resp, 200
     except BaseException as e:
         current_app.logger.error(e)
