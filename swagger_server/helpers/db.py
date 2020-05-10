@@ -7,7 +7,7 @@ URI = ""
 ENCRYPTED = True
 
 
-class Database(local):
+class Neo4jDatabase(local):
     db = None
 
     def __init__(self):
@@ -32,7 +32,7 @@ class Database(local):
     @classmethod
     def get(cls):
         if not cls.db:
-            cls.db = Database()
+            cls.db = Neo4jDatabase()
         return cls.db
 
     def close(self):

@@ -18,7 +18,7 @@ def samples_id_nearest_leaf_node_get(id):  # noqa: E501
     """
 
     try:
-        result = db.Database.get().query(f'MATCH (n:SampleNode)-[r:LINEAGE]->(m:LineageNode) WHERE n.name="{id}" RETURN '
+        result = db.Neo4jDatabase.get().query(f'MATCH (n:SampleNode)-[r:LINEAGE]->(m:LineageNode) WHERE n.name="{id}" RETURN '
                                          f'n,r,m').values()
 
         if not result:
@@ -49,7 +49,7 @@ def samples_id_nearest_neighbours_get(id):  # noqa: E501
     """
 
     try:
-        result = db.Database.get().query(
+        result = db.Neo4jDatabase.get().query(
             f'MATCH (n:SampleNode {{name: "{id}"}}) OPTIONAL MATCH (n)-[r:NEIGHBOUR]-(m:SampleNode) RETURN '
             f'n,r,m').values()
 

@@ -23,7 +23,7 @@ def get_to_know(pair):
 
     query = f'MATCH (a),(b) WHERE a.name=\'{node["name"]}\' AND b.name in {neighbour_names} ' \
             f'CREATE (a)-[:NEIGHBOUR {{ dist: {randrange(20)} }}]->(b)'
-    db.Database.get().query(query)
+    db.Neo4jDatabase.get().query(query)
 
 
 def connect_with_lineage(pair):
@@ -32,7 +32,7 @@ def connect_with_lineage(pair):
 
     query = f'MATCH (a),(b) WHERE a.name=\'{leaf["name"]}\' AND b.name in {sample_names} ' \
             f'CREATE (b)-[:LINEAGE {{ dist: {randrange(10)} }}]->(a)'
-    db.Database.get().query(query)
+    db.Neo4jDatabase.get().query(query)
 
 
 def create_nodes(names):
@@ -41,7 +41,7 @@ def create_nodes(names):
     nodes = [f'({v}:SampleNode {p})' for v, p in zip(variables, props)]
 
     query = 'CREATE ' + ','.join(nodes) + ' RETURN ' + ','.join(variables)
-    return db.Database.get().query(query).values()[0]
+    return db.Neo4jDatabase.get().query(query).values()[0]
 
 
 def create_leaves():
@@ -50,7 +50,7 @@ def create_leaves():
     nodes = [f'({v}:LineageNode {p})' for v, p in zip(variables, props)]
 
     query = 'CREATE ' + ','.join(nodes) + ' RETURN ' + ','.join(variables)
-    return db.Database.get().query(query).values()[0]
+    return db.Neo4jDatabase.get().query(query).values()[0]
 
 
 def main():

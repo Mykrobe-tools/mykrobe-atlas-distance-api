@@ -21,7 +21,7 @@ class BaseTestCase(TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        db.Database.get().query('MATCH (n) DETACH DELETE n')
+        db.Neo4jDatabase.get().query('MATCH (n) DETACH DELETE n')
 
     def create_app(self):
         logging.getLogger('connexion.operation').setLevel('ERROR')
