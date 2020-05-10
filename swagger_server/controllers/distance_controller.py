@@ -59,9 +59,6 @@ def samples_id_nearest_neighbours_get(id):  # noqa: E501
                                          'id': id, 'result': result})
             return Error(404, "Not found"), 404
 
-        rels = [r[1] for r in result if r[1]]
-        neighbors = [r[2] for r in result if r[2]]
-
         resp = [Neighbour(r[2]['name'], r[1]['dist']) for r in result if r[1] and r[2]]
         return resp, 200
     except BaseException as e:
