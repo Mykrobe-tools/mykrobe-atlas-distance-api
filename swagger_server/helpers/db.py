@@ -13,9 +13,19 @@ class Database(local):
     def __init__(self):
         self.driver = GraphDatabase.driver(URI, encrypted=ENCRYPTED)
 
-    def query(self, q):
+    def query(self, q, write=False):
+        """
+        Execute a Cypher query in a managed transaction
+
+        Keyword arguments:
+            q -- The query to be executed.
+            write -- Whether this is a query that will modify data. False by default.
+        """
         with self.driver.session() as s:
-            result = s.write_transaction(lambda tx: tx.run(q))
+            if write:
+                result = s.write_transaction(lambda tx: tx.run(q))
+            else:
+                result = s.read_transaction(lambda tx: tx.run(q))
 
         return result
 
