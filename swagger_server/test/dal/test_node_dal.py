@@ -1,6 +1,6 @@
 import unittest
 
-from hypothesis import given, strategies as st
+from hypothesis import given, strategies as st, settings
 
 from swagger_server.dal.neo4j import Neo4jDAL
 from swagger_server.helpers import db
@@ -43,6 +43,7 @@ class TestNodeDAL(BaseDALTestCase):
         keys=NEO4J_IDENTIFIER_ST,
         values=NEO4J_VALUE_ST
     ))
+    @settings(deadline=None)
     @cleanup_each_example
     def test_creating_single_node_with_properties(self, properties):
         self.check_empty_db()
