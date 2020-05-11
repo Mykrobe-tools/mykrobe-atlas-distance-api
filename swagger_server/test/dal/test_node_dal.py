@@ -30,6 +30,7 @@ class TestNodeDAL(BaseDALTestCase):
         self.assertEqual(node['label'], from_db['label'])
 
     @given(labels=st.lists(elements=NEO4J_IDENTIFIER_ST, unique=True))
+    @settings(deadline=None)
     @cleanup_each_example
     def test_creating_single_node_with_multiple_labels(self, labels):
         self.check_empty_db()
