@@ -2,7 +2,7 @@ import unittest
 
 from hypothesis import given, strategies as st, settings
 
-from swagger_server.dal.neo4j import Neo4jDAL
+from swagger_server.dal.neo4j import Neo4jNode
 from swagger_server.helpers import db
 from swagger_server.test.dal import BaseDALTestCase
 from swagger_server.test.dal.strategies import NEO4J_IDENTIFIER_ST, NEO4J_VALUE_ST
@@ -14,31 +14,31 @@ class TestNodeDAL(BaseDALTestCase):
     def test_creating_single_node(self):
         self.check_empty_db()
 
-        node = Neo4jDAL.create_node()
+        Neo4jNode()
 
-        from_db = db.Neo4jDatabase.get().query('MATCH (n) RETURN n', write=True).values()[0][0]
-        self.assertEqual(node['id'], from_db['id'])
+        rows = db.Neo4jDatabase.get().query('MATCH (n) RETURN n').values()
+        self.assertEqual(len(rows), 1)
 
     @given(label=NEO4J_IDENTIFIER_ST)
     @cleanup_each_example
     def test_creating_single_node_with_single_label(self, label):
         self.check_empty_db()
 
-        node = Neo4jDAL.create_node(labels=[label])
+        Neo4jNode(labels=[label])
 
-        from_db = db.Neo4jDatabase.get().query('MATCH (n) RETURN n', write=True).values()[0][0]
-        self.assertEqual(node['label'], from_db['label'])
+        rows = db.Neo4jDatabase.get().query(f'MATCH (n:{label}) RETURN n').values()
+        self.assertEqual(len(rows), 1)
 
-    @given(labels=st.lists(elements=NEO4J_IDENTIFIER_ST, unique=True))
+    @given(labels=st.lists(elements=NEO4J_IDENTIFIER_ST, unique=True, min_size=1))
     @settings(deadline=None)
     @cleanup_each_example
     def test_creating_single_node_with_multiple_labels(self, labels):
         self.check_empty_db()
 
-        node = Neo4jDAL.create_node(labels=labels)
+        Neo4jNode(labels=labels)
 
-        from_db = db.Neo4jDatabase.get().query('MATCH (n) RETURN n', write=True).values()[0][0]
-        self.assertEqual(node['label'], from_db['label'])
+        rows = db.Neo4jDatabase.get().query(f'MATCH (n:{":".join(labels)}) RETURN n').values()
+        self.assertEqual(len(rows), 1)
 
     @given(properties=st.dictionaries(
         keys=NEO4J_IDENTIFIER_ST,
@@ -49,11 +49,20 @@ class TestNodeDAL(BaseDALTestCase):
     def test_creating_single_node_with_properties(self, properties):
         self.check_empty_db()
 
-        node = Neo4jDAL.create_node(properties=properties)
+        Neo4jNode(properties=properties)
 
-        from_db = db.Neo4jDatabase.get().query('MATCH (n) RETURN n', write=True).values()[0][0]
-        for k in properties:
-            self.assertEqual(node[k], from_db[k])
+        rows = db.Neo4jDatabase.get().query(f'MATCH (n) RETURN n', write=True).values()
+        self.assertEqual(len(rows), 1)
+
+        for k in rows[0][0]:
+            if k in properties:
+                v = properties[k]
+                prop = rows[0][0][k]
+
+                if isinstance(v, float):
+                    self.assertAlmostEqual(prop, v)
+                else:
+                    self.assertEqual(prop, v)
 
     def check_empty_db(self):
         rows = db.Neo4jDatabase.get().query('MATCH (n) RETURN n').values()
