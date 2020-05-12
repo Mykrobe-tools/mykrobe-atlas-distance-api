@@ -4,6 +4,9 @@ from swagger_server.helpers import db
 
 
 class Neo4jNode:
+    labels = ''
+    properties = ''
+
     def __init__(self, labels: List[str] = None, properties: Dict = None):
         labels = ':' + ':'.join(labels) if labels else ''
 
@@ -16,6 +19,20 @@ class Neo4jNode:
         properties = [f'{k}:{v}' for k, v in properties.items()]
         properties = '{' + ','.join(properties) + '}'
 
-        q = f'CREATE (n{labels} {properties}) RETURN n'
+        self.labels = labels
+        self.properties = properties
+
+    def create(self):
+        q = f'CREATE (n{self.labels} {self.properties}) RETURN n'
+        db.Neo4jDatabase.get().query(q)
+
+    @staticmethod
+    def bulk_create(nodes):
+        if not nodes:
+            return
+
+        variables = ['n%d' % i for i in range(len(nodes))]
+        node_part = ','.join([f'({v}{node.labels} {node.properties})' for v, node in zip(variables, nodes)])
+        q = f'CREATE {node_part} RETURN {",".join(variables)}'
 
         db.Neo4jDatabase.get().query(q)
