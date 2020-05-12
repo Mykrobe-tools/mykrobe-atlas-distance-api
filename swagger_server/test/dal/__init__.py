@@ -14,3 +14,6 @@ class BaseDALTestCase(TestCase):
     @classmethod
     def tearDownClass(cls):
         db.Neo4jDatabase.get().query('MATCH (n) DETACH DELETE n', write=True)
+
+    def tearDown(self):
+        db.Neo4jDatabase.get().query('MATCH (n) DETACH DELETE n', write=True)

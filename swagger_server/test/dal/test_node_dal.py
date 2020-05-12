@@ -11,7 +11,6 @@ from swagger_server.test.utils import cleanup_each_example
 
 
 class TestNodeDAL(BaseDALTestCase):
-    @cleanup_each_example
     def test_creating_single_node(self):
         self.check_empty_db()
 
