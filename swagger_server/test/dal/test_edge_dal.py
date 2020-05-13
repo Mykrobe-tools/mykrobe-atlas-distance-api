@@ -33,6 +33,38 @@ class TestEdgeDAL(BaseDALTestCase):
         rows = db.Neo4jDatabase.get().query(f'MATCH (n) RETURN n').values()
         self.assertEqual(len(edges) + 1, len(rows))
 
+    def test_diamond_graph(self):
+        """
+               node
+            /       \
+        node        node
+            \       /
+              node
+        """
+
+        self.check_empty_db()
+
+        a, b, c, d = (Neo4jNode(properties={'name': 'n%d' % i}) for i in range(4))
+        edge_label = 'EDGE'
+        a.connect(b, edge_label)
+        a.connect(c, edge_label)
+        b.connect(d, edge_label)
+        c.connect(d, edge_label)
+        a.create()
+
+        rows = db.Neo4jDatabase.get().query(
+            f'MATCH '
+            f'({{name: "{a.properties["name"]}"}})-[e0:{edge_label}]->({{name: "{b.properties["name"]}"}}),'
+            f'({{name: "{a.properties["name"]}"}})-[e1:{edge_label}]->({{name: "{c.properties["name"]}"}}),'
+            f'({{name: "{b.properties["name"]}"}})-[e2:{edge_label}]->({{name: "{d.properties["name"]}"}}),'
+            f'({{name: "{c.properties["name"]}"}})-[e3:{edge_label}]->({{name: "{d.properties["name"]}"}})'
+            f' RETURN e0,e1,e2,e3'
+        ).values()
+        self.assertEqual(4, len(rows[0]))
+
+        rows = db.Neo4jDatabase.get().query(f'MATCH (n) RETURN n').values()
+        self.assertEqual(4, len(rows))
+
 
 if __name__ == '__main__':
     unittest.main()

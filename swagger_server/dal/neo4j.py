@@ -17,6 +17,9 @@ class Neo4jPropertyMapping:
     def __init__(self, properties: Dict):
         self.mapping = properties.copy() if properties else None
 
+    def __getitem__(self, item):
+        return self.mapping[item]
+
     def __str__(self):
         if not self.mapping:
             return ''
@@ -39,7 +42,7 @@ class Neo4jLabelList:
 
 
 class Neo4jEdge:
-    def __init__(self, to, label: str = '', properties: Dict = None):
+    def __init__(self, to, label: str, properties: Dict = None):
         self.label = label
         self.properties = Neo4jPropertyMapping(properties)
         self.to = to
@@ -53,35 +56,40 @@ class Neo4jNode:
         self.labels = Neo4jLabelList(labels)
         self.properties = Neo4jPropertyMapping(properties)
         self.edges = []
+        self.var = ''
 
-    def connect(self, other, label: str = '', properties: Dict = None):
+    def connect(self, other, label: str, properties: Dict = None):
         edge = Neo4jEdge(other, label, properties)
         self.edges.append(edge)
 
-    def get_all_nodes(self, nodes):
+    def get_all_nodes(self, nodes, node_counter, edges):
         for edge in self.edges:
             if edge.to not in nodes:
+                edge.to.var = 'n%d' % node_counter
                 nodes.append(edge.to)
-                edge.to.get_all_nodes(nodes)
+                node_counter += 1
+
+            edges.append((self.var, edge, edge.to.var))
+            node_counter = edge.to.get_all_nodes(nodes, node_counter, edges)
+
+        return node_counter
 
     def create(self):
-        self_var = 'n'
+        self.var = 'n'
 
-        nodes = []
-        self.get_all_nodes(nodes)
-        variables = ['n%d' % i for i in range(len(nodes))]
+        nodes = [self]
+        edges = []
+        self.get_all_nodes(nodes, 0, edges)
 
-        edges = ','.join([f'(n)-{e.build_query()}->({v})' for v, e in zip(variables, self.edges)])
+        nodes = ','.join([f'({n.var}{n.labels} {n.properties})' for n in nodes])
+        edges = ','.join([f'({from_v})-{e.build_query()}->({to_v})' for from_v, e, to_v in edges])
 
-        q = f'CREATE ({self_var}{self.labels} {self.properties})'
-
-        for v, node in zip(variables, nodes):
-            q += f',({v}{node.labels} {node.properties})'
+        q = f'CREATE {nodes}'
 
         if edges:
             q += f',{edges}'
 
-        q += f' RETURN {self_var}'
+        q += f' RETURN {self.var}'
 
         db.Neo4jDatabase.get().query(q, write=True)
 
