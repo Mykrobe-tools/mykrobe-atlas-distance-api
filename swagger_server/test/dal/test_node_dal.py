@@ -2,7 +2,7 @@ import unittest
 
 from hypothesis import given, strategies as st, settings
 
-from swagger_server.dal.neo4j import Neo4jNode
+from swagger_server.dal.neo4j import Neo4jNode, Neo4jLabelList
 from swagger_server.helpers import db
 from swagger_server.test.dal import BaseDALTestCase
 from swagger_server.test.dal.strategies import NEO4J_IDENTIFIER_ST, NEO4J_PROPS_ST, NEO4J_LABELS_ST, \
@@ -17,7 +17,7 @@ class TestNodeDAL(BaseDALTestCase):
         Neo4jNode().create()
 
         rows = db.Neo4jDatabase.get().query('MATCH (n) RETURN n').values()
-        self.assertEqual(len(rows), 1)
+        self.assertEqual(1, len(rows))
 
     @given(label=NEO4J_IDENTIFIER_ST)
     @cleanup_each_example
@@ -27,7 +27,7 @@ class TestNodeDAL(BaseDALTestCase):
         Neo4jNode(labels=[label]).create()
 
         rows = db.Neo4jDatabase.get().query(f'MATCH (n:{label}) RETURN n').values()
-        self.assertEqual(len(rows), 1)
+        self.assertEqual(1, len(rows))
 
     @given(labels=NEO4J_LABELS_ST)
     @settings(deadline=None)
@@ -37,8 +37,8 @@ class TestNodeDAL(BaseDALTestCase):
 
         Neo4jNode(labels=labels).create()
 
-        rows = db.Neo4jDatabase.get().query(f'MATCH (n:{":".join(labels)}) RETURN n').values()
-        self.assertEqual(len(rows), 1)
+        rows = db.Neo4jDatabase.get().query(f'MATCH (n{Neo4jLabelList(labels)}) RETURN n').values()
+        self.assertEqual(1, len(rows))
 
     @given(properties=NEO4J_PROPS_ST)
     @settings(deadline=None)
@@ -49,7 +49,7 @@ class TestNodeDAL(BaseDALTestCase):
         Neo4jNode(properties=properties).create()
 
         rows = db.Neo4jDatabase.get().query(f'MATCH (n) RETURN n').values()
-        self.assertEqual(len(rows), 1)
+        self.assertEqual(1, len(rows))
 
         for k in rows[0][0]:
             if k in properties:
@@ -57,9 +57,9 @@ class TestNodeDAL(BaseDALTestCase):
                 prop = rows[0][0][k]
 
                 if isinstance(v, float):
-                    self.assertAlmostEqual(prop, v)
+                    self.assertAlmostEqual(v, prop)
                 else:
-                    self.assertEqual(prop, v)
+                    self.assertEqual(v, prop)
 
     @given(nodes=st.lists(elements=NEO4J_NODE_ST))
     @settings(deadline=None)
