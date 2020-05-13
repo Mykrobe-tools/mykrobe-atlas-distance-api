@@ -5,7 +5,7 @@ from hypothesis import given, strategies as st, settings
 from swagger_server.dal.neo4j import Neo4jNode
 from swagger_server.helpers import db
 from swagger_server.test.dal import BaseDALTestCase
-from swagger_server.test.dal.strategies import NEO4J_IDENTIFIER_ST, NEO4J_VALUE_ST, NEO4J_PROPS_ST, NEO4J_LABELS_ST, \
+from swagger_server.test.dal.strategies import NEO4J_IDENTIFIER_ST, NEO4J_PROPS_ST, NEO4J_LABELS_ST, \
     NEO4J_NODE_ST
 from swagger_server.test.utils import cleanup_each_example
 
@@ -73,10 +73,6 @@ class TestNodeDAL(BaseDALTestCase):
         for n in nodes:
             rows = db.Neo4jDatabase.get().query(f'MATCH (n{n.labels} {n.properties}) RETURN n').values()
             self.assertGreaterEqual(len(rows), 1)
-
-    def check_empty_db(self):
-        rows = db.Neo4jDatabase.get().query('MATCH (n) RETURN n').values()
-        self.assertEqual(len(rows), 0)
 
 
 if __name__ == '__main__':

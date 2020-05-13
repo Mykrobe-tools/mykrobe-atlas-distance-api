@@ -17,3 +17,7 @@ class BaseDALTestCase(TestCase):
 
     def tearDown(self):
         db.Neo4jDatabase.get().query('MATCH (n) DETACH DELETE n', write=True)
+
+    def check_empty_db(self):
+        rows = db.Neo4jDatabase.get().query('MATCH (n) RETURN n').values()
+        self.assertEqual(len(rows), 0)
