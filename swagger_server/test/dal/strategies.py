@@ -23,5 +23,6 @@ NEO4J_NODE_ST = st.tuples(
 
 NEO4J_EDGE_ST = st.tuples(
     NEO4J_IDENTIFIER_ST,
-    NEO4J_PROPS_ST
+    NEO4J_PROPS_ST,
+    NEO4J_NODE_ST
 )

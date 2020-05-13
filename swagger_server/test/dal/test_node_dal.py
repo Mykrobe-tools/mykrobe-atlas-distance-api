@@ -20,6 +20,7 @@ class TestNodeDAL(BaseDALTestCase):
         self.assertEqual(1, len(rows))
 
     @given(label=NEO4J_IDENTIFIER_ST)
+    @settings(deadline=None)
     @cleanup_each_example
     def test_creating_single_node_with_single_label(self, label):
         self.check_empty_db()

@@ -58,15 +58,31 @@ class Neo4jNode:
         edge = Neo4jEdge(other, label, properties)
         self.edges.append(edge)
 
+    def get_all_nodes(self, nodes):
+        for edge in self.edges:
+            if edge.to not in nodes:
+                nodes.append(edge.to)
+                edge.to.get_all_nodes(nodes)
+
     def create(self):
         self_var = 'n'
 
-        edges = ','.join([f'(n)-{e.build_query()}->({e.to.labels} {e.to.properties})' for e in self.edges])
+        nodes = []
+        self.get_all_nodes(nodes)
+        variables = ['n%d' % i for i in range(len(nodes))]
+
+        edges = ','.join([f'(n)-{e.build_query()}->({v})' for v, e in zip(variables, self.edges)])
 
         q = f'CREATE ({self_var}{self.labels} {self.properties})'
+
+        for v, node in zip(variables, nodes):
+            q += f',({v}{node.labels} {node.properties})'
+
         if edges:
             q += f',{edges}'
+
         q += f' RETURN {self_var}'
+
         db.Neo4jDatabase.get().query(q, write=True)
 
     @staticmethod

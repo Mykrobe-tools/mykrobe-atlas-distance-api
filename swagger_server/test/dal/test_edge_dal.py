@@ -15,20 +15,23 @@ class TestEdgeDAL(BaseDALTestCase):
     @settings(deadline=None)
     @cleanup_each_example
     def test_connect_to_nodes(self, edges):
-        labels = [label for label, _ in edges]
+        labels = [label for label, _, _ in edges]
         assume(len(labels) == len(set(labels)))
         self.check_empty_db()
 
         a = Neo4jNode()
-        for label, properties in edges:
-            n = Neo4jNode()
+        for label, properties, (node_labels, node_props) in edges:
+            n = Neo4jNode(node_labels, node_props)
             a.connect(n, label, properties)
         a.create()
 
-        for label, properties in edges:
+        for label, properties, _ in edges:
             properties = Neo4jPropertyMapping(properties)
             rows = db.Neo4jDatabase.get().query(f'MATCH (n)-[:{label} {properties}]->() RETURN n').values()
             self.assertEqual(1, len(rows))
+
+        rows = db.Neo4jDatabase.get().query(f'MATCH (n) RETURN n').values()
+        self.assertEqual(len(edges) + 1, len(rows))
 
 
 if __name__ == '__main__':
