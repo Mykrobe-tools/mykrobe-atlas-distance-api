@@ -62,19 +62,6 @@ class TestNodeDAL(BaseDALTestCase):
                 else:
                     self.assertEqual(v, prop)
 
-    @given(nodes=st.lists(elements=NEO4J_NODE_ST))
-    @settings(deadline=None)
-    @cleanup_each_example
-    def test_creating_multiple_nodes(self, nodes):
-        self.check_empty_db()
-
-        nodes = [Neo4jNode(labels, props) for labels, props in nodes]
-        Neo4jNode.bulk_create(nodes)
-
-        for n in nodes:
-            rows = db.Neo4jDatabase.get().query(f'MATCH (n{n.labels} {n.properties}) RETURN n').values()
-            self.assertGreaterEqual(len(rows), 1)
-
 
 if __name__ == '__main__':
     unittest.main()

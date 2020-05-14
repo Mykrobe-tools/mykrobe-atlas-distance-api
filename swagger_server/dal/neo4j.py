@@ -92,14 +92,3 @@ class Neo4jNode:
         q += f' RETURN {self.var}'
 
         db.Neo4jDatabase.get().query(q, write=True)
-
-    @staticmethod
-    def bulk_create(nodes):
-        if not nodes:
-            return
-
-        variables = ['n%d' % i for i in range(len(nodes))]
-        node_part = ','.join([f'({v}{node.labels} {node.properties})' for v, node in zip(variables, nodes)])
-        q = f'CREATE {node_part} RETURN {",".join(variables)}'
-
-        db.Neo4jDatabase.get().query(q)

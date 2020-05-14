@@ -62,6 +62,9 @@ class TestEdgeDAL(BaseDALTestCase):
         ).values()
         self.assertEqual(4, len(rows[0]))
 
+        rows = db.Neo4jDatabase.get().query(f'MATCH ()-[e:EDGE]->() RETURN e').values()
+        self.assertEqual(4, len(rows))
+
         rows = db.Neo4jDatabase.get().query(f'MATCH (n) RETURN n').values()
         self.assertEqual(4, len(rows))
 
@@ -97,6 +100,9 @@ class TestEdgeDAL(BaseDALTestCase):
             f' RETURN e0,e1,e2,e3,e4,e5'
         ).values()
         self.assertEqual(6, len(rows[0]))
+
+        rows = db.Neo4jDatabase.get().query(f'MATCH ()-[e:EDGE]->() RETURN e').values()
+        self.assertEqual(6, len(rows))
 
         rows = db.Neo4jDatabase.get().query(f'MATCH (n) RETURN n').values()
         self.assertEqual(7, len(rows))
