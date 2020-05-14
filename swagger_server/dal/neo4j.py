@@ -62,7 +62,7 @@ class Neo4jNode:
         edge = Neo4jEdge(other, label, properties)
         self.edges.append(edge)
 
-    def get_all_nodes(self, nodes, node_counter, edges):
+    def _walk_graph(self, nodes, node_counter, edges):
         for edge in self.edges:
             if edge.to not in nodes:
                 edge.to.var = 'n%d' % node_counter
@@ -70,7 +70,7 @@ class Neo4jNode:
                 node_counter += 1
 
             edges.append((self.var, edge, edge.to.var))
-            node_counter = edge.to.get_all_nodes(nodes, node_counter, edges)
+            node_counter = edge.to._walk_graph(nodes, node_counter, edges)
 
         return node_counter
 
@@ -79,7 +79,7 @@ class Neo4jNode:
 
         nodes = [self]
         edges = []
-        self.get_all_nodes(nodes, 0, edges)
+        self._walk_graph(nodes, 0, edges)
 
         nodes = ','.join([f'({n.var}{n.labels} {n.properties})' for n in nodes])
         edges = ','.join([f'({from_v})-{e.build_query()}->({to_v})' for from_v, e, to_v in edges])
