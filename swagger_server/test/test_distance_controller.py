@@ -45,6 +45,11 @@ class TestDistanceController(BaseTestCase):
             }
         )
 
+    def test_no_nearest_leaf(self):
+        response = self.request(self.isolated_node_name, 'nearest-leaf-node')
+
+        self.assert404(response)
+
     def test_nearest_neighbors(self):
         response = self.request(self.node['name'], 'nearest-neighbours')
 
