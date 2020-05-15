@@ -10,8 +10,12 @@ ENCRYPTED = True
 class Neo4jDatabase(local):
     db = None
 
-    def __init__(self):
+    def __enter__(self):
         self.driver = GraphDatabase.driver(URI, encrypted=ENCRYPTED)
+        return self
+
+    def __exit__(self, *args):
+        self.driver.close()
 
     def query(self, q, write=False):
         """
@@ -21,6 +25,9 @@ class Neo4jDatabase(local):
             q -- The query to be executed.
             write -- Whether this is a query that will modify data. False by default.
         """
+        if not hasattr(self, 'driver'):
+            raise RuntimeError("neo4j driver not created. Did you use the helper in a context manager?")
+
         with self.driver.session() as s:
             if write:
                 result = s.write_transaction(lambda tx: tx.run(q))
@@ -34,6 +41,3 @@ class Neo4jDatabase(local):
         if not cls.db:
             cls.db = Neo4jDatabase()
         return cls.db
-
-    def close(self):
-        self.driver.close()
