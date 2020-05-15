@@ -62,11 +62,7 @@ class TestDistanceController(BaseTestCase):
     def test_no_neighbor(self):
         response = self.request(self.isolated_node_name, 'nearest-neighbours')
 
-        self.assert200(response)
-
-        actual = json.loads(response.data.decode())
-        expected = []
-        assert actual == expected
+        self.assert404(response)
 
     @given(sub_type=st.one_of(
         st.just('nearest-leaf-node'),

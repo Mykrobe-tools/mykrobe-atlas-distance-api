@@ -1,5 +1,6 @@
 from flask import current_app
 
+from swagger_server.dal import get_nearest_neighbours, get_nearest_leaf_node
 from swagger_server.helpers import db
 from swagger_server.models import Neighbour
 from swagger_server.models.error import Error  # noqa: E501
@@ -11,26 +12,19 @@ def samples_id_nearest_leaf_node_get(id):  # noqa: E501
 
     Return the nearest leaf node of a sample based on a sample ID. # noqa: E501
 
-    :param id: 
+    :param id:
     :type id: str
 
     :rtype: NearestLeaf
     """
 
     try:
-        result = db.Neo4jDatabase.get().query(f'MATCH (n:SampleNode)-[r:LINEAGE]->(m:LineageNode) WHERE n.name="{id}" RETURN '
-                                         f'n,r,m').values()
+        result = get_nearest_leaf_node(id)
 
         if not result:
-            if current_app.config['DEBUG']:
-                current_app.logger.debug({'error': 'empty result', 'method': samples_id_nearest_leaf_node_get.__name__,
-                                          'id': id, 'result': result})
             return Error(404, "Not found"), 404
 
-        rel = result[0][1]
-        leaf = result[0][2]
-
-        resp = NearestLeaf(leaf['name'], distance=rel['dist'])
+        resp = NearestLeaf(result['leaf_id'], distance=result['distance'])
         return resp, 200
     except BaseException as e:
         current_app.logger.error(e)
@@ -49,17 +43,12 @@ def samples_id_nearest_neighbours_get(id):  # noqa: E501
     """
 
     try:
-        result = db.Neo4jDatabase.get().query(
-            f'MATCH (n:SampleNode {{name: "{id}"}}) OPTIONAL MATCH (n)-[r:NEIGHBOUR]-(m:SampleNode) RETURN '
-            f'n,r,m').values()
+        result = get_nearest_neighbours(id)
 
         if not result:
-            if current_app.config['DEBUG']:
-                current_app.logger.debug({'error': 'empty result', 'method': samples_id_nearest_neighbours_get.__name__,
-                                         'id': id, 'result': result})
             return Error(404, "Not found"), 404
 
-        resp = [Neighbour(r[2]['name'], r[1]['dist']) for r in result if r[1] and r[2]]
+        resp = [Neighbour(r['experiment_id'], r['distance']) for r in result]
         return resp, 200
     except BaseException as e:
         current_app.logger.error(e)

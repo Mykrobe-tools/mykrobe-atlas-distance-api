@@ -1,15 +1,15 @@
 import unittest
 
-from hypothesis import given, strategies as st, settings
+from hypothesis import given, settings
 
 from swagger_server.dal.neo4j import Neo4jNode, Neo4jLabelList
 from swagger_server.helpers import db
 from swagger_server.test.dal import BaseDALTestCase
-from swagger_server.test.dal.strategies import NEO4J_IDENTIFIER_ST, NEO4J_PROPS_ST, NEO4J_LABELS_ST, \
-    NEO4J_NODE_ST
+from swagger_server.test.dal.strategies import NEO4J_IDENTIFIER_ST, NEO4J_PROPS_ST, NEO4J_LABELS_ST
 from swagger_server.test.utils import cleanup_each_example
 
 
+@unittest.skip("experimenting feature")
 class TestNodeDAL(BaseDALTestCase):
     def test_creating_single_node(self):
         self.check_empty_db()
