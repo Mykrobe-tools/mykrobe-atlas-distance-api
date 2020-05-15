@@ -53,6 +53,8 @@ class Neo4jEdge:
 
 class Neo4jNode:
     def __init__(self, labels: List[str] = None, properties: Dict = None):
+        print('WARNING: WORK IN PROGRESS. DO NOT USE!')
+
         self.labels = Neo4jLabelList(labels)
         self.properties = Neo4jPropertyMapping(properties)
         self.edges = []
