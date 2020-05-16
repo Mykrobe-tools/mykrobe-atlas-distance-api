@@ -4,20 +4,18 @@ from swagger_server.helpers import db
 
 
 def get_nearest_neighbours(sample_id):
-    with db.Neo4jDatabase.get() as db_helper:
-        result = db_helper.query(
-            f'MATCH (:SampleNode {{name: "{sample_id}"}})-[r:NEIGHBOUR]-(m:SampleNode) RETURN '
-            f'r.dist,m.name'
-        ).values()
+    result = db.Neo4jDatabase.get().query(
+        f'MATCH (:SampleNode {{name: "{sample_id}"}})-[r:NEIGHBOUR]-(m:SampleNode) RETURN '
+        f'r.dist,m.name'
+    ).values()
 
     return [{'experiment_id': r[1], 'distance': r[0]} for r in result]
 
 
 def get_nearest_leaf_node(sample_id):
-    with db.Neo4jDatabase.get() as db_helper:
-        result = db_helper.query(
-            f'MATCH (:SampleNode {{name: "{sample_id}"}})-[r:LINEAGE]->(m:LineageNode) RETURN '
-            f'r.dist,m.name').values()
+    result = db.Neo4jDatabase.get().query(
+        f'MATCH (:SampleNode {{name: "{sample_id}"}})-[r:LINEAGE]->(m:LineageNode) RETURN '
+        f'r.dist,m.name').values()
 
     if not result:
         if current_app.config['DEBUG']:
