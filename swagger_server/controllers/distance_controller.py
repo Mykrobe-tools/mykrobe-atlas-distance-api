@@ -1,12 +1,13 @@
 from flask import current_app
 
 from swagger_server.dal import get_nearest_neighbours, get_nearest_leaf_node
-from swagger_server.helpers import db
+from swagger_server.helpers.controller_helpers import with_db
 from swagger_server.models import Neighbour
 from swagger_server.models.error import Error  # noqa: E501
 from swagger_server.models.nearest_leaf import NearestLeaf  # noqa: E501
 
 
+@with_db
 def samples_id_nearest_leaf_node_get(id):  # noqa: E501
     """samples_id_nearest_leaf_node_get
 
@@ -31,6 +32,7 @@ def samples_id_nearest_leaf_node_get(id):  # noqa: E501
         return Error(500, "Unexpected error"), 500
 
 
+@with_db
 def samples_id_nearest_neighbours_get(id):  # noqa: E501
     """samples_id_nearest_neighbours_get
 

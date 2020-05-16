@@ -108,13 +108,15 @@ class TestDistanceController(BaseTestCase):
                 '(a)-[:NEIGHBOUR {{dist: {d1}}}]->(b), (a)-[:NEIGHBOUR {{dist: {d2}}}]->(c),' \
                 '(a)-[:LINEAGE {{dist: {d3}}}]->(d) ' \
                 'return a,b,c,d'
-        rows = db.Neo4jDatabase.get().query(query.format(d1=cls.neighbour_dists[0], d2=cls.neighbour_dists[1], d3=cls.dist)).values()
-        cls.node = rows[0][0]
-        cls.neighbours = rows[0][1:3]
-        cls.leaf = rows[0][3]
 
-        cls.isolated_node_name = 'isolated'
-        db.Neo4jDatabase.get().query(f'create (n:SampleNode {{name: "{cls.isolated_node_name}"}})')
+        with db.Neo4jDatabase.get() as db_helper:
+            rows = db_helper.query(query.format(d1=cls.neighbour_dists[0], d2=cls.neighbour_dists[1], d3=cls.dist)).values()
+            cls.node = rows[0][0]
+            cls.neighbours = rows[0][1:3]
+            cls.leaf = rows[0][3]
+
+            cls.isolated_node_name = 'isolated'
+            db_helper.query(f'create (n:SampleNode {{name: "{cls.isolated_node_name}"}})')
 
 
 if __name__ == '__main__':

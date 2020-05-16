@@ -15,12 +15,11 @@ class BaseTestCase(TestCase):
     def setUpClass(cls):
         db.URI = "bolt://localhost:7687"
         db.ENCRYPTED = False
-        db.Neo4jDatabase.get().open()
 
     @classmethod
     def tearDownClass(cls):
-        db.Neo4jDatabase.get().query('MATCH (n) DETACH DELETE n', write=True)
-        db.Neo4jDatabase.get().close()
+        with db.Neo4jDatabase.get() as db_helper:
+            db_helper.query('MATCH (n) DETACH DELETE n', write=True)
 
     def create_app(self):
         logging.getLogger('connexion.operation').setLevel('ERROR')
