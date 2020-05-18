@@ -1,5 +1,3 @@
-from threading import local
-
 from neo4j import GraphDatabase
 
 
@@ -7,14 +5,23 @@ URI = ""
 ENCRYPTED = True
 
 
-class Neo4jDatabase(local):
+class Neo4jDatabase:
     db = None
 
+    def __init__(self):
+        self.driver = None
+
     def __enter__(self):
-        self.driver = GraphDatabase.driver(URI, encrypted=ENCRYPTED)
+        self.connect()
         return self
 
     def __exit__(self, *args):
+        self.close()
+
+    def connect(self):
+        self.driver = GraphDatabase.driver(URI, encrypted=ENCRYPTED)
+
+    def close(self):
         self.driver.close()
 
     def query(self, q, write=False):
@@ -25,8 +32,9 @@ class Neo4jDatabase(local):
             q -- The query to be executed.
             write -- Whether this is a query that will modify data. False by default.
         """
-        if not hasattr(self, 'driver'):
-            raise RuntimeError("neo4j driver not created. Did you use the helper in a context manager?")
+        if not self.driver:
+            raise RuntimeError(
+                "neo4j driver not created. Have you either used the helper in a context manager or connected manually?")
 
         with self.driver.session() as s:
             if write:
