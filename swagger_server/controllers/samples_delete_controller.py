@@ -15,7 +15,7 @@ def samples_id_delete(id):  # noqa: E501
     :rtype: None
     """
 
-    rows = db.Database.get().query(f'MATCH (n:SampleNode {{name: "{id}"}}) DETACH DELETE n RETURN n').values()
+    rows = db.Neo4jDatabase.get().query(f'MATCH (n:SampleNode {{name: "{id}"}}) DETACH DELETE n RETURN n').values()
 
     if not rows:
         return Error(404, 'Not found'), 404

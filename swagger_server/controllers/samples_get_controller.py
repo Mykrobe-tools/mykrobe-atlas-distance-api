@@ -16,7 +16,7 @@ def samples_id_get(id):  # noqa: E501
     :rtype: Sample
     """
 
-    rows = db.Database.get().query(f'MATCH (n:SampleNode {{name: "{id}"}}) RETURN n').values()
+    rows = db.Neo4jDatabase.get().query(f'MATCH (n:SampleNode {{name: "{id}"}}) RETURN n').values()
 
     if not rows:
         return Error(404, 'Not found'), 404

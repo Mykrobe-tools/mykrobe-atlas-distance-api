@@ -26,14 +26,14 @@ class TestSamplesDeleteController(BaseTestCase):
     @given(experiment_id=experiment_id_st)
     @cleanup_each_example
     def test_deleting_sample(self, experiment_id):
-        db.Database.get().query(f'CREATE (a:SampleNode {{name: "{experiment_id}"}}),'
+        db.Neo4jDatabase.get().query(f'CREATE (a:SampleNode {{name: "{experiment_id}"}}),'
                                 f'(a)-[:NEIGHBOUR]->(:SampleNode), (a)-[:LINEAGE]->(:LineageNode)')
 
         response = self.request(experiment_id)
 
         self.assertEqual(response.status_code, 204)
 
-        rows = db.Database.get().query(f'MATCH (n:SampleNode {{name: "{experiment_id}"}}) RETURN n').values()
+        rows = db.Neo4jDatabase.get().query(f'MATCH (n:SampleNode {{name: "{experiment_id}"}}) RETURN n').values()
         self.assertEqual(len(rows), 0)
 
     def request(self, experiment_id):

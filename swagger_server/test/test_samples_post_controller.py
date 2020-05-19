@@ -103,7 +103,7 @@ class TestSamplesPostController(BaseTestCase):
         assume(len(set(experiment_ids)) == len(experiment_ids))
         assume(existed in experiment_ids)
 
-        db.Database.get().query(f'CREATE (:SampleNode {{name: "{existed}"}})')
+        db.Neo4jDatabase.get().query(f'CREATE (:SampleNode {{name: "{existed}"}})')
 
         response = self.request(body)
 
@@ -125,7 +125,7 @@ class TestSamplesPostController(BaseTestCase):
 
     @staticmethod
     def get_nodes_and_relationships(experiment_id):
-        return db.Database.get().query(
+        return db.Neo4jDatabase.get().query(
             f'MATCH '
             f'(n:SampleNode {{name: "{experiment_id}"}}) '
             f'OPTIONAL MATCH (n)-[r:NEIGHBOUR]->(m:SampleNode) '

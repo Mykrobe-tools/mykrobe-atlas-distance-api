@@ -27,7 +27,7 @@ class TestSamplesGetController(BaseTestCase):
     @given(experiment_id=experiment_id_st)
     @cleanup_each_example
     def test_getting_sample(self, experiment_id):
-        db.Database.get().query(f'CREATE (:SampleNode {{name: "{experiment_id}"}})')
+        db.Neo4jDatabase.get().query(f'CREATE (:SampleNode {{name: "{experiment_id}"}})')
 
         response = self.request(experiment_id)
 

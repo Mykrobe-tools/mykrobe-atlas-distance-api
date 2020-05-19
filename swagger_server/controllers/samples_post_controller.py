@@ -54,7 +54,7 @@ def samples_post(body):  # noqa: E501
         to_return = ','.join(to_return)
         query = f'CREATE {to_create} RETURN {to_return}'
 
-        rows = db.Database.get().query(query).values()
+        rows = db.Neo4jDatabase.get().query(query).values()
         neighbour_cols = rows[0][1:1+len(neighbour_variables)]
         rel_cols = rows[0][1+len(neighbour_variables):-2]
         neighbour_objs = [Neighbour(n['name'], r['dist']) for n, r in zip(neighbour_cols, rel_cols)]
