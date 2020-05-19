@@ -1,3 +1,4 @@
+from swagger_server.dal.sample import get_sample, SampleNotExist
 from swagger_server.helpers import db
 from swagger_server.helpers.controller_helpers import handle_500
 from swagger_server.models.error import Error  # noqa: E501
@@ -16,9 +17,7 @@ def samples_id_get(id):  # noqa: E501
     :rtype: Sample
     """
 
-    rows = db.Neo4jDatabase.get().query(f'MATCH (n:SampleNode {{name: "{id}"}}) RETURN n').values()
-
-    if not rows:
+    try:
+        return get_sample(id), 200
+    except SampleNotExist:
         return Error(404, 'Not found'), 404
-
-    return Sample(rows[0][0]['name']), 200

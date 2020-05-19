@@ -1,3 +1,4 @@
+from swagger_server.dal.sample import delete_sample, SampleNotExist
 from swagger_server.helpers import db
 from swagger_server.helpers.controller_helpers import handle_500
 from swagger_server.models.error import Error  # noqa: E501
@@ -15,9 +16,8 @@ def samples_id_delete(id):  # noqa: E501
     :rtype: None
     """
 
-    rows = db.Neo4jDatabase.get().query(f'MATCH (n:SampleNode {{name: "{id}"}}) DETACH DELETE n RETURN n').values()
-
-    if not rows:
+    try:
+        delete_sample(id)
+        return '', 204
+    except SampleNotExist:
         return Error(404, 'Not found'), 404
-
-    return '', 204
