@@ -16,7 +16,7 @@ def cleanup_each_example(func):
         try:
             return func(test_case_instance, *args, **kwargs)
         finally:
-            db.Database.get().query('MATCH (n) DETACH DELETE n')
+            db.Neo4jDatabase.get().query('MATCH (n) DETACH DELETE n', write=True)
 
     return wrapped
 

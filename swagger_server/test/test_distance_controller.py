@@ -45,6 +45,11 @@ class TestDistanceController(BaseTestCase):
             }
         )
 
+    def test_no_nearest_leaf(self):
+        response = self.request(self.isolated_node_name, 'nearest-leaf-node')
+
+        self.assert404(response)
+
     def test_nearest_neighbors(self):
         response = self.request(self.node['name'], 'nearest-neighbours')
 
@@ -62,11 +67,7 @@ class TestDistanceController(BaseTestCase):
     def test_no_neighbor(self):
         response = self.request(self.isolated_node_name, 'nearest-neighbours')
 
-        self.assert200(response)
-
-        actual = json.loads(response.data.decode())
-        expected = []
-        assert actual == expected
+        self.assert404(response)
 
     @given(sub_type=st.one_of(
         st.just('nearest-leaf-node'),
@@ -107,13 +108,14 @@ class TestDistanceController(BaseTestCase):
                 '(a)-[:NEIGHBOUR {{dist: {d1}}}]->(b), (a)-[:NEIGHBOUR {{dist: {d2}}}]->(c),' \
                 '(a)-[:LINEAGE {{dist: {d3}}}]->(d) ' \
                 'return a,b,c,d'
-        rows = db.Database.get().query(query.format(d1=cls.neighbour_dists[0], d2=cls.neighbour_dists[1], d3=cls.dist)).values()
+
+        rows = db.Neo4jDatabase.get().query(query.format(d1=cls.neighbour_dists[0], d2=cls.neighbour_dists[1], d3=cls.dist)).values()
         cls.node = rows[0][0]
         cls.neighbours = rows[0][1:3]
         cls.leaf = rows[0][3]
 
         cls.isolated_node_name = 'isolated'
-        db.Database.get().query(f'create (n:SampleNode {{name: "{cls.isolated_node_name}"}})')
+        db.Neo4jDatabase.get().query(f'create (n:SampleNode {{name: "{cls.isolated_node_name}"}})')
 
 
 if __name__ == '__main__':
