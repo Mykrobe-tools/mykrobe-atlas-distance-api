@@ -80,15 +80,15 @@ def delete_sample(experiment_id: str):
 
 
 def update_sample(sample: Sample):
-    delete_old_neighbours = f'MATCH (n:SampleNode {{name: "{sample.experiment_id}"}}) ' \
-                            f'OPTIONAL MATCH (n)-[:NEIGHBOUR]->(ne:SampleNode) ' \
-        f'WHERE NOT ne.name IN {[ne.experiment_id for ne in sample.nearest_neighbours]} ' \
-        f'DETACH DELETE ne'
-    create_new_neighbours = ' '.join([
-        f'MERGE (n)-[:NEIGHBOUR {{dist: {n.distance}}}]->(:SampleNode {{name: "{n.experiment_id}"}})'
-        for n in sample.nearest_neighbours])
+    detach_old_neighbours = f'MATCH (n:SampleNode {{name: "{sample.experiment_id}"}}) ' \
+        f'OPTIONAL MATCH (n)-[r:NEIGHBOUR]->(:SampleNode) ' \
+        f'DELETE r'
 
-    q = delete_old_neighbours
+    create_new_neighbours = ' '.join([
+        f'MERGE (n)-[:NEIGHBOUR {{dist: {n.distance}}}]->(n{i}:SampleNode {{name: "{n.experiment_id}"}})'
+        for i, n in enumerate(sample.nearest_neighbours)])
+
+    q = detach_old_neighbours
     if create_new_neighbours:
         q += ' ' + create_new_neighbours
     q += ' RETURN id(n)'
