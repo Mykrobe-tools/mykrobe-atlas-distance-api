@@ -141,7 +141,7 @@ paths:
                 $ref: '#/components/schemas/Error'
     put:
       tags:
-        - sample_put
+        - samples_put
       description: Replace the list of nearest neighbours of a sample based on a sample ID.
       parameters:
         - name: id

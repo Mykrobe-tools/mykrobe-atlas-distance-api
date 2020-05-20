@@ -4,7 +4,7 @@ from __future__ import absolute_import
 
 from flask import json
 from hypothesis import given, assume, settings
-from hypothesis.strategies import integers, lists, from_type
+from hypothesis.strategies import lists, from_type
 
 from swagger_server.helpers import db
 from swagger_server.models.neighbour import Neighbour  # noqa: E501
