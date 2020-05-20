@@ -8,7 +8,8 @@ from hypothesis import given
 from swagger_server.helpers import db
 from swagger_server.models.error import Error  # noqa: E501
 from swagger_server.test import BaseTestCase
-from swagger_server.test.utils import experiment_id_st, cleanup_each_example
+from swagger_server.test.utils import cleanup_each_example
+from swagger_server.test.strategies import experiment_id_st
 
 
 class TestSamplesDeleteController(BaseTestCase):

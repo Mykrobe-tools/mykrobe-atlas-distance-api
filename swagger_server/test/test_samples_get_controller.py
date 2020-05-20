@@ -9,7 +9,8 @@ from swagger_server.helpers import db
 from swagger_server.models.error import Error  # noqa: E501
 from swagger_server.models.sample import Sample  # noqa: E501
 from swagger_server.test import BaseTestCase
-from swagger_server.test.utils import experiment_id_st, cleanup_each_example
+from swagger_server.test.utils import cleanup_each_example
+from swagger_server.test.strategies import experiment_id_st
 
 
 class TestSamplesGetController(BaseTestCase):

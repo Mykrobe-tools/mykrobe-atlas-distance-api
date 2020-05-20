@@ -1,5 +1,3 @@
-from hypothesis import strategies as st
-
 from swagger_server.helpers import db
 
 
@@ -19,6 +17,3 @@ def cleanup_each_example(func):
             db.Neo4jDatabase.get().query('MATCH (n) DETACH DELETE n', write=True)
 
     return wrapped
-
-
-experiment_id_st = st.text(alphabet=st.characters(whitelist_categories=('L', 'N')), min_size=1)

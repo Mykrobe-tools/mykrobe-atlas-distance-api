@@ -9,7 +9,8 @@ from hypothesis import given, strategies as st, assume, settings, HealthCheck
 from swagger_server.helpers import db
 from swagger_server.models import Error
 from swagger_server.test import BaseTestCase
-from swagger_server.test.utils import cleanup_each_example, experiment_id_st
+from swagger_server.test.utils import cleanup_each_example
+from swagger_server.test.strategies import experiment_id_st
 
 samples_post_body_st = st.fixed_dictionaries({
     'experiment_id': experiment_id_st,

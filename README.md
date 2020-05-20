@@ -61,6 +61,6 @@ docker stop dist
 ## Run tests
 ```shell script
 ./scripts/start_test_db.sh
-python3 -m unittest
+python3 -m unittest discover
 docker stop test_neo4j
 ```
