@@ -2,10 +2,13 @@ import logging
 
 import connexion
 from flask_testing import TestCase
+from hypothesis.strategies import register_type_strategy
 
 from swagger_server.encoder import JSONEncoder
 from swagger_server.helpers import db
 from swagger_server.migrate import migrate
+from swagger_server.models import Neighbour
+from swagger_server.test.strategies import neighbours
 
 
 class BaseTestCase(TestCase):
@@ -33,3 +36,6 @@ class BaseTestCase(TestCase):
 
     def create_app(self):
         return self.app
+
+
+register_type_strategy(Neighbour, neighbours())

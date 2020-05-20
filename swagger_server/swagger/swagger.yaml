@@ -144,6 +144,8 @@ paths:
                 $ref: '#/components/schemas/Error'
       x-openapi-router-controller: swagger_server.controllers.distance_controller
     put:
+      tags:
+      - sample_put
       description: Replace the list of nearest neighbours of a sample based on a sample
         ID.
       operationId: samples_id_nearest_neighbours_put
@@ -187,7 +189,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-      x-openapi-router-controller: swagger_server.controllers.default_controller
+      x-openapi-router-controller: swagger_server.controllers.sample_put_controller
   /samples/{id}/nearest-leaf-node:
     get:
       tags:

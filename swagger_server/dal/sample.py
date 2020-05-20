@@ -77,3 +77,23 @@ def delete_sample(experiment_id: str):
 
     if not rows:
         raise SampleNotExist
+
+
+def update_sample(sample: Sample):
+    delete_old_neighbours = f'MATCH (n:SampleNode {{name: "{sample.experiment_id}"}}) ' \
+                            f'OPTIONAL MATCH (n)-[:NEIGHBOUR]->(ne:SampleNode) ' \
+        f'WHERE NOT ne.name IN {[ne.experiment_id for ne in sample.nearest_neighbours]} ' \
+        f'DETACH DELETE ne'
+    create_new_neighbours = ' '.join([
+        f'MERGE (n)-[:NEIGHBOUR {{dist: {n.distance}}}]->(:SampleNode {{name: "{n.experiment_id}"}})'
+        for n in sample.nearest_neighbours])
+
+    q = delete_old_neighbours
+    if create_new_neighbours:
+        q += ' ' + create_new_neighbours
+    q += ' RETURN id(n)'
+
+    rows = db.Neo4jDatabase.get().query(q, write=True).values()
+
+    if not rows:
+        raise SampleNotExist

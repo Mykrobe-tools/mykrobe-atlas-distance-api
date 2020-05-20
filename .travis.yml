@@ -26,4 +26,4 @@ before_script:
   - sudo systemctl restart neo4j
   - sleep 10
 
-script: python -m unittest
+script: python -m unittest discover
