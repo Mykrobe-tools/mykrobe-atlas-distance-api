@@ -15,6 +15,7 @@ from swagger_server.test.utils import cleanup_each_example
 class TestSamplePutController(BaseTestCase):
 
     @given(node=from_type(Neighbour), neighbours=lists(elements=from_type(Neighbour)))
+    @settings(deadline=None)
     def test_non_existent_sample(self, node, neighbours):
         response = self.request(node.experiment_id, neighbours)
         self.assert404(response)
