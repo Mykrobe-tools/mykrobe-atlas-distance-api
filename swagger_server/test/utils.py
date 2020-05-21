@@ -1,4 +1,4 @@
-from swagger_server.helpers import db
+from swagger_server.drivers.neo4j import Neo4jDriver
 
 
 def capture_logs(func):
@@ -14,6 +14,8 @@ def cleanup_each_example(func):
         try:
             return func(test_case_instance, *args, **kwargs)
         finally:
-            db.Neo4jDatabase.get().query('MATCH (n) DETACH DELETE n', write=True)
+            with Neo4jDriver.get() as driver:
+                with driver.driver.session() as s:
+                    s.write_transaction(lambda tx: tx.run('MATCH (n) DETACH DELETE n'))
 
     return wrapped
