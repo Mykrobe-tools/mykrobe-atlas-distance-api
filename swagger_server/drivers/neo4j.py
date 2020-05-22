@@ -1,25 +1,15 @@
-from typing import Union, Optional
+from typing import Optional
 
-from py2neo import Graph, Subgraph
-from py2neo.ogm import GraphObject
+from py2neo import Graph
 
 
 class Neo4jDriver:
-    instance: Optional['Neo4jDriver'] = None
+    instance: Optional[Graph] = None
     uri = 'bolt://localhost:7687'
     encrypted = False
 
-    def __init__(self):
-        self.graph = Graph(self.uri, secure=self.encrypted)
-
-    def push(self, graph: Union[Subgraph, GraphObject]):
-        self.graph.push(graph)
-
-    def exists(self, graph: Union[Subgraph, GraphObject]) -> bool:
-        return self.graph.exists(graph)
-
     @classmethod
-    def get(cls) -> Union['Neo4jDriver']:
+    def get(cls) -> Graph:
         if not cls.instance:
-            cls.instance = Neo4jDriver()
+            cls.instance = Graph(cls.uri, secure=cls.encrypted)
         return cls.instance

@@ -6,6 +6,6 @@ def cleanup_each_example(func):
         try:
             return func(test_case_instance, *args, **kwargs)
         finally:
-            Neo4jDriver.get().graph.delete_all()
+            Neo4jDriver.get().delete_all()
 
     return wrapped
