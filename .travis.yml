@@ -27,5 +27,5 @@ before_script:
   - sleep 10
 
 script:
-  - ./scripts/type_check.sh
+  - mypy swagger_server
   - python -m unittest discover
