@@ -26,5 +26,8 @@ class BaseDriver:
     def execute(self, query: str):
         raise NotImplementedError
 
+    def modify_schema(self, query: str):
+        raise NotImplementedError
+
     def clear_db(self):
         raise NotImplementedError

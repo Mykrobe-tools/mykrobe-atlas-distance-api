@@ -6,6 +6,6 @@ from swagger_server.migrations.neo4j import NEO4J_MIGRATIONS
 def migrate():
     for forward, _ in NEO4J_MIGRATIONS:
         try:
-            Neo4jDriver.get().execute(forward)
+            Neo4jDriver.get().modify_schema(forward)
         except SchemaExistedError:
             pass

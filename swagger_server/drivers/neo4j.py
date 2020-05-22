@@ -1,10 +1,11 @@
 from typing import Union
 
-from py2neo import Graph, Subgraph, ClientError
+from py2neo import Graph, Subgraph, ClientError, DatabaseError
 from py2neo.ogm import GraphObject
 
 from swagger_server.drivers.base import BaseDriver
-from swagger_server.drivers.exceptions import SchemaExistedError, UniqueConstraintViolationError
+from swagger_server.drivers.exceptions import SchemaExistedError, UniqueConstraintViolationError, \
+    SchemaDoesNotExistError
 
 GraphState = Union[Subgraph, GraphObject]
 
@@ -41,11 +42,17 @@ class Neo4jDriver(BaseDriver):
         return self.graph.exists(changes)
 
     def execute(self, query: str):
+        return self.graph.evaluate(query)
+
+    def modify_schema(self, query: str):
         try:
-            self.graph.evaluate(query)
+            self.execute(query)
         except ClientError as e:
             if 'EquivalentSchemaRuleAlreadyExists' in e.code:
                 raise SchemaExistedError
+        except DatabaseError as e:
+            if 'No such constraint' in e.message:
+                raise SchemaDoesNotExistError
 
     def clear_db(self):
         self.graph.delete_all()
