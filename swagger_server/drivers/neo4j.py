@@ -20,6 +20,9 @@ class Neo4jDriver(BaseDriver):
         self.graph = Graph(self.uri, secure=self.encrypted)
 
     def _create_new(self, changes: GraphState):
+        # Enforce creating new for GraphObject instances
+        if isinstance(changes, GraphObject):
+            changes = changes.__ogm__.node
         self.graph.create(changes)
 
     def _apply_changes(self, changes: GraphState):

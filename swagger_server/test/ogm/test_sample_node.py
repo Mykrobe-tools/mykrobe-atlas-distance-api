@@ -32,10 +32,11 @@ class SampleNodeTestCase(TestCase):
 
     @given(name=neo4j_strings())
     @cleanup_each_example
-    def test_graph_objects_with_primary_keys_merge_instead_of_creating_duplicated_nodes(self, name):
+    def test_unique_name_constraint_with_graph_objects(self, name):
         migrate()
 
-        a = SampleNode(name=name)
-        b = SampleNode(name=name)
-        Neo4jDriver.get().create_new(a)
-        Neo4jDriver.get().create_new(b)
+        with self.assertRaises(DriverError):
+            a = SampleNode(name=name)
+            b = SampleNode(name=name)
+            Neo4jDriver.get().create_new(a)
+            Neo4jDriver.get().create_new(b)
