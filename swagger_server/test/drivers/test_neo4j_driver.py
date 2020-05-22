@@ -1,4 +1,4 @@
-from hypothesis import given
+from hypothesis import given, settings
 from py2neo import Node
 
 from swagger_server.drivers import Neo4jDriver
@@ -12,6 +12,7 @@ from swagger_server.test.utils import cleanup_each_example
 class Neo4jDriverTestCase(DBTestCase):
 
     @given(name=neo4j_strings())
+    @settings(deadline=None)
     @cleanup_each_example
     def test_unique_constraint_violation(self, name):
         with self.assertRaises(UniqueConstraintViolation):
@@ -21,6 +22,7 @@ class Neo4jDriverTestCase(DBTestCase):
             Neo4jDriver.get().create_new(b)
 
     @given(name=neo4j_strings())
+    @settings(deadline=None)
     @cleanup_each_example
     def test_unique_constraint_violation_with_graph_objects(self, name):
         with self.assertRaises(UniqueConstraintViolation):
