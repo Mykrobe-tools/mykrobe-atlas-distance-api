@@ -1,30 +1,19 @@
-from unittest import TestCase
-
 from hypothesis import given
 from py2neo import Node
 
 from swagger_server.drivers import Neo4jDriver
-from swagger_server.drivers.exceptions import SchemaExisted, UniqueConstraintViolation, \
-    SchemaDoesNotExist
-from swagger_server.migrations import migrate
-from swagger_server.migrations.neo4j import unique_sample_name
+from swagger_server.drivers.exceptions import UniqueConstraintViolation
 from swagger_server.ogm import SampleNode
+from swagger_server.test import DBTestCase
 from swagger_server.test.strategies import neo4j_strings
 from swagger_server.test.utils import cleanup_each_example
 
 
-class SampleNodeTestCase(TestCase):
-    def setUp(self):
-        try:
-            Neo4jDriver.get().modify_schema(unique_sample_name.BACKWARD)
-        except SchemaDoesNotExist:
-            pass
+class Neo4jDriverTestCase(DBTestCase):
 
     @given(name=neo4j_strings())
     @cleanup_each_example
-    def test_unique_name_constraint(self, name):
-        migrate()
-
+    def test_unique_constraint_violation(self, name):
         with self.assertRaises(UniqueConstraintViolation):
             a = Node('SampleNode', name=name)
             b = Node('SampleNode', name=name)
@@ -33,9 +22,7 @@ class SampleNodeTestCase(TestCase):
 
     @given(name=neo4j_strings())
     @cleanup_each_example
-    def test_unique_name_constraint_with_graph_objects(self, name):
-        migrate()
-
+    def test_unique_constraint_violation_with_graph_objects(self, name):
         with self.assertRaises(UniqueConstraintViolation):
             a = SampleNode(name=name)
             b = SampleNode(name=name)
