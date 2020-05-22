@@ -16,3 +16,8 @@ class SampleRepository:
             Neo4jDriver.get().create_new(node)
         except UniqueConstraintViolation:
             raise SampleAlreadyExisted
+
+    @staticmethod
+    def exists(sample: Sample) -> bool:
+        node = SampleNode(sample)
+        return Neo4jDriver.get().verify_changes(node)
