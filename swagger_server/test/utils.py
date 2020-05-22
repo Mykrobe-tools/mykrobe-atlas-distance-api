@@ -1,11 +1,11 @@
-from unittest import TestCase
-
 from swagger_server.drivers.neo4j import Neo4jDriver
-from swagger_server.migrate import migrate
 
 
-class DBTestCase(TestCase):
-    @classmethod
-    def setUpClass(cls):
-        with Neo4jDriver.get() as driver:
-            migrate(driver.driver)
+def cleanup_each_example(func):
+    def wrapped(test_case_instance, *args, **kwargs):
+        try:
+            return func(test_case_instance, *args, **kwargs)
+        finally:
+            Neo4jDriver.get().graph.delete_all()
+
+    return wrapped

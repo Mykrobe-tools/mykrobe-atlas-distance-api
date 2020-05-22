@@ -1,6 +1,7 @@
 from typing import Union
 
-from neo4j import GraphDatabase
+from py2neo import Graph, Subgraph
+from py2neo.ogm import GraphObject
 
 
 class Neo4jDriver:
@@ -8,12 +9,14 @@ class Neo4jDriver:
     uri = 'bolt://localhost:7687'
     encrypted = False
 
-    def __enter__(self):
-        self.driver = GraphDatabase.driver(self.uri, encrypted=self.encrypted)
-        return self
+    def __init__(self):
+        self.graph = Graph(self.uri, secure=self.encrypted)
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        self.driver.close()
+    def push(self, graph: Union[Subgraph, GraphObject]):
+        self.graph.push(graph)
+
+    def exists(self, graph: Union[Subgraph, GraphObject]) -> bool:
+        return self.graph.exists(graph)
 
     @classmethod
     def get(cls) -> Union['Neo4jDriver']:

@@ -3,7 +3,7 @@ from flask import current_app
 from swagger_server.models import Error
 
 
-def handle_500(func):
+def handle_unexpected_errors(func):
     def wrapped(*args, **kwargs):
         try:
             return func(*args, **kwargs)
