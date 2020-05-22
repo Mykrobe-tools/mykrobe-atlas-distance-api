@@ -44,8 +44,6 @@ paths:
       x-openapi-router-controller: swagger_server.controllers.samples_post_controller
   /samples/{id}:
     get:
-      tags:
-      - samples_get
       description: Return a sample based on a sample ID.
       operationId: samples_id_get
       parameters:
@@ -75,10 +73,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-      x-openapi-router-controller: swagger_server.controllers.samples_get_controller
+      x-openapi-router-controller: swagger_server.controllers.default_controller
     delete:
-      tags:
-      - samples_delete
       description: Delete a sample based on a sample ID.
       operationId: samples_id_delete
       parameters:
@@ -104,11 +100,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-      x-openapi-router-controller: swagger_server.controllers.samples_delete_controller
+      x-openapi-router-controller: swagger_server.controllers.default_controller
   /samples/{id}/nearest-neighbours:
     get:
-      tags:
-      - distance
       description: Return the list of nearest neighbours of a sample based on a sample
         ID.
       operationId: samples_id_nearest_neighbours_get
@@ -142,10 +136,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-      x-openapi-router-controller: swagger_server.controllers.distance_controller
+      x-openapi-router-controller: swagger_server.controllers.default_controller
     put:
-      tags:
-      - samples_put
       description: Replace the list of nearest neighbours of a sample based on a sample
         ID.
       operationId: samples_id_nearest_neighbours_put
@@ -189,11 +181,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-      x-openapi-router-controller: swagger_server.controllers.samples_put_controller
+      x-openapi-router-controller: swagger_server.controllers.default_controller
   /samples/{id}/nearest-leaf-node:
     get:
-      tags:
-      - distance
       description: Return the nearest leaf node of a sample based on a sample ID.
       operationId: samples_id_nearest_leaf_node_get
       parameters:
@@ -223,7 +213,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-      x-openapi-router-controller: swagger_server.controllers.distance_controller
+      x-openapi-router-controller: swagger_server.controllers.default_controller
     put:
       description: Replace the nearest leaf node of a sample based on a sample ID.
       operationId: samples_id_nearest_leaf_node_put

@@ -55,7 +55,6 @@ paths:
   /samples/{id}:
     get:
       tags:
-        - samples_get
       description: Return a sample based on a sample ID.
       parameters:
         - name: id
@@ -84,7 +83,6 @@ paths:
                 $ref: '#/components/schemas/Error'
     delete:
       tags:
-        - samples_delete
       description: Delete a sample based on a sample ID.
       parameters:
         - name: id
@@ -110,7 +108,6 @@ paths:
   /samples/{id}/nearest-neighbours:
     get:
       tags:
-        - distance
       description: Return the list of nearest neighbours of a sample based on a sample ID.
       parameters:
         - name: id
@@ -141,7 +138,6 @@ paths:
                 $ref: '#/components/schemas/Error'
     put:
       tags:
-        - samples_put
       description: Replace the list of nearest neighbours of a sample based on a sample ID.
       parameters:
         - name: id
@@ -182,7 +178,6 @@ paths:
   /samples/{id}/nearest-leaf-node:
     get:
       tags:
-        - distance
       description: Return the nearest leaf node of a sample based on a sample ID.
       parameters:
         - name: id
