@@ -6,7 +6,7 @@ from swagger_server.drivers import BaseDriver
 
 class DerivedDriver(BaseDriver):
     @classmethod
-    def make_instance(cls):
+    def _make_instance(cls):
         return DerivedDriver()
 
 

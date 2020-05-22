@@ -5,7 +5,6 @@ from py2neo.ogm import GraphObject
 
 from swagger_server.drivers.base import BaseDriver
 
-
 GraphState = Union[Subgraph, GraphObject]
 
 
@@ -14,17 +13,23 @@ class Neo4jDriver(BaseDriver):
     encrypted = False
 
     @classmethod
-    def make_instance(cls) -> Union['Neo4jDriver']:
+    def _make_instance(cls) -> Union['Neo4jDriver']:
         return Neo4jDriver()
 
     def __init__(self):
         self.graph = Graph(self.uri, secure=self.encrypted)
 
-    def apply_changes(self, changes: GraphState):
+    def _create_new(self, changes: GraphState):
+        self.graph.create(changes)
+
+    def _apply_changes(self, changes: GraphState):
         self.graph.push(changes)
 
-    def verify_changes(self, changes: GraphState) -> bool:
+    def _verify_changes(self, changes: GraphState) -> bool:
         return self.graph.exists(changes)
 
-    def clear_db(self):
+    def _execute(self, query: str):
+        self.graph.evaluate(query)
+
+    def _clear_db(self):
         self.graph.delete_all()
