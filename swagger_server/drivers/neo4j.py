@@ -1,11 +1,11 @@
-from typing import Union
+from typing import Union, Optional
 
 from py2neo import Graph, Subgraph
 from py2neo.ogm import GraphObject
 
 
 class Neo4jDriver:
-    instance: Union['Neo4jDriver'] = None
+    instance: Optional['Neo4jDriver'] = None
     uri = 'bolt://localhost:7687'
     encrypted = False
 
