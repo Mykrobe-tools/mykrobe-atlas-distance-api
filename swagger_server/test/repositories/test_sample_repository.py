@@ -16,6 +16,6 @@ class SampleRepositoryTestCase(TestCase):
         driver = Neo4jDriver.get()
 
         node = SampleRepository.create(sample)
-        driver.push(node)
+        driver.apply_changes(node)
 
-        self.assertTrue(driver.exists(node))
+        self.assertTrue(driver.verify_changes(node))
