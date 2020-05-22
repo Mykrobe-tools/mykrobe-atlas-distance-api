@@ -23,6 +23,7 @@
 #!docs/README.md
 
 /Dockerfile
+/git_push.sh
 /requirements.txt
 /setup.py
 /test-requirements.txt
