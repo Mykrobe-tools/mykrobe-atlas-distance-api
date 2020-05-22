@@ -2,13 +2,13 @@ class SchemaError(Exception):
     pass
 
 
-class SchemaExistedError(SchemaError):
+class SchemaExisted(SchemaError):
     pass
 
 
-class SchemaDoesNotExistError(SchemaError):
+class SchemaDoesNotExist(SchemaError):
     pass
 
 
-class UniqueConstraintViolationError(SchemaError):
+class UniqueConstraintViolation(SchemaError):
     pass

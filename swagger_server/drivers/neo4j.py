@@ -4,8 +4,8 @@ from py2neo import Graph, Subgraph, ClientError, DatabaseError
 from py2neo.ogm import GraphObject
 
 from swagger_server.drivers.base import BaseDriver
-from swagger_server.drivers.exceptions import SchemaExistedError, UniqueConstraintViolationError, \
-    SchemaDoesNotExistError
+from swagger_server.drivers.exceptions import SchemaExisted, UniqueConstraintViolation, \
+    SchemaDoesNotExist
 
 GraphState = Union[Subgraph, GraphObject]
 
@@ -31,7 +31,7 @@ class Neo4jDriver(BaseDriver):
             tx.create(changes)
         except ClientError as e:
             if 'ConstraintValidationFailed' in e.code:
-                raise UniqueConstraintViolationError
+                raise UniqueConstraintViolation
         else:
             tx.commit()
 
@@ -49,10 +49,10 @@ class Neo4jDriver(BaseDriver):
             self.execute(query)
         except ClientError as e:
             if 'EquivalentSchemaRuleAlreadyExists' in e.code:
-                raise SchemaExistedError
+                raise SchemaExisted
         except DatabaseError as e:
             if 'No such constraint' in e.message:
-                raise SchemaDoesNotExistError
+                raise SchemaDoesNotExist
 
     def clear_db(self):
         self.graph.delete_all()

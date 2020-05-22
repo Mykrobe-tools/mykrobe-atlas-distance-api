@@ -4,8 +4,8 @@ from hypothesis import given
 from py2neo import Node
 
 from swagger_server.drivers import Neo4jDriver
-from swagger_server.drivers.exceptions import SchemaExistedError, UniqueConstraintViolationError, \
-    SchemaDoesNotExistError
+from swagger_server.drivers.exceptions import SchemaExisted, UniqueConstraintViolation, \
+    SchemaDoesNotExist
 from swagger_server.migrations import migrate
 from swagger_server.migrations.neo4j import unique_sample_name
 from swagger_server.ogm import SampleNode
@@ -17,7 +17,7 @@ class SampleNodeTestCase(TestCase):
     def setUp(self):
         try:
             Neo4jDriver.get().modify_schema(unique_sample_name.BACKWARD)
-        except SchemaDoesNotExistError:
+        except SchemaDoesNotExist:
             pass
 
     @given(name=neo4j_strings())
@@ -25,7 +25,7 @@ class SampleNodeTestCase(TestCase):
     def test_unique_name_constraint(self, name):
         migrate()
 
-        with self.assertRaises(UniqueConstraintViolationError):
+        with self.assertRaises(UniqueConstraintViolation):
             a = Node('SampleNode', name=name)
             b = Node('SampleNode', name=name)
             Neo4jDriver.get().create_new(a)
@@ -36,7 +36,7 @@ class SampleNodeTestCase(TestCase):
     def test_unique_name_constraint_with_graph_objects(self, name):
         migrate()
 
-        with self.assertRaises(UniqueConstraintViolationError):
+        with self.assertRaises(UniqueConstraintViolation):
             a = SampleNode(name=name)
             b = SampleNode(name=name)
             Neo4jDriver.get().create_new(a)
