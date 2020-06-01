@@ -27,6 +27,7 @@
 /requirements.txt
 /setup.py
 /test-requirements.txt
+/.dockerignore
 /.gitignore
 /.travis.yml
 /README.md

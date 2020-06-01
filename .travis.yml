@@ -27,4 +27,4 @@ before_script:
   - sleep 10
 
 script:
-  - python -m unittest discover
+  - pytest
