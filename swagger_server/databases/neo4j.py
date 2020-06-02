@@ -1,3 +1,5 @@
+from abc import ABC, abstractmethod
+
 from py2neo import Graph, NodeMatcher, ClientError
 from py2neo.ogm import GraphObject
 
@@ -5,7 +7,13 @@ from swagger_server.databases.base import BaseDatabase
 from swagger_server.databases.exceptions import UniqueConstraintViolated
 
 
-class Neo4JDatabase(BaseDatabase):
+class INeo4jDatabase(ABC):
+    @abstractmethod
+    def create(self, obj: GraphObject):
+        raise NotImplementedError
+
+
+class Neo4JDatabase(BaseDatabase, INeo4jDatabase):
 
     def __init__(self, graph: Graph = None):
         self.graph = graph or Graph()
