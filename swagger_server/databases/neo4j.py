@@ -13,7 +13,7 @@ class INeo4jDatabase(ABC):
         raise NotImplementedError
 
 
-class Neo4JDatabase(BaseDatabase, INeo4jDatabase):
+class Neo4jDatabase(BaseDatabase, INeo4jDatabase):
 
     def __init__(self, graph: Graph = None):
         self.graph = graph or Graph()

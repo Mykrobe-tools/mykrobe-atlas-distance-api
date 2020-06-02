@@ -2,7 +2,7 @@ import connexion
 
 from swagger_server import services
 from swagger_server.adapters.repositories.sample_repository import SampleAlreadyExist
-from swagger_server.databases.neo4j import Neo4JDatabase
+from swagger_server.databases.neo4j import Neo4jDatabase
 from swagger_server.models import Error
 from swagger_server.models.sample import Sample  # noqa: E501
 
@@ -20,7 +20,7 @@ def samples_post(body):  # noqa: E501
     if connexion.request.is_json:
         body = Sample.from_dict(connexion.request.get_json())  # noqa: E501
 
-    db = Neo4JDatabase()
+    db = Neo4jDatabase()
 
     try:
         services.add_new_sample(body, db)
