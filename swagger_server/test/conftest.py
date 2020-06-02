@@ -1,9 +1,13 @@
 from pytest import fixture
 
-from swagger_server.test.fixtures import managed_db
+from swagger_server.databases.neo4j import Neo4jDatabase
 
 
 @fixture
 def db():
-    with managed_db() as db:
+    db = Neo4jDatabase()
+
+    try:
         yield db
+    finally:
+        db.truncate()
