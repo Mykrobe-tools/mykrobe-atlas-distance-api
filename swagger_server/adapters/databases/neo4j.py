@@ -15,8 +15,8 @@ class INeo4jDatabase(ABC):
 
 class Neo4jDatabase(BaseDatabase, INeo4jDatabase):
 
-    def __init__(self, graph: Graph = None):
-        self.graph = graph or Graph()
+    def __init__(self, uri=None, **settings):
+        self.graph = Graph(uri, **settings)
 
     @property
     def node_matcher(self) -> NodeMatcher:
