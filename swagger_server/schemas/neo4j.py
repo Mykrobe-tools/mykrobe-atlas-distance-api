@@ -1,0 +1,16 @@
+from py2neo import Schema
+
+from swagger_server.adapters.object_mappers.neo4j import SampleNode
+from swagger_server.databases.neo4j import Neo4JDatabase
+
+
+class Neo4jSchema:
+    @staticmethod
+    def apply(db: Neo4JDatabase):
+        schema = Schema(db.graph)
+        schema.create_uniqueness_constraint(SampleNode.__primarylabel__, SampleNode.__primarykey__)
+
+    @staticmethod
+    def unapply(db: Neo4JDatabase):
+        schema = Schema(db.graph)
+        schema.drop_uniqueness_constraint(SampleNode.__primarylabel__, SampleNode.__primarykey__)
