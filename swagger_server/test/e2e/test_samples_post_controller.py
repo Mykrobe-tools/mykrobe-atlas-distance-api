@@ -21,19 +21,17 @@ def test_creating_new_sample(db, client, experiment_id):
         db.truncate()
 
 
-@given(experiment_id=text())
-def test_creating_duplicated_sample(db, client, experiment_id):
-    try:
-        repo = SampleRepository(db)
-        sample = Sample(experiment_id)
-        repo.add(sample)
+def test_creating_duplicated_sample(db, client):
+    experiment_id = 'some id'
+    sample = Sample(experiment_id)
 
-        body = {
-            'experiment_id': experiment_id
-        }
-        response = client.open('/api/v1/samples', method='POST', json=body)
+    repo = SampleRepository(db)
+    repo.add(sample)
 
-        assert response.status_code == 409
-        assert len(db.node_matcher.match(SampleNode.__primarylabel__, name=experiment_id)) == 1
-    finally:
-        db.truncate()
+    body = {
+        'experiment_id': experiment_id
+    }
+    response = client.open('/api/v1/samples', method='POST', json=body)
+
+    assert response.status_code == 409
+    assert len(db.node_matcher.match(SampleNode.__primarylabel__, name=experiment_id)) == 1

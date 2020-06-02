@@ -1,3 +1,5 @@
+from hypothesis import given
+from hypothesis.strategies import text
 from py2neo import Schema
 from py2neo.ogm import GraphObject, Property
 from pytest import raises, fixture
@@ -22,13 +24,18 @@ class SomeObject(GraphObject):
     name = Property()
 
 
-def test_creating_node_from_graph_object(db):
-    obj = SomeObject()
+@given(name=text())
+def test_creating_node_from_graph_object(db, name):
+    try:
+        obj = SomeObject()
+        obj.name = name
 
-    db.create(obj)
+        db.create(obj)
 
-    matched_nodes = db.node_matcher.match()
-    assert len(matched_nodes) == 1
+        matched_nodes = db.node_matcher.match(name=name)
+        assert len(matched_nodes) == 1
+    finally:
+        db.truncate()
 
 
 def test_creating_duplicated_node(db):
