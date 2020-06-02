@@ -3,13 +3,10 @@ from py2neo.ogm import GraphObject, Property
 from pytest import raises, fixture
 
 from swagger_server.databases.exceptions import UniqueConstraintViolated
-from swagger_server.databases.neo4j import Neo4JDatabase
 
 
 @fixture
-def db():
-    db = Neo4JDatabase()
-
+def db(db):
     label = SomeObject.__name__
     property_key = 'name'
     schema = Schema(db.graph)
@@ -18,7 +15,6 @@ def db():
     try:
         yield db
     finally:
-        db.truncate()
         schema.drop_uniqueness_constraint(label, property_key)
 
 
