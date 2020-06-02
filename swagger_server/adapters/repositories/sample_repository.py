@@ -1,6 +1,11 @@
+from swagger_server.databases.exceptions import UniqueConstraintViolated
 from swagger_server.models import Sample
 from swagger_server.databases.neo4j import Neo4JDatabase
 from swagger_server.adapters.object_mappers.neo4j import SampleNode
+
+
+class SampleAlreadyExist(Exception):
+    pass
 
 
 class SampleRepository:
@@ -12,4 +17,7 @@ class SampleRepository:
         node = SampleNode()
         node.name = sample.experiment_id
 
-        self.db.create(node)
+        try:
+            self.db.create(node)
+        except UniqueConstraintViolated:
+            raise SampleAlreadyExist

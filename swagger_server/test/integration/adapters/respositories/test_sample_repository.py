@@ -1,18 +1,18 @@
-from hypothesis import given
-from hypothesis.strategies import from_type
+from pytest import raises
 
-from swagger_server.adapters.object_mappers.neo4j import SampleNode
-from swagger_server.adapters.repositories.sample_repository import SampleRepository
+from swagger_server.adapters.repositories.sample_repository import SampleRepository, SampleAlreadyExist
+from swagger_server.databases.exceptions import UniqueConstraintViolated
 from swagger_server.models import Sample
-from swagger_server.test.fixtures import managed_db
 
 
-@given(sample=from_type(Sample))
-def test_adding_new_sample(sample):
-    with managed_db() as db:
-        repo = SampleRepository(db)
+class FakeDatabase:
+    def create(self, sample: Sample):
+        raise UniqueConstraintViolated
 
-        repo.add(sample)
 
-        matched_nodes = db.node_matcher.match(SampleNode.__primarylabel__, name=sample.experiment_id)
-        assert len(matched_nodes) == 1
+def test_wrapping_unique_constraint_violation_in_more_domain_relevant_error():
+    db = FakeDatabase()
+    repo = SampleRepository(db)
+
+    with raises(SampleAlreadyExist):
+        repo.add(Sample())
