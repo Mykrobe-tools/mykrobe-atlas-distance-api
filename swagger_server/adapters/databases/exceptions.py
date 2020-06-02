@@ -1,2 +1,0 @@
-class UniqueConstraintViolated(Exception):
-    pass
