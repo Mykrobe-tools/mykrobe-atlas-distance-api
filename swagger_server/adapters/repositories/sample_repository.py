@@ -1,7 +1,7 @@
+from swagger_server.adapters.object_mappers.neo4j import SampleNode
+from swagger_server.databases.base import BaseDatabase
 from swagger_server.databases.exceptions import UniqueConstraintViolated
 from swagger_server.models import Sample
-from swagger_server.databases.neo4j import Neo4JDatabase
-from swagger_server.adapters.object_mappers.neo4j import SampleNode
 
 
 class SampleAlreadyExist(Exception):
@@ -10,7 +10,7 @@ class SampleAlreadyExist(Exception):
 
 class SampleRepository:
 
-    def __init__(self, db: Neo4JDatabase):
+    def __init__(self, db: BaseDatabase):
         self.db = db
 
     def add(self, sample: Sample):

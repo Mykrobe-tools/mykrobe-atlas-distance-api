@@ -1,13 +1,17 @@
 from pytest import raises
 
 from swagger_server.adapters.repositories.sample_repository import SampleRepository, SampleAlreadyExist
+from swagger_server.databases.base import BaseDatabase
 from swagger_server.databases.exceptions import UniqueConstraintViolated
 from swagger_server.models import Sample
 
 
-class FakeDatabase:
+class FakeDatabase(BaseDatabase):
     def create(self, sample: Sample):
         raise UniqueConstraintViolated
+
+    def truncate(self):
+        pass
 
 
 def test_wrapping_unique_constraint_violation_in_more_domain_relevant_error():

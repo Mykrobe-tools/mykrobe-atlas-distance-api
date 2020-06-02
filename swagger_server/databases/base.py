@@ -1,10 +1,11 @@
 from abc import ABC, abstractmethod
+from typing import Any
 
 
 class BaseDatabase(ABC):
 
     @abstractmethod
-    def apply_schema(self):
+    def create(self, obj: Any):
         raise NotImplementedError
 
     @abstractmethod
