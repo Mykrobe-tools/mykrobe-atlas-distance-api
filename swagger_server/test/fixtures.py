@@ -1,15 +1,13 @@
 from contextlib import contextmanager
 
-from py2neo import Graph
-
-from swagger_server.adapters.schema import neo4j_schema
+from swagger_server.databases.neo4j import Neo4JDatabase
 
 
 @contextmanager
 def managed_db():
-    graph = Graph()
-    neo4j_schema.apply_schema(graph)
+    db = Neo4JDatabase()
+    db.apply_schema()
 
-    yield Graph()
+    yield db
 
-    graph.delete_all()
+    db.truncate()
