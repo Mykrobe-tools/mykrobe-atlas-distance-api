@@ -4,18 +4,18 @@ import connexion
 from flask import g
 from pytest import fixture
 
+from swagger_server import schema
 from swagger_server.encoder import JSONEncoder
-from swagger_server.schemas.neo4j import Neo4jSchema
 
 
 @fixture
 def db(db):
-    Neo4jSchema.apply(db)
+    schema.apply(db)
 
     try:
         yield db
     finally:
-        Neo4jSchema.unapply(db)
+        schema.unapply(db)
 
 
 @fixture
