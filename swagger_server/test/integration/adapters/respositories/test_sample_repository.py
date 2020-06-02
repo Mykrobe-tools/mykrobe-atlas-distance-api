@@ -1,8 +1,8 @@
 from pytest import raises
 
 from swagger_server.adapters.repositories.sample_repository import SampleRepository, SampleAlreadyExist
-from swagger_server.databases.exceptions import UniqueConstraintViolated
-from swagger_server.databases.neo4j import INeo4jDatabase
+from swagger_server.adapters.databases.exceptions import UniqueConstraintViolated
+from swagger_server.adapters.databases.neo4j import INeo4jDatabase
 from swagger_server.models import Sample
 
 

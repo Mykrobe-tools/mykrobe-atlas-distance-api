@@ -3,8 +3,8 @@ from abc import ABC, abstractmethod
 from py2neo import Graph, NodeMatcher, ClientError
 from py2neo.ogm import GraphObject
 
-from swagger_server.databases.base import BaseDatabase
-from swagger_server.databases.exceptions import UniqueConstraintViolated
+from swagger_server.adapters.databases.base import BaseDatabase
+from swagger_server.adapters.databases.exceptions import UniqueConstraintViolated
 
 
 class INeo4jDatabase(ABC):

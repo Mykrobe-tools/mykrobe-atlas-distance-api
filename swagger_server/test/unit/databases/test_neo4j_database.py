@@ -4,7 +4,7 @@ from py2neo import Schema
 from py2neo.ogm import GraphObject, Property
 from pytest import raises, fixture
 
-from swagger_server.databases.exceptions import UniqueConstraintViolated
+from swagger_server.adapters.databases.exceptions import UniqueConstraintViolated
 
 
 @fixture

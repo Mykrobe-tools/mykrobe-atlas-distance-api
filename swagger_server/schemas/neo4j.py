@@ -1,7 +1,7 @@
 from py2neo import Schema
 
 from swagger_server.adapters.object_mappers.neo4j import SampleNode
-from swagger_server.databases.neo4j import Neo4jDatabase
+from swagger_server.adapters.databases.neo4j import Neo4jDatabase
 
 
 class Neo4jSchema:

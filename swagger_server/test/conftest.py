@@ -1,6 +1,6 @@
 from pytest import fixture
 
-from swagger_server.databases.neo4j import Neo4jDatabase
+from swagger_server.adapters.databases.neo4j import Neo4jDatabase
 
 
 @fixture

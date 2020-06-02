@@ -1,6 +1,6 @@
 from swagger_server.adapters.object_mappers.neo4j import SampleNode
-from swagger_server.databases.exceptions import UniqueConstraintViolated
-from swagger_server.databases.neo4j import INeo4jDatabase
+from swagger_server.adapters.databases.exceptions import UniqueConstraintViolated
+from swagger_server.adapters.databases.neo4j import INeo4jDatabase
 from swagger_server.models import Sample
 
 
