@@ -1,8 +1,9 @@
-from py2neo import Graph, Schema, NodeMatcher
+from py2neo import Graph, Schema, NodeMatcher, ClientError
 from py2neo.ogm import GraphObject
 
 from swagger_server.databases.base import BaseDatabase
 from swagger_server.adapters.object_mappers.neo4j import SampleNode
+from swagger_server.databases.exceptions import UniqueConstraintViolated
 
 
 class Neo4JDatabase(BaseDatabase):
@@ -15,7 +16,15 @@ class Neo4JDatabase(BaseDatabase):
         return self.graph.nodes
 
     def create(self, obj: GraphObject):
-        self.graph.create(obj)
+        tx = self.graph.begin()
+        try:
+            tx.create(obj.__node__)
+        except ClientError as e:
+            if 'already exist' in e.message:
+                raise UniqueConstraintViolated
+            raise e
+        else:
+            tx.commit()
 
     def apply_schema(self):
         schema = Schema(self.graph)
