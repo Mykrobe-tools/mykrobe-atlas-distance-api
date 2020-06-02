@@ -1,6 +1,7 @@
 from hypothesis import given
 from hypothesis.strategies import from_type
 
+from swagger_server.adapters.ogm.neo4j import SampleNode
 from swagger_server.adapters.repositories.sample_repository import SampleRepository
 from swagger_server.models import Sample
 from swagger_server.test.fixtures import managed_db
@@ -13,4 +14,4 @@ def test_adding_new_sample(sample):
 
         repo.add(sample)
 
-        assert len(db.nodes.match('SampleNode', name=sample.experiment_id)) == 1
+        assert len(db.nodes.match(SampleNode.__primarylabel__, name=sample.experiment_id)) == 1

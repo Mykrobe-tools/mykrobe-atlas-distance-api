@@ -1,5 +1,6 @@
-from py2neo import Graph, Node
+from py2neo import Graph
 
+from swagger_server.adapters.ogm.neo4j import SampleNode
 from swagger_server.models import Sample
 
 
@@ -8,4 +9,7 @@ class SampleRepository:
         self.graph = graph
 
     def add(self, sample: Sample):
-        self.graph.create(Node('SampleNode', name=sample.experiment_id))
+        node = SampleNode()
+        node.name = sample.experiment_id
+
+        self.graph.create(node)
