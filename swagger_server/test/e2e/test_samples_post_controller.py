@@ -57,4 +57,4 @@ def test_creating_duplicated_sample(db, client):
     response = client.open('/api/v1/samples', method='POST', json=body)
 
     assert response.status_code == 409
-    assert len(db.node_matcher.match(SampleNode.__primarylabel__, name=experiment_id)) == 1
+    assert len(db.graph.nodes.match(SampleNode.__primarylabel__, name=sample.experiment_id)) == 1
