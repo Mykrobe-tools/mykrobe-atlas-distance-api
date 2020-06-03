@@ -2,6 +2,8 @@ from py2neo.ogm import GraphObject, Property, RelatedTo
 
 
 class LeafNode(GraphObject):
+    __primarykey__ = 'name'
+
     name = Property()
 
 
