@@ -9,7 +9,7 @@ class Neo4jDatabase(IDatabase):
     def __init__(self, uri=None, **settings):
         self.graph = Graph(uri, **settings)
 
-    def create(self, obj: GraphObject):
+    def create_or_merge(self, obj: GraphObject):
         # The `py2neo.Graph.create` method on error will throw two exceptions, in the order below:
         #
         # 1. A ClientError exception which contain useful description of the error

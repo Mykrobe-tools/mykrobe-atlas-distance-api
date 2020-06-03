@@ -25,4 +25,4 @@ class SampleRepository:
                 neighbour_node.name = neighbour.experiment_id
                 node.neighbours.add(neighbour_node, distance=neighbour.distance)
 
-        self.db.create(node)
+        self.db.create_or_merge(node)

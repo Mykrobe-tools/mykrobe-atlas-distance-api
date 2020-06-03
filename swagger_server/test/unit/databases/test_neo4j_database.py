@@ -30,7 +30,7 @@ def test_creating_graph_objects(db, prop):
         obj = SomeObject()
         obj.some_prop = prop
 
-        db.create(obj)
+        db.create_or_merge(obj)
 
         matched_nodes = db.graph.nodes.match(SomeObject.__primarylabel__, **{PROP_NAME: prop})
         assert len(matched_nodes) == 1
@@ -46,9 +46,9 @@ def test_creating_duplicated_objects_without_primary_key_raises_error(schematise
     other = SomeObject()
     other.some_prop = value
 
-    schematised_db.create(obj)
+    schematised_db.create_or_merge(obj)
     with raises(ClientError):
-        schematised_db.create(other)
+        schematised_db.create_or_merge(other)
 
     matched_nodes = schematised_db.graph.nodes.match(SomeObject.__primarylabel__, **{PROP_NAME: value})
     assert len(matched_nodes) == 1
@@ -63,8 +63,8 @@ def test_creating_duplicated_objects_with_primary_key_merge_objects_instead(sche
     other = SomeObject()
     other.some_prop = value
 
-    schematised_db.create(obj)
-    schematised_db.create(other)
+    schematised_db.create_or_merge(obj)
+    schematised_db.create_or_merge(other)
 
     matched_nodes = schematised_db.graph.nodes.match(SomeObject.__primarylabel__, **{PROP_NAME: value})
     assert len(matched_nodes) == 1
