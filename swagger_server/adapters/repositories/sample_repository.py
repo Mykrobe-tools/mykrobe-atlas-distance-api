@@ -13,7 +13,7 @@ class SampleRepository:
         self.db = db
 
     def add(self, sample: Sample):
-        if SampleNode.exists(sample, self.db.graph):
+        if SampleNode.primary_key_exists(sample.experiment_id, self.db.graph):
             raise SampleAlreadyExist
 
         node = SampleNode()
