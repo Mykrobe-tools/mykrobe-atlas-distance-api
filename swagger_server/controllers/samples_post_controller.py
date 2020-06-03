@@ -1,9 +1,10 @@
 import connexion
 from flask import g
 
-from swagger_server.adapters.repositories.sample_repository import SampleAlreadyExist, SampleRepository
+from swagger_server import services
 from swagger_server.models import Error
 from swagger_server.models.sample import Sample  # noqa: E501
+from swagger_server.services import ResourceAlreadyExist
 
 
 def samples_post(body):  # noqa: E501
@@ -20,11 +21,10 @@ def samples_post(body):  # noqa: E501
         body = Sample.from_dict(connexion.request.get_json())  # noqa: E501
 
     db = g.db
-    repo = SampleRepository(db)
 
     try:
-        repo.add(body)
-    except SampleAlreadyExist:
+        services.add_new_sample(body, db)
+    except ResourceAlreadyExist:
         return Error(409, 'Already existed'), 409
     else:
         return body, 201
