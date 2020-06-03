@@ -16,7 +16,6 @@ class LeafRepository:
         if LeafNode.primary_key_exists(leaf.leaf_id, self.db.graph):
             raise LeafAlreadyExist
 
-        node = LeafNode()
-        node.name = leaf.leaf_id
+        node = LeafNode.from_model(leaf)
 
         self.db.create_or_merge(node)
