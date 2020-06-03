@@ -13,7 +13,7 @@ def test_creating_new_sample(db, client, sample):
 
         assert response.status_code == 201
 
-        matcher = SampleNode.match(db.graph).where(f'_.name = "{sample.experiment_id}"')
+        matcher = db.graph.nodes.match(SampleNode.__primarylabel__, name=sample.experiment_id)
         assert len(matcher) == 1
     finally:
         db.truncate()
@@ -30,10 +30,10 @@ def test_creating_sample_with_neighbours(db, client, sample, neighbours):
 
         assert response.status_code == 201
 
-        matcher = SampleNode.match(db.graph).where(f'_.name = "{sample.experiment_id}"')
+        matcher = db.graph.nodes.match(SampleNode.__primarylabel__, name=sample.experiment_id)
         assert len(matcher) == 1
 
-        node = matcher.first()
+        node = SampleNode.wrap(matcher.first())
         if sample.nearest_neighbours:
             assert len(node.neighbours) == len(sample.nearest_neighbours)
 
