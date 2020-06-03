@@ -11,7 +11,9 @@ def test_creating_new_sample(db, client, sample):
         response = client.open('/api/v1/samples', method='POST', json=sample)
 
         assert response.status_code == 201
-        assert len(db.graph.nodes.match(SampleNode.__primarylabel__, name=sample.experiment_id)) == 1
+
+        found_nodes = db.graph.nodes.match(SampleNode.__primarylabel__, name=sample.experiment_id)
+        assert len(found_nodes) == 1
     finally:
         db.truncate()
 
@@ -24,7 +26,9 @@ def test_creating_duplicated_sample_returns_error(sample_repo, db, client):
     response = client.open('/api/v1/samples', method='POST', json=sample)
 
     assert response.status_code == 409
-    assert len(db.graph.nodes.match(SampleNode.__primarylabel__, name=sample.experiment_id)) == 1
+
+    found_nodes = db.graph.nodes.match(SampleNode.__primarylabel__, name=sample.experiment_id)
+    assert len(found_nodes) == 1
 
 
 @given(sample=from_type(Sample), neighbours=lists(from_type(Neighbour), unique_by=lambda n: n.experiment_id))
