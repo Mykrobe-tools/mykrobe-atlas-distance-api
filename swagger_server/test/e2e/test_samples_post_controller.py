@@ -18,7 +18,7 @@ def test_creating_new_sample(db, client, sample):
         db.truncate()
 
 
-def test_creating_duplicated_sample(sample_repo, db, client):
+def test_creating_duplicated_sample_returns_error(sample_repo, db, client):
     experiment_id = 'some id'
     sample = Sample(experiment_id)
     sample_repo.add(sample)
@@ -30,7 +30,7 @@ def test_creating_duplicated_sample(sample_repo, db, client):
 
 
 @given(sample=from_type(Sample), neighbours=lists(from_type(Neighbour), unique_by=lambda n: n.experiment_id))
-def test_creating_sample_with_neighbours(db, client, sample, neighbours):
+def test_creating_sample_with_non_duplicated_new_neighbours(db, client, sample, neighbours):
     assume(sample.experiment_id not in [n.experiment_id for n in neighbours])
 
     sample.nearest_neighbours = neighbours
@@ -54,7 +54,7 @@ def test_creating_sample_with_neighbours(db, client, sample, neighbours):
         db.truncate()
 
 
-def test_some_neighbours_already_exist(sample_repo, db, client):
+def test_existing_neighbours_are_merged(sample_repo, db, client):
     existing_id = 'some id'
     sample = Sample(existing_id)
     sample_repo.add(sample)
