@@ -9,17 +9,6 @@ from swagger_server.test.strategies import safe_strings
 PROP_NAME = 'some_prop'
 
 
-@fixture
-def schematised_db(db):
-    schema = Schema(db.graph)
-    schema.create_uniqueness_constraint(SomeObject.__primarylabel__, PROP_NAME)
-
-    try:
-        yield db
-    finally:
-        schema.drop_uniqueness_constraint(SomeObject.__primarylabel__, PROP_NAME)
-
-
 class SomeObject(GraphObject):
     some_prop = Property()
 
@@ -38,33 +27,44 @@ def test_creating_graph_objects(db, prop):
         db.truncate()
 
 
-def test_creating_duplicated_objects_without_primary_key_raises_error(schematised_db):
-    value = 'some value'
+@fixture
+def schematised_db(db):
+    schema = Schema(db.graph)
+    schema.create_uniqueness_constraint(SomeObject.__primarylabel__, PROP_NAME)
 
-    obj = SomeObject()
-    obj.some_prop = value
-    other = SomeObject()
-    other.some_prop = value
+    try:
+        yield db
+    finally:
+        schema.drop_uniqueness_constraint(SomeObject.__primarylabel__, PROP_NAME)
 
-    schematised_db.create_or_merge(obj)
-    with raises(ClientError):
+
+class TestUniqueConstraint:
+    def test_creating_duplicated_objects_without_primary_key_raises_error(self, schematised_db):
+        value = 'some value'
+
+        obj = SomeObject()
+        obj.some_prop = value
+        other = SomeObject()
+        other.some_prop = value
+
+        schematised_db.create_or_merge(obj)
+        with raises(ClientError):
+            schematised_db.create_or_merge(other)
+
+        matched_nodes = schematised_db.graph.nodes.match(SomeObject.__primarylabel__, **{PROP_NAME: value})
+        assert len(matched_nodes) == 1
+
+    def test_creating_duplicated_objects_with_primary_key_merge_objects_instead(self, schematised_db):
+        SomeObject.__primarykey__ = PROP_NAME
+        value = 'some value'
+
+        obj = SomeObject()
+        obj.some_prop = value
+        other = SomeObject()
+        other.some_prop = value
+
+        schematised_db.create_or_merge(obj)
         schematised_db.create_or_merge(other)
 
-    matched_nodes = schematised_db.graph.nodes.match(SomeObject.__primarylabel__, **{PROP_NAME: value})
-    assert len(matched_nodes) == 1
-
-
-def test_creating_duplicated_objects_with_primary_key_merge_objects_instead(schematised_db):
-    SomeObject.__primarykey__ = PROP_NAME
-    value = 'some value'
-
-    obj = SomeObject()
-    obj.some_prop = value
-    other = SomeObject()
-    other.some_prop = value
-
-    schematised_db.create_or_merge(obj)
-    schematised_db.create_or_merge(other)
-
-    matched_nodes = schematised_db.graph.nodes.match(SomeObject.__primarylabel__, **{PROP_NAME: value})
-    assert len(matched_nodes) == 1
+        matched_nodes = schematised_db.graph.nodes.match(SomeObject.__primarylabel__, **{PROP_NAME: value})
+        assert len(matched_nodes) == 1
