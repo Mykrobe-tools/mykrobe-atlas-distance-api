@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 from py2neo import Graph
 from py2neo.ogm import GraphObject
 
-from swagger_server.adapters.databases.base import BaseDatabase
+from swagger_server.adapters.databases.base import IDatabase
 
 
 class INeo4jDatabase(ABC):
@@ -12,7 +12,7 @@ class INeo4jDatabase(ABC):
         raise NotImplementedError
 
 
-class Neo4jDatabase(BaseDatabase, INeo4jDatabase):
+class Neo4jDatabase(IDatabase, INeo4jDatabase):
 
     def __init__(self, uri=None, **settings):
         self.graph = Graph(uri, **settings)

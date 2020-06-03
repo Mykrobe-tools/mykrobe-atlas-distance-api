@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 
-class BaseDatabase(ABC):
+class IDatabase(ABC):
     @abstractmethod
     def truncate(self):
         raise NotImplementedError
