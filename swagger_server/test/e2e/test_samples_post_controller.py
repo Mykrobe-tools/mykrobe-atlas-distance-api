@@ -1,8 +1,8 @@
 from hypothesis import given, assume
 from hypothesis.strategies import from_type, lists
 
-from swagger_server.adapters.object_mappers.neo4j import SampleNode, NEIGHBOUR_REL_TYPE
-from swagger_server.models import Sample, Neighbour
+from swagger_server.adapters.object_mappers.neo4j import SampleNode, NEIGHBOUR_REL_TYPE, LeafNode, LINEAGE_REL_TYPE
+from swagger_server.models import Sample, Neighbour, NearestLeaf, Leaf
 
 
 @given(sample=from_type(Sample))
@@ -124,3 +124,47 @@ def test_neighbours_duplicated_with_sample_are_merged_into_sample_and_is_self_ne
     relationships = db.graph.relationships.match([node, node], NEIGHBOUR_REL_TYPE)
     assert len(relationships) == 1
     assert relationships.first()['distance'] == distance
+
+
+@given(sample=from_type(Sample), leaf=from_type(NearestLeaf))
+def test_creating_sample_with_leaf_node(db, client, sample, leaf):
+    sample.nearest_leaf_node = leaf
+
+    try:
+        response = client.open('/api/v1/samples', method='POST', json=sample)
+
+        assert response.status_code == 201
+
+        sample_nodes = db.graph.nodes.match(SampleNode.__primarylabel__, name=sample.experiment_id)
+        assert len(sample_nodes) == 1
+
+        leaf_nodes = db.graph.nodes.match(LeafNode.__primarylabel__, name=leaf.leaf_id)
+        assert len(leaf_nodes) == 1
+
+        relationships = db.graph.relationships.match([sample_nodes.first(), leaf_nodes.first()], LINEAGE_REL_TYPE,
+                                                     distance=leaf.distance)
+        assert len(relationships) == 1
+    finally:
+        db.truncate()
+
+
+def test_existing_leaf_node_will_not_duplicate_nor_raise_error(db, client, leaf_repo):
+    leaf_id = 'leaf id'
+    leaf = NearestLeaf(leaf_id, distance=1)
+    sample = Sample('sample id', nearest_leaf_node=leaf)
+
+    leaf_repo.add(Leaf(leaf_id))
+
+    response = client.open('/api/v1/samples', method='POST', json=sample)
+
+    assert response.status_code == 201
+
+    sample_nodes = db.graph.nodes.match(SampleNode.__primarylabel__, name=sample.experiment_id)
+    assert len(sample_nodes) == 1
+
+    leaf_nodes = db.graph.nodes.match(LeafNode.__primarylabel__, name=leaf.leaf_id)
+    assert len(leaf_nodes) == 1
+
+    relationships = db.graph.relationships.match([sample_nodes.first(), leaf_nodes.first()], LINEAGE_REL_TYPE,
+                                                 distance=leaf.distance)
+    assert len(relationships) == 1

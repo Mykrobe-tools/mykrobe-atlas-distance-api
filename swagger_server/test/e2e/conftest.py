@@ -4,6 +4,7 @@ import connexion
 from flask import g
 from pytest import fixture
 
+from swagger_server.adapters.repositories.leaf_repository import LeafRepository
 from swagger_server.adapters.repositories.sample_repository import SampleRepository
 from swagger_server.encoder import JSONEncoder
 
@@ -29,3 +30,8 @@ def client(app):
 @fixture
 def sample_repo(db):
     return SampleRepository(db)
+
+
+@fixture
+def leaf_repo(db):
+    return LeafRepository(db)
