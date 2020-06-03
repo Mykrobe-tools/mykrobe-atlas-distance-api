@@ -4,6 +4,7 @@ import connexion
 from flask import g
 from pytest import fixture
 
+from swagger_server.adapters.repositories.sample_repository import SampleRepository
 from swagger_server.encoder import JSONEncoder
 
 
@@ -23,3 +24,8 @@ def app(db):
 def client(app):
     with app.test_client() as client:
         yield client
+
+
+@fixture
+def sample_repo(db):
+    return SampleRepository(db)
