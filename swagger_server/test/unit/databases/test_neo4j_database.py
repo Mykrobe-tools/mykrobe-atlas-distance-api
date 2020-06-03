@@ -6,62 +6,65 @@ from pytest import fixture, raises
 from swagger_server.test.strategies import safe_strings
 
 
+PROP_NAME = 'some_prop'
+
+
 @fixture
-def db(db):
+def schematised_db(db):
     schema = Schema(db.graph)
-    property_key = 'name'
-    schema.create_uniqueness_constraint(SomeObject.__primarylabel__, property_key)
+    schema.create_uniqueness_constraint(SomeObject.__primarylabel__, PROP_NAME)
 
     try:
         yield db
     finally:
-        schema.drop_uniqueness_constraint(SomeObject.__primarylabel__, property_key)
+        schema.drop_uniqueness_constraint(SomeObject.__primarylabel__, PROP_NAME)
 
 
 class SomeObject(GraphObject):
-    name = Property()
+    some_prop = Property()
 
 
-@given(name=safe_strings())
-def test_creating_node_from_graph_object(db, name):
+@given(prop=safe_strings())
+def test_creating_graph_objects(db, prop):
     try:
         obj = SomeObject()
-        obj.name = name
+        obj.some_prop = prop
 
         db.create(obj)
 
-        matched_nodes = db.graph.nodes.match(SomeObject.__primarylabel__, name=name)
+        matched_nodes = db.graph.nodes.match(SomeObject.__primarylabel__, **{PROP_NAME: prop})
         assert len(matched_nodes) == 1
     finally:
         db.truncate()
 
 
-def test_creating_duplicated_node(db):
-    name = 'some name'
+def test_creating_duplicated_objects_without_primary_key_raises_error(schematised_db):
+    value = 'some value'
+
     obj = SomeObject()
-    obj.name = name
+    obj.some_prop = value
     other = SomeObject()
-    other.name = name
+    other.some_prop = value
 
-    db.create(obj)
+    schematised_db.create(obj)
     with raises(ClientError):
-        db.create(other)
+        schematised_db.create(other)
 
-    matched_nodes = db.graph.nodes.match(SomeObject.__primarylabel__, name=name)
+    matched_nodes = schematised_db.graph.nodes.match(SomeObject.__primarylabel__, **{PROP_NAME: value})
     assert len(matched_nodes) == 1
 
 
-def test_creating_duplicated_node_with_primary_key(db):
-    SomeObject.__primarykey__ = 'name'
+def test_creating_duplicated_objects_with_primary_key_merge_objects_instead(schematised_db):
+    SomeObject.__primarykey__ = PROP_NAME
+    value = 'some value'
 
-    name = 'some name'
     obj = SomeObject()
-    obj.name = name
+    obj.some_prop = value
     other = SomeObject()
-    other.name = name
+    other.some_prop = value
 
-    db.create(obj)
-    db.create(other)
+    schematised_db.create(obj)
+    schematised_db.create(other)
 
-    matched_nodes = db.graph.nodes.match(SomeObject.__primarylabel__, name=name)
+    matched_nodes = schematised_db.graph.nodes.match(SomeObject.__primarylabel__, **{PROP_NAME: value})
     assert len(matched_nodes) == 1
