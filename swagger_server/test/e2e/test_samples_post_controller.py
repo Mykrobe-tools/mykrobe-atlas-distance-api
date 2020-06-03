@@ -102,3 +102,25 @@ def test_duplicated_neighbours_are_merged(db, client):
         [samples.first(), neighbours.first()], NEIGHBOUR_REL_TYPE)
     assert len(relationships) == 1
     assert relationships.first()['distance'] == second_distance
+
+
+def test_neighbours_duplicated_with_sample_are_merged_into_sample_and_is_self_neighboured(db, client):
+    sample_id = 'sample id'
+    distance = 1
+
+    neighbour = Neighbour(sample_id, distance=distance)
+    sample = Sample(sample_id, nearest_neighbours=[neighbour])
+
+    response = client.open('/api/v1/samples', method='POST', json=sample)
+
+    assert response.status_code == 201
+
+    nodes = db.graph.nodes.match(SampleNode.__primarylabel__)
+    assert len(nodes) == 1
+
+    node = nodes.first()
+    assert node['name'] == sample_id
+
+    relationships = db.graph.relationships.match([node, node], NEIGHBOUR_REL_TYPE)
+    assert len(relationships) == 1
+    assert relationships.first()['distance'] == distance
