@@ -1,9 +1,6 @@
-import connexion
-import six
+from flask import g
 
-from swagger_server.models.error import Error  # noqa: E501
 from swagger_server.models.sample import Sample  # noqa: E501
-from swagger_server import util
 
 
 def samples_id_get(id):  # noqa: E501
@@ -16,4 +13,9 @@ def samples_id_get(id):  # noqa: E501
 
     :rtype: Sample
     """
-    return Sample()
+
+    graph = g.db
+    exp_id = graph.get_node_by_id(id)
+    sample = Sample(exp_id)
+
+    return sample.to_dict()
