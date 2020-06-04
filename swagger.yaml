@@ -55,6 +55,7 @@ paths:
   /samples/{id}:
     get:
       tags:
+        - samples_get
       description: Return a sample based on a sample ID.
       parameters:
         - name: id

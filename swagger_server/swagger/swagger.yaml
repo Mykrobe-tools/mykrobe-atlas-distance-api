@@ -44,6 +44,8 @@ paths:
       x-openapi-router-controller: swagger_server.controllers.samples_post_controller
   /samples/{id}:
     get:
+      tags:
+      - samples_get
       description: Return a sample based on a sample ID.
       operationId: samples_id_get
       parameters:
@@ -73,7 +75,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-      x-openapi-router-controller: swagger_server.controllers.default_controller
+      x-openapi-router-controller: swagger_server.controllers.samples_get_controller
     delete:
       description: Delete a sample based on a sample ID.
       operationId: samples_id_delete
