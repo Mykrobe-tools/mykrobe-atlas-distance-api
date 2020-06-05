@@ -15,7 +15,7 @@ def samples_id_get(id):  # noqa: E501
     """
 
     graph = g.db
-    exp_id = graph.get_node_by_id(id)
-    sample = Sample(exp_id)
+    node = graph.get_node(label=Sample.__name__, experiment_id=id)
 
+    sample = Sample(node['experiment_id'])
     return sample.to_dict()

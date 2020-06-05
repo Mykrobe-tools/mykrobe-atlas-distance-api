@@ -18,6 +18,6 @@ def samples_post(body):  # noqa: E501
         body = Sample.from_dict(connexion.request.get_json())  # noqa: E501
 
     graph = g.db
-    graph.add_node(body.experiment_id)
+    graph.add_node(label=body.__class__.__name__, experiment_id=body.experiment_id)
 
     return body, 201

@@ -3,13 +3,9 @@ from abc import ABC, abstractmethod
 
 class AbstractGraph(ABC):
     @abstractmethod
-    def add_node(self, node):
+    def add_node(self, **attributes):
         raise NotImplementedError
 
     @abstractmethod
-    def get_node_by_id(self, id_):
+    def get_node(self, **attributes):
         raise NotImplementedError
-
-
-class NodeNotFound(Exception):
-    pass
