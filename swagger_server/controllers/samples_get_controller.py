@@ -1,6 +1,7 @@
 from flask import g
 
 from swagger_server.models.sample import Sample  # noqa: E501
+from swagger_server.services import graph
 
 
 def samples_id_get(id):  # noqa: E501
@@ -14,8 +15,8 @@ def samples_id_get(id):  # noqa: E501
     :rtype: Sample
     """
 
-    graph = g.db
-    node = graph.get_node(label=Sample.__name__, experiment_id=id)
+    db = g.db
 
-    sample = Sample(node['experiment_id'])
+    sample = graph.get_sample(id, db)
+
     return sample.to_dict()

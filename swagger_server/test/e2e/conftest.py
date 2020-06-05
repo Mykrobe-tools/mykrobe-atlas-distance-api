@@ -1,20 +1,18 @@
 import logging
-import os
 
 import connexion
+import py2neo
 from flask import g
 from pytest import fixture
 
-from swagger_server.adapters.graph.in_memory import InMemoryGraph
-from swagger_server.adapters.graph.persistent import PersistentGraph
 from swagger_server.encoder import JSONEncoder
 
 
 @fixture
 def db():
-    if os.environ.get('DB') == 'persistent':
-        return PersistentGraph()
-    return InMemoryGraph()
+    db = py2neo.Graph()
+    yield db
+    db.delete_all()
 
 
 @fixture

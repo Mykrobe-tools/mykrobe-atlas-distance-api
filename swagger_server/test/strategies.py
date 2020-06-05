@@ -7,7 +7,7 @@ def safe_non_empty_strings():
     return text(alphabet=characters(whitelist_categories=('L', 'N')), min_size=1)
 
 
-def neo4j_integers():
+def int64s():
     return integers(min_value=-2**63, max_value=2**63-1)
 
 
@@ -23,7 +23,7 @@ def samples(draw):
 @composite
 def neighbours(draw):
     experiment_id = draw(safe_non_empty_strings())
-    distance = draw(neo4j_integers())
+    distance = draw(int64s())
 
     return Neighbour(
         experiment_id=experiment_id,
@@ -34,7 +34,7 @@ def neighbours(draw):
 @composite
 def nearest_leafs(draw):
     leaf_id = draw(safe_non_empty_strings())
-    distance = draw(neo4j_integers())
+    distance = draw(int64s())
 
     return NearestLeaf(
         leaf_id=leaf_id,
