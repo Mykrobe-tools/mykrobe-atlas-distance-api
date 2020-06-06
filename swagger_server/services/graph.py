@@ -13,8 +13,9 @@ def build_graph(sample: Sample) -> Subgraph:
 
     if sample.nearest_neighbours:
         for neighbour in sample.nearest_neighbours:
-            neighbour_node = Node(Sample.__name__, experiment_id=neighbour.experiment_id)
-            graph |= Relationship(sample_node, 'NEIGHBOUR', neighbour_node, distance=neighbour.distance)
+            if neighbour.experiment_id != sample.experiment_id:
+                neighbour_node = Node(Sample.__name__, experiment_id=neighbour.experiment_id)
+                graph |= Relationship(sample_node, 'NEIGHBOUR', neighbour_node, distance=neighbour.distance)
 
     return graph
 

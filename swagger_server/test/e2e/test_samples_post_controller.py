@@ -1,5 +1,7 @@
+from copy import deepcopy
+
 from hypothesis import given, assume
-from hypothesis.strategies import from_type, lists
+from hypothesis.strategies import from_type, lists, integers
 
 from swagger_server.models import Sample, NearestLeaf, Neighbour
 from swagger_server.test.e2e.utils import SAMPLES_API_PATH
@@ -38,6 +40,15 @@ def test_create_new_sample_with_multiple_unique_neighbours(db, client, sample, n
         db.delete_all()
 
 
+@given(sample=from_type(Sample), distance=integers())
+def test_create_new_sample_that_neighbour_itself(db, client, sample, distance):
+    try:
+        sample.nearest_neighbours = [Neighbour(sample.experiment_id, distance)]
+        check_create_and_retrieve_sample(sample, client)
+    finally:
+        db.delete_all()
+
+
 def check_create_and_retrieve_sample(sample, client):
     path = str(SAMPLES_API_PATH)
     resp = client.open(path, method='POST', json=sample)
@@ -48,10 +59,16 @@ def check_create_and_retrieve_sample(sample, client):
     assert resp.status_code == 200
 
     actual = Sample.from_dict(resp.json)
-    assert actual.experiment_id == sample.experiment_id
-    assert actual.nearest_leaf_node == sample.nearest_leaf_node
-    assert bool(actual.nearest_neighbours) == bool(sample.nearest_neighbours)
+    expected = deepcopy(sample)
+    expected.nearest_neighbours = [x for x in expected.nearest_neighbours if x.experiment_id != expected.experiment_id]
 
-    if sample.nearest_neighbours:
-        for expected in sample.nearest_neighbours:
-            assert expected in actual.nearest_neighbours
+    assert actual.experiment_id == expected.experiment_id
+    assert actual.nearest_leaf_node == expected.nearest_leaf_node
+    assert bool(actual.nearest_neighbours) == bool(expected.nearest_neighbours)
+
+    if expected.nearest_neighbours:
+        for x in expected.nearest_neighbours:
+            if x.experiment_id != sample.experiment_id:
+                assert x in actual.nearest_neighbours
+            else:
+                assert x not in actual.nearest_neighbours
