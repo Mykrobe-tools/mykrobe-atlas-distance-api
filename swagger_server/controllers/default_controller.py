@@ -8,19 +8,6 @@ from swagger_server.models.neighbour import Neighbour  # noqa: E501
 from swagger_server import util
 
 
-def samples_id_delete(id):  # noqa: E501
-    """samples_id_delete
-
-    Delete a sample based on a sample ID. # noqa: E501
-
-    :param id: 
-    :type id: str
-
-    :rtype: None
-    """
-    return 'do some magic!'
-
-
 def samples_id_nearest_leaf_node_get(id):  # noqa: E501
     """samples_id_nearest_leaf_node_get
 

@@ -84,6 +84,7 @@ paths:
                 $ref: '#/components/schemas/Error'
     delete:
       tags:
+        - samples_delete
       description: Delete a sample based on a sample ID.
       parameters:
         - name: id

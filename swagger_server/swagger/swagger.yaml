@@ -77,6 +77,8 @@ paths:
                 $ref: '#/components/schemas/Error'
       x-openapi-router-controller: swagger_server.controllers.samples_get_controller
     delete:
+      tags:
+      - samples_delete
       description: Delete a sample based on a sample ID.
       operationId: samples_id_delete
       parameters:
@@ -102,7 +104,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-      x-openapi-router-controller: swagger_server.controllers.default_controller
+      x-openapi-router-controller: swagger_server.controllers.samples_delete_controller
   /samples/{id}/nearest-neighbours:
     get:
       description: Return the list of nearest neighbours of a sample based on a sample
