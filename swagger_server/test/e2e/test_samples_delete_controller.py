@@ -10,6 +10,7 @@ from swagger_server.test.e2e.utils import SAMPLES_API_PATH
 def test_deleting_non_existent_sample(client, sample):
     path = str(SAMPLES_API_PATH / sample.experiment_id)
     resp = client.open(path, method='DELETE')
+
     assert resp.status_code == 404
     assert resp.json['code'] == 404
     assert resp.json['message'] == 'Not found'

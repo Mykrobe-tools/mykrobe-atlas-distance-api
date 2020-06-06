@@ -48,5 +48,14 @@ def get_sample(experiment_id: str, db: Graph) -> Sample:
     return sample
 
 
+def delete_sample(experiment_id: str, db: Graph):
+    sample_node = db.nodes.match(Sample.__name__, experiment_id=experiment_id).limit(1)
+    if len(sample_node) == 0:
+        raise SampleNotFound
+    sample_node = sample_node.first()
+
+    db.delete(sample_node)
+
+
 class SampleNotFound(Exception):
     pass
