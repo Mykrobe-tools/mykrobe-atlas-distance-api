@@ -62,6 +62,22 @@ def test_create_new_sample_with_duplicated_neighbours(db, client, sample, neighb
         db.delete_all()
 
 
+@given(sample=from_type(Sample), neighbours=lists(from_type(Neighbour)), nearest_leaf=from_type(NearestLeaf))
+def test_create_existing_sample(db, client, sample, neighbours, nearest_leaf):
+    sample.nearest_neighbours = neighbours
+    sample.nearest_leaf_node = nearest_leaf
+
+    try:
+        path = str(SAMPLES_API_PATH)
+        resp = client.open(path, method='POST', json=sample)
+        assert resp.status_code == 201
+
+        resp = client.open(path, method='POST', json=sample)
+        assert resp.status_code == 409
+    finally:
+        db.delete_all()
+
+
 def create_and_retrieve_sample(sample, client):
     path = str(SAMPLES_API_PATH)
     resp = client.open(path, method='POST', json=sample)
