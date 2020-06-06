@@ -24,7 +24,11 @@ def build_graph(sample: Sample) -> Subgraph:
 
 
 def get_sample(experiment_id: str, db: Graph) -> Sample:
-    sample_node = db.nodes.match(Sample.__name__, experiment_id=experiment_id).limit(1).first()
+    sample_node = db.nodes.match(Sample.__name__, experiment_id=experiment_id).limit(1)
+    if len(sample_node) == 0:
+        raise SampleNotFound
+    sample_node = sample_node.first()
+
     leaf_relationship = db.relationships.match([sample_node], 'LINEAGE')
     neighbour_relationships = db.relationships.match([sample_node], 'NEIGHBOUR')
 
@@ -42,3 +46,7 @@ def get_sample(experiment_id: str, db: Graph) -> Sample:
             sample.nearest_neighbours.append(Neighbour(neighbour_node['experiment_id'], neighbour_relationship['distance']))
 
     return sample
+
+
+class SampleNotFound(Exception):
+    pass

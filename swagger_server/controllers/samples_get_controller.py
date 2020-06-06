@@ -1,7 +1,9 @@
 from flask import g
 
+from swagger_server.models import Error
 from swagger_server.models.sample import Sample  # noqa: E501
 from swagger_server.services import graph
+from swagger_server.services.graph import SampleNotFound
 
 
 def samples_id_get(id):  # noqa: E501
@@ -17,6 +19,9 @@ def samples_id_get(id):  # noqa: E501
 
     db = g.db
 
-    sample = graph.get_sample(id, db)
-
-    return sample
+    try:
+        sample = graph.get_sample(id, db)
+    except SampleNotFound:
+        return Error(404, 'Not found'), 404
+    else:
+        return sample

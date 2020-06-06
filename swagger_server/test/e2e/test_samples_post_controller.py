@@ -61,6 +61,8 @@ def test_create_existing_sample(db, client, sample, neighbours, nearest_leaf):
 
         resp = client.open(path, method='POST', json=sample)
         assert resp.status_code == 409
+        assert resp.json['code'] == 409
+        assert resp.json['message'] == 'Already existed'
     finally:
         db.delete_all()
 
