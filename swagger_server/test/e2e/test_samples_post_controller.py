@@ -7,9 +7,9 @@ from swagger_server.test.e2e.utils import SAMPLES_API_PATH
 
 @given(sample=from_type(Sample), nearest_leaf=from_type(NearestLeaf), neighbours=lists(from_type(Neighbour), unique_by=lambda x: x.experiment_id))
 def test_create_new_sample(db, client, sample, nearest_leaf, neighbours):
-    try:
-        assume(sample.experiment_id not in [x.experiment_id for x in neighbours])
+    assume(sample.experiment_id not in [x.experiment_id for x in neighbours])
 
+    try:
         sample.nearest_leaf_node = nearest_leaf
         sample.nearest_neighbours = neighbours
 
