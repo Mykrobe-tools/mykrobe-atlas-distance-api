@@ -12,10 +12,13 @@ def build_graph(sample: Sample) -> Subgraph:
         graph = Relationship(sample_node, 'LINEAGE', leaf_node, distance=sample.nearest_leaf_node.distance)
 
     if sample.nearest_neighbours:
+        ids = []
         for neighbour in sample.nearest_neighbours:
-            if neighbour.experiment_id != sample.experiment_id:
+            if neighbour.experiment_id != sample.experiment_id and neighbour.experiment_id not in ids:
                 neighbour_node = Node(Sample.__name__, experiment_id=neighbour.experiment_id)
                 graph |= Relationship(sample_node, 'NEIGHBOUR', neighbour_node, distance=neighbour.distance)
+
+                ids.append(neighbour.experiment_id)
 
     return graph
 

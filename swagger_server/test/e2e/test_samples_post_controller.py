@@ -49,6 +49,19 @@ def test_create_new_sample_that_neighbour_itself(db, client, sample, distance):
         db.delete_all()
 
 
+@given(sample=from_type(Sample), neighbour=from_type(Neighbour))
+def test_create_new_sample_with_duplicated_neighbours(db, client, sample, neighbour):
+    assume(sample.experiment_id != neighbour.experiment_id)
+    try:
+        sample.nearest_neighbours = [neighbour, neighbour]
+        actual = create_and_retrieve_sample(sample, client)
+
+        assert len(actual.nearest_neighbours) == 1
+        assert actual.nearest_neighbours[0] == neighbour
+    finally:
+        db.delete_all()
+
+
 def create_and_retrieve_sample(sample, client):
     path = str(SAMPLES_API_PATH)
     resp = client.open(path, method='POST', json=sample)
