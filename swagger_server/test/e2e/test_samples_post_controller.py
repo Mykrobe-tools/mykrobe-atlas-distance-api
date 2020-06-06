@@ -1,73 +1,52 @@
-from hypothesis import given, assume
+from hypothesis import given, assume, settings
 from hypothesis.strategies import from_type, lists, integers
 
 from swagger_server.models import Sample, NearestLeaf, Neighbour
 from swagger_server.test.e2e.utils import SAMPLES_API_PATH
 
 
-@given(sample=from_type(Sample))
-def test_create_new_sample(client, sample):
-    assert_created_and_retrieved_samples_are_the_same(sample, client)
-
-
-@given(sample=from_type(Sample), nearest_leaf=from_type(NearestLeaf))
-def test_create_new_sample_with_nearest_leaf(db, client, sample, nearest_leaf):
+@given(sample=from_type(Sample), nearest_leaf=from_type(NearestLeaf), neighbours=lists(from_type(Neighbour), unique_by=lambda x: x.experiment_id))
+def test_create_new_sample(db, client, sample, nearest_leaf, neighbours):
     try:
+        assume(sample.experiment_id not in [x.experiment_id for x in neighbours])
+
         sample.nearest_leaf_node = nearest_leaf
-        assert_created_and_retrieved_samples_are_the_same(sample, client)
-    finally:
-        db.delete_all()
-
-
-@given(sample=from_type(Sample), neighbour=from_type(Neighbour))
-def test_create_new_sample_with_one_neighbour(db, client, sample, neighbour):
-    assume(sample.experiment_id != neighbour.experiment_id)
-    try:
-        sample.nearest_neighbours = [neighbour]
-        assert_created_and_retrieved_samples_are_the_same(sample, client)
-    finally:
-        db.delete_all()
-
-
-@given(sample=from_type(Sample), neighbours=lists(from_type(Neighbour), unique_by=lambda x: x.experiment_id))
-def test_create_new_sample_with_multiple_unique_neighbours(db, client, sample, neighbours):
-    assume(sample.experiment_id not in [x.experiment_id for x in neighbours])
-    try:
         sample.nearest_neighbours = neighbours
+
         assert_created_and_retrieved_samples_are_the_same(sample, client)
     finally:
         db.delete_all()
 
 
 @given(sample=from_type(Sample), distance=integers())
+@settings(max_examples=1)
 def test_create_new_sample_that_neighbour_itself(db, client, sample, distance):
-    try:
-        sample.nearest_neighbours = [Neighbour(sample.experiment_id, distance)]
-        actual = create_and_retrieve_sample(sample, client)
-        assert not actual.nearest_neighbours
-    finally:
-        db.delete_all()
+    sample.nearest_neighbours = [Neighbour(sample.experiment_id, distance)]
+
+    actual = create_and_retrieve_sample(sample, client)
+
+    assert not actual.nearest_neighbours
 
 
 @given(sample=from_type(Sample), neighbour=from_type(Neighbour))
+@settings(max_examples=1)
 def test_create_new_sample_with_duplicated_neighbours(db, client, sample, neighbour):
     assume(sample.experiment_id != neighbour.experiment_id)
-    try:
-        sample.nearest_neighbours = [neighbour, neighbour]
-        actual = create_and_retrieve_sample(sample, client)
 
-        assert len(actual.nearest_neighbours) == 1
-        assert actual.nearest_neighbours[0] == neighbour
-    finally:
-        db.delete_all()
+    sample.nearest_neighbours = [neighbour, neighbour]
+
+    actual = create_and_retrieve_sample(sample, client)
+
+    assert len(actual.nearest_neighbours) == 1
+    assert actual.nearest_neighbours[0] == neighbour
 
 
 @given(sample=from_type(Sample), neighbours=lists(from_type(Neighbour)), nearest_leaf=from_type(NearestLeaf))
 def test_create_existing_sample(db, client, sample, neighbours, nearest_leaf):
-    sample.nearest_neighbours = neighbours
-    sample.nearest_leaf_node = nearest_leaf
-
     try:
+        sample.nearest_neighbours = neighbours
+        sample.nearest_leaf_node = nearest_leaf
+
         path = str(SAMPLES_API_PATH)
         resp = client.open(path, method='POST', json=sample)
         assert resp.status_code == 201
