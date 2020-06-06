@@ -13,7 +13,15 @@ def test_create_new_sample(db, client, sample, nearest_leaf, neighbours):
         sample.nearest_leaf_node = nearest_leaf
         sample.nearest_neighbours = neighbours
 
-        assert_created_and_retrieved_samples_are_the_same(sample, client)
+        actual = create_and_retrieve_sample(sample, client)
+
+        assert actual.experiment_id == sample.experiment_id
+        assert actual.nearest_leaf_node == sample.nearest_leaf_node
+        assert bool(actual.nearest_neighbours) == bool(sample.nearest_neighbours)
+
+        if sample.nearest_neighbours and actual.nearest_neighbours:
+            for x in sample.nearest_neighbours:
+                assert x in actual.nearest_neighbours
     finally:
         db.delete_all()
 
@@ -67,15 +75,3 @@ def create_and_retrieve_sample(sample, client):
     assert resp.status_code == 200
 
     return Sample.from_dict(resp.json)
-
-
-def assert_created_and_retrieved_samples_are_the_same(sample, client):
-    actual = create_and_retrieve_sample(sample, client)
-
-    assert actual.experiment_id == sample.experiment_id
-    assert actual.nearest_leaf_node == sample.nearest_leaf_node
-    assert bool(actual.nearest_neighbours) == bool(sample.nearest_neighbours)
-
-    if sample.nearest_neighbours and actual.nearest_neighbours:
-        for x in sample.nearest_neighbours:
-            assert x in actual.nearest_neighbours
