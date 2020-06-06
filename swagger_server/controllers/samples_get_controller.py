@@ -19,4 +19,4 @@ def samples_id_get(id):  # noqa: E501
 
     sample = graph.get_sample(id, db)
 
-    return sample.to_dict()
+    return sample
