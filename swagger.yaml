@@ -110,6 +110,7 @@ paths:
   /samples/{id}/nearest-neighbours:
     get:
       tags:
+        - neighbours_get
       description: Return the list of nearest neighbours of a sample based on a sample ID.
       parameters:
         - name: id
