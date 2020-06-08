@@ -1,10 +1,10 @@
 import connexion
 from flask import g
-from py2neo import Node
 
 from swagger_server.models import Error
 from swagger_server.models.sample import Sample  # noqa: E501
 from swagger_server.services import graph
+from swagger_server.services.graph import SampleExisted
 
 
 def samples_post(body):  # noqa: E501
@@ -22,11 +22,9 @@ def samples_post(body):  # noqa: E501
 
     db = g.db
 
-    existing_node = db.nodes.match(Sample.__name__, experiment_id=body.experiment_id)
-    if len(existing_node) > 0:
+    try:
+        graph.create_sample(body, db)
+    except SampleExisted:
         return Error(409, 'Already existed'), 409
-
-    subgraph = graph.build_graph(body)
-    db.create(subgraph)
-
-    return body, 201
+    else:
+        return body, 201
