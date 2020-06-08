@@ -34,6 +34,7 @@
 /tox.ini
 /swagger_server/__main__.py
 /swagger_server/controllers/neighbours_get_controller.py
+/swagger_server/controllers/neighbours_put_controller.py
 /swagger_server/controllers/samples_post_controller.py
 /swagger_server/controllers/samples_get_controller.py
 /swagger_server/controllers/samples_delete_controller.py
