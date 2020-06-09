@@ -6,7 +6,7 @@ from swagger_server.models.error import Error  # noqa: E501
 from swagger_server.models.neighbour import Neighbour  # noqa: E501
 from swagger_server import util
 from swagger_server.services import graph
-from swagger_server.services.graph import SampleNotFound
+from swagger_server.services.graph import ObjectNotFound
 
 
 def samples_id_nearest_neighbours_get(id):  # noqa: E501
@@ -14,7 +14,7 @@ def samples_id_nearest_neighbours_get(id):  # noqa: E501
 
     Return the list of nearest neighbours of a sample based on a sample ID. # noqa: E501
 
-    :param id: 
+    :param id:
     :type id: str
 
     :rtype: List[Neighbour]
@@ -24,7 +24,7 @@ def samples_id_nearest_neighbours_get(id):  # noqa: E501
 
     try:
         sample = graph.get_sample(id, db)
-    except SampleNotFound:
+    except ObjectNotFound:
         return Error(404, 'Not found'), 404
     else:
         if not sample.nearest_neighbours:
