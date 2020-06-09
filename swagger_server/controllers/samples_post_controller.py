@@ -4,7 +4,7 @@ from flask import g
 from swagger_server.models import Error
 from swagger_server.models.sample import Sample  # noqa: E501
 from swagger_server.services import graph
-from swagger_server.services.graph import SampleExisted
+from swagger_server.services.graph import ObjectExisted
 
 
 def samples_post(body):  # noqa: E501
@@ -24,7 +24,7 @@ def samples_post(body):  # noqa: E501
 
     try:
         graph.create_sample(body, db)
-    except SampleExisted:
+    except ObjectExisted:
         return Error(409, 'Already existed'), 409
     else:
         return body, 201

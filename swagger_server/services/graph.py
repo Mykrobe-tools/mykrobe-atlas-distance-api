@@ -22,10 +22,6 @@ class SampleNode(GraphObject):
 
 
 def create_sample(sample: Sample, db: Graph):
-    existing_node = SampleNode.match(db).where(experiment_id=sample.experiment_id)
-    if len(existing_node) > 0:
-        raise SampleExisted
-
     sample_node = SampleNode()
     sample_node.experiment_id = sample.experiment_id
 
@@ -41,7 +37,21 @@ def create_sample(sample: Sample, db: Graph):
                 neighbour_node.experiment_id = neighbour.experiment_id
                 sample_node.neighbours.add(neighbour_node, distance=neighbour.distance)
 
-    db.create(sample_node)
+    create_graph_object(sample_node, db)
+
+
+def create_graph_object(obj: GraphObject, db: Graph):
+    primary_key = obj.__primarykey__
+    primary_value = getattr(obj, primary_key)
+
+    existing = obj.__class__.match(db).where(**{
+        primary_key: primary_value
+    })
+
+    if len(existing) > 0:
+        raise ObjectExisted
+
+    db.create(obj)
 
 
 def get_sample(experiment_id: str, db: Graph) -> Sample:
@@ -82,5 +92,5 @@ class SampleNotFound(Exception):
     pass
 
 
-class SampleExisted(Exception):
+class ObjectExisted(Exception):
     pass
