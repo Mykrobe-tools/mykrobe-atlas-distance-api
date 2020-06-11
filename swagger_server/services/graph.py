@@ -16,8 +16,6 @@ def get_sample(experiment_id: str, db: Graph):
 
 
 def delete_sample(experiment_id: str, db: Graph):
-    sample_node = SampleNode.get(experiment_id, db)
-
-    db.delete(sample_node)
+    SampleNode.delete(experiment_id, db)
 
 

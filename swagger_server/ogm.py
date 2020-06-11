@@ -28,6 +28,11 @@ class GraphModel(GraphObject):
 
         return len(existing) > 0
 
+    @classmethod
+    def delete(cls, pk, graph: Graph):
+        node = cls.get(pk, graph)
+        graph.delete(node)
+
 
 class LeafNode(GraphObject):
     __primarylabel__ = Leaf.__name__
