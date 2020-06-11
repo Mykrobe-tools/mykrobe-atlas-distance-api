@@ -1,4 +1,4 @@
-from abc import ABC, abstractmethod
+from functools import singledispatchmethod
 
 from py2neo.ogm import GraphObject
 
@@ -7,16 +7,15 @@ from swagger_server.models.base_model_ import Model
 from swagger_server.ogm import LeafNode, SampleNode
 
 
-class AbstractFactory(ABC):
+class GraphFactory:
+    @singledispatchmethod
     @staticmethod
-    @abstractmethod
     def build(recipe: Model) -> GraphObject:
         raise NotImplementedError
 
-
-class SampleNodeFactory(AbstractFactory):
+    @build.register(Sample)
     @staticmethod
-    def build(recipe: Sample) -> SampleNode:
+    def _(recipe: Sample) -> SampleNode:
         node = SampleNode()
         node.experiment_id = recipe.experiment_id
 
