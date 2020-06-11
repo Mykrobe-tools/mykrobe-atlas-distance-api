@@ -1,10 +1,10 @@
 import connexion
 from flask import g
 
+from swagger_server.exceptions import Exists
+from swagger_server.factories import GraphFactory
 from swagger_server.models import Error
 from swagger_server.models.sample import Sample  # noqa: E501
-from swagger_server.services import graph
-from swagger_server.exceptions import Exists
 
 
 def samples_post(body):  # noqa: E501
@@ -23,7 +23,8 @@ def samples_post(body):  # noqa: E501
     db = g.db
 
     try:
-        graph.create_sample(body, db)
+        node = GraphFactory.build(body)
+        node.create(db)
     except Exists:
         return Error(409, 'Already existed'), 409
     else:

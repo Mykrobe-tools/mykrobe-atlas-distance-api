@@ -1,11 +1,8 @@
-import connexion
-import six
 from flask import g
 
-from swagger_server.models.error import Error  # noqa: E501
-from swagger_server import util
-from swagger_server.services import graph
 from swagger_server.exceptions import NotFound
+from swagger_server.models.error import Error  # noqa: E501
+from swagger_server.ogm import SampleNode
 
 
 def samples_id_delete(id):  # noqa: E501
@@ -22,7 +19,7 @@ def samples_id_delete(id):  # noqa: E501
     db = g.db
 
     try:
-        graph.delete_sample(id, db)
+        SampleNode.delete(id, db)
     except NotFound:
         return Error(404, 'Not found'), 404
     else:
