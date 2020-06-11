@@ -11,7 +11,7 @@ def create_sample(sample: Sample, db: Graph):
 
 
 def get_sample(experiment_id: str, db: Graph) -> Sample:
-    sample_node = get_graph_object(SampleNode, experiment_id, db)
+    sample_node = SampleNode.get(experiment_id, db)
 
     leaf_relationship = sample_node.lineage
     neighbour_relationships = sample_node.neighbours
@@ -32,25 +32,9 @@ def get_sample(experiment_id: str, db: Graph) -> Sample:
     return sample
 
 
-def get_graph_object(klass, primary_value, db: Graph):
-    primary_key = klass.__primarykey__
-
-    existing = klass.match(db).where(**{
-        primary_key: primary_value
-    }).limit(1)
-    if len(existing) == 0:
-        raise ObjectNotFound
-
-    return existing.first()
-
-
 def delete_sample(experiment_id: str, db: Graph):
-    sample_node = get_graph_object(SampleNode, experiment_id, db)
+    sample_node = SampleNode.get(experiment_id, db)
 
     db.delete(sample_node)
-
-
-class ObjectNotFound(Exception):
-    pass
 
 

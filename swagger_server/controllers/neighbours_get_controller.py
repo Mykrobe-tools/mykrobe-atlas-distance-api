@@ -6,7 +6,7 @@ from swagger_server.models.error import Error  # noqa: E501
 from swagger_server.models.neighbour import Neighbour  # noqa: E501
 from swagger_server import util
 from swagger_server.services import graph
-from swagger_server.services.graph import ObjectNotFound
+from swagger_server.exceptions import NotFound
 
 
 def samples_id_nearest_neighbours_get(id):  # noqa: E501
@@ -24,7 +24,7 @@ def samples_id_nearest_neighbours_get(id):  # noqa: E501
 
     try:
         sample = graph.get_sample(id, db)
-    except ObjectNotFound:
+    except NotFound:
         return Error(404, 'Not found'), 404
     else:
         if not sample.nearest_neighbours:

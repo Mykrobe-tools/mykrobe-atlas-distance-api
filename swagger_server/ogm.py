@@ -1,18 +1,27 @@
 from py2neo import Graph
 from py2neo.ogm import GraphObject, Property, RelatedTo
 
-from swagger_server.exceptions import Exists
+from swagger_server.exceptions import Exists, NotFound
 from swagger_server.models import Leaf, Sample
 
 
 class GraphModel(GraphObject):
     def create(self, graph: Graph):
-        if self.primary_key_exists(graph):
+        if self.exists(graph):
             raise Exists
 
         graph.create(self)
 
-    def primary_key_exists(self, graph: Graph):
+    @classmethod
+    def get(cls, pk, graph: Graph):
+        matched = cls.match(graph, pk).limit(1)
+
+        if len(matched) == 0:
+            raise NotFound
+
+        return matched.first()
+
+    def exists(self, graph: Graph):
         existing = self.match(graph).where(**{
             self.__primarykey__: self.__primaryvalue__
         })
