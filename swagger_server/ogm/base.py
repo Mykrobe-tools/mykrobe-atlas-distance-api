@@ -11,6 +11,12 @@ class GraphModel(GraphObject):
 
         graph.create(self)
 
+    def update(self, graph: Graph):
+        if not self.exists(graph):
+            raise NotFound
+
+        graph.push(self)
+
     @classmethod
     def get(cls, pk, graph: Graph):
         matched = cls.match(graph, pk).limit(1)
