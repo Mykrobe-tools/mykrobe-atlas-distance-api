@@ -3,13 +3,11 @@ from py2neo import Graph
 from swagger_server.factories import GraphFactory
 from swagger_server.models import Sample, NearestLeaf, Neighbour
 from swagger_server.ogm import SampleNode
-from swagger_server.repositories import Neo4jRepository
 
 
 def create_sample(sample: Sample, db: Graph):
     node = GraphFactory.build(sample)
-    repo = Neo4jRepository(db)
-    repo.create(node)
+    node.create(db)
 
 
 def get_sample(experiment_id: str, db: Graph) -> Sample:
