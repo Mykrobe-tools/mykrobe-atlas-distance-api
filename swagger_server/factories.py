@@ -4,13 +4,13 @@ from py2neo.ogm import GraphObject
 
 from swagger_server.models import Sample, NearestLeaf, Neighbour
 from swagger_server.models.base_model_ import Model
-from swagger_server.ogm.mappers import LeafNode, SampleNode
+from swagger_server.ogm import LeafNode, SampleNode
 
 
 class ModelFactory:
     @singledispatchmethod
     @staticmethod
-    def build(recipe: GraphObject) -> Model:
+    def build(recipe: GraphObject):
         raise NotImplementedError
 
     @build.register(SampleNode)
@@ -38,7 +38,7 @@ class ModelFactory:
 class GraphFactory:
     @singledispatchmethod
     @staticmethod
-    def build(recipe: Model) -> GraphObject:
+    def build(recipe: Model):
         raise NotImplementedError
 
     @build.register(Sample)

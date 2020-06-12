@@ -1,14 +1,11 @@
 import connexion
-import six
 from flask import g
 
 from swagger_server.exceptions import NotFound
-from swagger_server.factories import ModelFactory, GraphFactory
+from swagger_server.factories import GraphFactory
 from swagger_server.models import Sample
 from swagger_server.models.error import Error  # noqa: E501
 from swagger_server.models.neighbour import Neighbour  # noqa: E501
-from swagger_server import util
-from swagger_server.ogm.mappers import SampleNode
 
 
 def samples_id_nearest_neighbours_put(body, id):  # noqa: E501
@@ -31,7 +28,7 @@ def samples_id_nearest_neighbours_put(body, id):  # noqa: E501
     try:
         sample = Sample(id, body)
         node = GraphFactory.build(sample)
-        node.update(db)
+        db.update(node)
     except NotFound:
         return Error(404, 'Not found'), 404
     else:

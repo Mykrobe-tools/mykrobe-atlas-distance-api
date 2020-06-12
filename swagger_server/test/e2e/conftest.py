@@ -6,13 +6,14 @@ from flask import g
 from pytest import fixture
 
 from swagger_server.encoder import JSONEncoder
+from swagger_server.repositories import Neo4jRepository
 
 
 @fixture
 def db():
-    db = py2neo.Graph()
+    db = Neo4jRepository(py2neo.Graph())
     yield db
-    db.delete_all()
+    db.truncate()
 
 
 @fixture

@@ -2,7 +2,7 @@ from flask import g
 
 from swagger_server.exceptions import NotFound
 from swagger_server.models.error import Error  # noqa: E501
-from swagger_server.ogm.mappers import SampleNode
+from swagger_server.ogm import SampleNode
 
 
 def samples_id_delete(id):  # noqa: E501
@@ -19,7 +19,7 @@ def samples_id_delete(id):  # noqa: E501
     db = g.db
 
     try:
-        SampleNode.delete(id, db)
+        db.delete(SampleNode, id)
     except NotFound:
         return Error(404, 'Not found'), 404
     else:

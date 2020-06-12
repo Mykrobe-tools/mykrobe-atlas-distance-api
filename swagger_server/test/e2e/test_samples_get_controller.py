@@ -40,4 +40,4 @@ def test_getting_sample(db, client, sample, nearest_leaf, neighbours):
             for x in sample.nearest_neighbours:
                 assert x in actual.nearest_neighbours
     finally:
-        db.delete_all()
+        db.truncate()

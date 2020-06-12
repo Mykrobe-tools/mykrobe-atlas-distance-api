@@ -39,4 +39,4 @@ def test_updating_neighbours(db, client, sample, neighbours):
         for x in sample.nearest_neighbours:
             assert x in actual.nearest_neighbours
     finally:
-        db.delete_all()
+        db.truncate()

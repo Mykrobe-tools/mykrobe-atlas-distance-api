@@ -26,7 +26,7 @@ def test_getting_non_existent_neighbours(db, client, sample):
         resp = client.open(path)
         assert resp.status_code == 404
     finally:
-        db.delete_all()
+        db.truncate()
 
 
 @given(sample=from_type(Sample), neighbours=lists(from_type(Neighbour), unique_by=lambda x: x.experiment_id, min_size=1))
@@ -47,4 +47,4 @@ def test_getting_neighbours(db, client, sample, neighbours):
         for x in sample.nearest_neighbours:
             assert x in actual.nearest_neighbours
     finally:
-        db.delete_all()
+        db.truncate()

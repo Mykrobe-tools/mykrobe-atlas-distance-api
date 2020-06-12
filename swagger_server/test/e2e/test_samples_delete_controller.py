@@ -35,4 +35,4 @@ def test_deleting_sample(db, client, sample, nearest_leaf, neighbours):
         resp = client.open(path)
         assert resp.status_code == 404
     finally:
-        db.delete_all()
+        db.truncate()

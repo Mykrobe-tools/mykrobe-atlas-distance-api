@@ -23,7 +23,7 @@ def test_create_new_sample(db, client, sample, nearest_leaf, neighbours):
             for x in sample.nearest_neighbours:
                 assert x in actual.nearest_neighbours
     finally:
-        db.delete_all()
+        db.truncate()
 
 
 @given(sample=from_type(Sample), distance=integers())
@@ -64,7 +64,7 @@ def test_create_existing_sample(db, client, sample, neighbours, nearest_leaf):
         assert resp.json['code'] == 409
         assert resp.json['message'] == 'Already existed'
     finally:
-        db.delete_all()
+        db.truncate()
 
 
 def create_and_retrieve_sample(sample, client):

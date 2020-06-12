@@ -24,7 +24,7 @@ def samples_post(body):  # noqa: E501
 
     try:
         node = GraphFactory.build(body)
-        node.create(db)
+        db.create(node)
     except Exists:
         return Error(409, 'Already existed'), 409
     else:

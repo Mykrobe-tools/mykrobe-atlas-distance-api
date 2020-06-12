@@ -2,8 +2,9 @@ from flask import g
 
 from swagger_server.exceptions import NotFound
 from swagger_server.factories import ModelFactory
+from swagger_server.models import Sample
 from swagger_server.models.error import Error  # noqa: E501
-from swagger_server.ogm.mappers import SampleNode
+from swagger_server.ogm import SampleNode
 
 
 def samples_id_nearest_neighbours_get(id):  # noqa: E501
@@ -20,7 +21,7 @@ def samples_id_nearest_neighbours_get(id):  # noqa: E501
     db = g.db
 
     try:
-        sample_node = SampleNode.get(id, db)
+        sample_node = db.get(SampleNode, id)
         sample = ModelFactory.build(sample_node)
     except NotFound:
         return Error(404, 'Not found'), 404
