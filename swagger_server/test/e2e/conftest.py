@@ -1,6 +1,7 @@
 import logging
 
 import connexion
+from hypothesis import settings
 from pytest import fixture
 
 from swagger_server.encoder import JSONEncoder
@@ -27,3 +28,7 @@ def app():
 def client(app):
     with app.test_client() as client:
         yield client
+
+
+settings.register_profile('e2e', deadline=None)
+settings.load_profile('e2e')
