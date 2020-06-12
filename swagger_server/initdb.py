@@ -11,7 +11,9 @@ if __name__ == '__main__':
     samples = []
 
     with open('swagger_server/test/data/sample.list') as f:
-        for experiment_id in f:
+        for line in f:
+            experiment_id = line.strip()
+
             sample = Sample(experiment_id)
             sample.nearest_neighbours = []
 
