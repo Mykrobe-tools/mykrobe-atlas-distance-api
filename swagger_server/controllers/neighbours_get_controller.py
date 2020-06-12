@@ -1,10 +1,8 @@
-from flask import g
-
 from swagger_server.exceptions import NotFound
 from swagger_server.factories import ModelFactory
-from swagger_server.models import Sample
 from swagger_server.models.error import Error  # noqa: E501
 from swagger_server.ogm import SampleNode
+from swagger_server.repositories import Neo4jRepository
 
 
 def samples_id_nearest_neighbours_get(id):  # noqa: E501
@@ -18,7 +16,7 @@ def samples_id_nearest_neighbours_get(id):  # noqa: E501
     :rtype: List[Neighbour]
     """
 
-    db = g.db
+    db = Neo4jRepository()
 
     try:
         sample_node = db.get(SampleNode, id)

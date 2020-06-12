@@ -15,3 +15,6 @@ run:
 
 logs:
 	docker exec -ti dist tail -f app_stdout.log app_stderr.log
+
+clean:
+	docker system prune -f && docker volume prune -f

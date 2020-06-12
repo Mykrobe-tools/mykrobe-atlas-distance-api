@@ -7,8 +7,8 @@ from swagger_server.exceptions import Exists, NotFound
 
 
 class Neo4jRepository:
-    def __init__(self, driver: Graph):
-        self.driver = driver
+    def __init__(self, driver: Graph = None):
+        self.driver = driver or Graph()
 
     def create(self, graph_object: GraphObject):
         if self.exists(graph_object):

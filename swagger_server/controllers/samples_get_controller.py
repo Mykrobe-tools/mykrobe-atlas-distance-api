@@ -1,10 +1,9 @@
-from flask import g
-
 from swagger_server.exceptions import NotFound
 from swagger_server.factories import ModelFactory
 from swagger_server.models import Error
 from swagger_server.models.sample import Sample  # noqa: E501
 from swagger_server.ogm import SampleNode
+from swagger_server.repositories import Neo4jRepository
 
 
 def samples_id_get(id):  # noqa: E501
@@ -18,7 +17,7 @@ def samples_id_get(id):  # noqa: E501
     :rtype: Sample
     """
 
-    db = g.db
+    db = Neo4jRepository()
 
     try:
         sample_node = db.get(SampleNode, id)

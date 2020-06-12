@@ -1,8 +1,6 @@
 import logging
 
 import connexion
-import py2neo
-from flask import g
 from pytest import fixture
 
 from swagger_server.encoder import JSONEncoder
@@ -11,21 +9,18 @@ from swagger_server.repositories import Neo4jRepository
 
 @fixture
 def db():
-    db = Neo4jRepository(py2neo.Graph())
+    db = Neo4jRepository()
     yield db
     db.truncate()
 
 
 @fixture
-def app(db):
+def app():
     logging.getLogger('connexion.operation').setLevel('ERROR')
     app = connexion.App(__name__, specification_dir='../../swagger/')
     app.app.json_encoder = JSONEncoder
     app.add_api('swagger.yaml')
-
-    with app.app.app_context():
-        g.db = db
-        yield app.app
+    return app.app
 
 
 @fixture

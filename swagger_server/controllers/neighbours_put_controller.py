@@ -1,11 +1,11 @@
 import connexion
-from flask import g
 
 from swagger_server.exceptions import NotFound
 from swagger_server.factories import GraphFactory
 from swagger_server.models import Sample
 from swagger_server.models.error import Error  # noqa: E501
 from swagger_server.models.neighbour import Neighbour  # noqa: E501
+from swagger_server.repositories import Neo4jRepository
 
 
 def samples_id_nearest_neighbours_put(body, id):  # noqa: E501
@@ -23,7 +23,7 @@ def samples_id_nearest_neighbours_put(body, id):  # noqa: E501
     if connexion.request.is_json:
         body = [Neighbour.from_dict(d) for d in connexion.request.get_json()]  # noqa: E501
 
-    db = g.db
+    db = Neo4jRepository()
 
     try:
         sample = Sample(id, body)
