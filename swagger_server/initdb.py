@@ -7,7 +7,6 @@ from swagger_server.repositories import Neo4jRepository
 
 if __name__ == '__main__':
     repo = Neo4jRepository()
-    repo.truncate()
 
     samples = []
 
