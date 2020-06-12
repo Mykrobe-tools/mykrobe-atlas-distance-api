@@ -6,7 +6,7 @@ from swagger_server.test.e2e.utils import SAMPLES_API_PATH, NEIGHBOURS_API_PATH
 
 
 @given(sample=from_type(Sample))
-@settings(max_examples=1)
+@settings(max_examples=1, deadline=None)
 def test_getting_neighbours_of_non_existent_sample(client, sample):
     path = str(NEIGHBOURS_API_PATH(sample.experiment_id))
     resp = client.open(path)
@@ -17,6 +17,7 @@ def test_getting_neighbours_of_non_existent_sample(client, sample):
 
 
 @given(sample=from_type(Sample))
+@settings(deadline=None)
 def test_getting_non_existent_neighbours(db, client, sample):
     try:
         path = str(SAMPLES_API_PATH)
@@ -30,6 +31,7 @@ def test_getting_non_existent_neighbours(db, client, sample):
 
 
 @given(sample=from_type(Sample), neighbours=lists(from_type(Neighbour), unique_by=lambda x: x.experiment_id, min_size=1))
+@settings(deadline=None)
 def test_getting_neighbours(db, client, sample, neighbours):
     assume(sample.experiment_id not in [x.experiment_id for x in neighbours])
 
