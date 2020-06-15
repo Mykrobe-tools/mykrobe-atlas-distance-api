@@ -1,3 +1,4 @@
+from swagger_server import registry
 from swagger_server.exceptions import NotFound
 from swagger_server.models.error import Error  # noqa: E501
 from swagger_server.ogm import SampleNode
@@ -15,7 +16,7 @@ def samples_id_delete(id):  # noqa: E501
     :rtype: None
     """
 
-    db = Neo4jRepository()
+    db = registry.get('db')
 
     try:
         db.delete(SampleNode, id)

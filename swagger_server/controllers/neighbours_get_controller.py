@@ -1,3 +1,4 @@
+from swagger_server import registry
 from swagger_server.exceptions import NotFound
 from swagger_server.factories import ModelFactory
 from swagger_server.models.error import Error  # noqa: E501
@@ -16,7 +17,7 @@ def samples_id_nearest_neighbours_get(id):  # noqa: E501
     :rtype: List[Neighbour]
     """
 
-    db = Neo4jRepository()
+    db = registry.get('db')
 
     try:
         sample_node = db.get(SampleNode, id)

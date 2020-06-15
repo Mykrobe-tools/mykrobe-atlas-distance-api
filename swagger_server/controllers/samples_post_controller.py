@@ -1,5 +1,6 @@
 import connexion
 
+from swagger_server import registry
 from swagger_server.exceptions import Exists
 from swagger_server.factories import GraphFactory
 from swagger_server.models import Error
@@ -20,7 +21,7 @@ def samples_post(body):  # noqa: E501
     if connexion.request.is_json:
         body = Sample.from_dict(connexion.request.get_json())  # noqa: E501
 
-    db = Neo4jRepository()
+    db = registry.get('db')
 
     try:
         node = GraphFactory.build(body)

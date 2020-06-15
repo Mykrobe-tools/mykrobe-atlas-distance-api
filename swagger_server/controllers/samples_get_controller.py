@@ -1,3 +1,4 @@
+from swagger_server import registry
 from swagger_server.exceptions import NotFound
 from swagger_server.factories import ModelFactory
 from swagger_server.models import Error
@@ -17,7 +18,7 @@ def samples_id_get(id):  # noqa: E501
     :rtype: Sample
     """
 
-    db = Neo4jRepository()
+    db = registry.get('db')
 
     try:
         sample_node = db.get(SampleNode, id)
