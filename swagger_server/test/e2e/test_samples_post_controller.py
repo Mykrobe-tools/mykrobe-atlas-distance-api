@@ -6,7 +6,7 @@ from swagger_server.test.e2e.utils import SAMPLES_API_PATH
 
 
 @given(sample=from_type(Sample), nearest_leaf=from_type(NearestLeaf), neighbours=lists(from_type(Neighbour), unique_by=lambda x: x.experiment_id))
-def test_create_new_sample(db, client, sample, nearest_leaf, neighbours):
+def test_create_new_sample(repo, client, sample, nearest_leaf, neighbours):
     assume(sample.experiment_id not in [x.experiment_id for x in neighbours])
 
     try:
@@ -23,12 +23,12 @@ def test_create_new_sample(db, client, sample, nearest_leaf, neighbours):
             for x in sample.nearest_neighbours:
                 assert x in actual.nearest_neighbours
     finally:
-        db.truncate()
+        repo.truncate()
 
 
 @given(sample=from_type(Sample), distance=integers())
 @settings(max_examples=1)
-def test_create_new_sample_that_neighbour_itself(db, client, sample, distance):
+def test_create_new_sample_that_neighbour_itself(repo, client, sample, distance):
     sample.nearest_neighbours = [Neighbour(sample.experiment_id, distance)]
 
     actual = create_and_retrieve_sample(sample, client)
@@ -38,7 +38,7 @@ def test_create_new_sample_that_neighbour_itself(db, client, sample, distance):
 
 @given(sample=from_type(Sample), neighbour=from_type(Neighbour))
 @settings(max_examples=1)
-def test_create_new_sample_with_duplicated_neighbours(db, client, sample, neighbour):
+def test_create_new_sample_with_duplicated_neighbours(repo, client, sample, neighbour):
     assume(sample.experiment_id != neighbour.experiment_id)
 
     sample.nearest_neighbours = [neighbour, neighbour]
@@ -50,7 +50,7 @@ def test_create_new_sample_with_duplicated_neighbours(db, client, sample, neighb
 
 
 @given(sample=from_type(Sample), neighbours=lists(from_type(Neighbour)), nearest_leaf=from_type(NearestLeaf))
-def test_create_existing_sample(db, client, sample, neighbours, nearest_leaf):
+def test_create_existing_sample(repo, client, sample, neighbours, nearest_leaf):
     try:
         sample.nearest_neighbours = neighbours
         sample.nearest_leaf_node = nearest_leaf
@@ -64,7 +64,7 @@ def test_create_existing_sample(db, client, sample, neighbours, nearest_leaf):
         assert resp.json['code'] == 409
         assert resp.json['message'] == 'Already existed'
     finally:
-        db.truncate()
+        repo.truncate()
 
 
 def create_and_retrieve_sample(sample, client):

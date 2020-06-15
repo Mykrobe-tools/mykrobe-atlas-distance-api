@@ -24,12 +24,12 @@ def samples_id_nearest_neighbours_put(body, id):  # noqa: E501
     if connexion.request.is_json:
         body = [Neighbour.from_dict(d) for d in connexion.request.get_json()]  # noqa: E501
 
-    db = registry.get('db')
+    repo = registry.get('repo')
 
     try:
         sample = Sample(id, body)
         node = GraphFactory.build(sample)
-        db.update(node)
+        repo.update(node)
     except NotFound:
         return Error(404, 'Not found'), 404
     else:

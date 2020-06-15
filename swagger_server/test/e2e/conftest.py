@@ -10,21 +10,21 @@ from swagger_server.repositories import Neo4jRepository
 
 
 @fixture
-def db():
-    db = Neo4jRepository()
-    yield db
-    db.truncate()
+def repo():
+    repo = Neo4jRepository()
+    yield repo
+    repo.truncate()
 
 
 @fixture
-def app(db):
+def app(repo):
     logging.getLogger('connexion.operation').setLevel('ERROR')
     app = connexion.App(__name__, specification_dir='../../swagger/')
     app.app.json_encoder = JSONEncoder
     app.add_api('swagger.yaml')
 
     with app.app.app_context():
-        registry.register('db', db)
+        registry.register('repo', repo)
         yield app.app
 
 

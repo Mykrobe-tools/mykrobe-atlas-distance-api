@@ -17,7 +17,7 @@ def test_updating_neighbours_of_non_existent_sample(client, sample, neighbours):
 
 
 @given(sample=from_type(Sample), neighbours=lists(from_type(Neighbour), unique_by=lambda x: x.experiment_id))
-def test_updating_neighbours(db, client, sample, neighbours):
+def test_updating_neighbours(repo, client, sample, neighbours):
     assume(sample.experiment_id not in [x.experiment_id for x in neighbours])
 
     try:
@@ -39,4 +39,4 @@ def test_updating_neighbours(db, client, sample, neighbours):
         for x in sample.nearest_neighbours:
             assert x in actual.nearest_neighbours
     finally:
-        db.truncate()
+        repo.truncate()

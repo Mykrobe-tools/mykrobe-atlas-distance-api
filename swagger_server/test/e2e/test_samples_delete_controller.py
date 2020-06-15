@@ -17,7 +17,7 @@ def test_deleting_non_existent_sample(client, sample):
 
 
 @given(sample=from_type(Sample), nearest_leaf=from_type(NearestLeaf), neighbours=lists(from_type(Neighbour), unique_by=lambda x: x.experiment_id))
-def test_deleting_sample(db, client, sample, nearest_leaf, neighbours):
+def test_deleting_sample(repo, client, sample, nearest_leaf, neighbours):
     assume(sample.experiment_id not in [x.experiment_id for x in neighbours])
 
     try:
@@ -35,4 +35,4 @@ def test_deleting_sample(db, client, sample, nearest_leaf, neighbours):
         resp = client.open(path)
         assert resp.status_code == 404
     finally:
-        db.truncate()
+        repo.truncate()

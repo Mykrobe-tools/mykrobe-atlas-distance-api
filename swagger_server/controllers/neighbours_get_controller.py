@@ -17,10 +17,10 @@ def samples_id_nearest_neighbours_get(id):  # noqa: E501
     :rtype: List[Neighbour]
     """
 
-    db = registry.get('db')
+    repo = registry.get('repo')
 
     try:
-        sample_node = db.get(SampleNode, id)
+        sample_node = repo.get(SampleNode, id)
         sample = ModelFactory.build(sample_node)
     except NotFound:
         return Error(404, 'Not found'), 404

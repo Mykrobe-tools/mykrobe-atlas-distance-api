@@ -21,11 +21,11 @@ def samples_post(body):  # noqa: E501
     if connexion.request.is_json:
         body = Sample.from_dict(connexion.request.get_json())  # noqa: E501
 
-    db = registry.get('db')
+    repo = registry.get('repo')
 
     try:
         node = GraphFactory.build(body)
-        db.create(node)
+        repo.create(node)
     except Exists:
         return Error(409, 'Already existed'), 409
     else:

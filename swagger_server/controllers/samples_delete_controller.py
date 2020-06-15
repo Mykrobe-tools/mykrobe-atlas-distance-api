@@ -16,10 +16,10 @@ def samples_id_delete(id):  # noqa: E501
     :rtype: None
     """
 
-    db = registry.get('db')
+    repo = registry.get('repo')
 
     try:
-        db.delete(SampleNode, id)
+        repo.delete(SampleNode, id)
     except NotFound:
         return Error(404, 'Not found'), 404
     else:
