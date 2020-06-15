@@ -21,9 +21,9 @@ def samples_id_get(id):  # noqa: E501
     repo = registry.get('repo')
 
     try:
-        sample_node = repo.get(SampleNode, id)
-        sample = ModelFactory.build(sample_node)
+        node = repo.get(SampleNode, id)
+        resource = ModelFactory.build(node)
     except NotFound:
         return Error(404, 'Not found'), 404
     else:
-        return sample
+        return resource

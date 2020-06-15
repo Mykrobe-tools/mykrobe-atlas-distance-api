@@ -3,7 +3,6 @@ from swagger_server.exceptions import NotFound
 from swagger_server.factories import ModelFactory
 from swagger_server.models.error import Error  # noqa: E501
 from swagger_server.ogm import SampleNode
-from swagger_server.repositories import Neo4jRepository
 
 
 def samples_id_nearest_neighbours_get(id):  # noqa: E501
@@ -20,11 +19,11 @@ def samples_id_nearest_neighbours_get(id):  # noqa: E501
     repo = registry.get('repo')
 
     try:
-        sample_node = repo.get(SampleNode, id)
-        sample = ModelFactory.build(sample_node)
+        node = repo.get(SampleNode, id)
+        resource = ModelFactory.build(node)
     except NotFound:
         return Error(404, 'Not found'), 404
     else:
-        if not sample.nearest_neighbours:
+        if not resource.nearest_neighbours:
             return Error(404, 'Not found'), 404
-        return sample
+        return resource

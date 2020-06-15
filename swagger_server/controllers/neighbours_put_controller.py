@@ -27,8 +27,8 @@ def samples_id_nearest_neighbours_put(body, id):  # noqa: E501
     repo = registry.get('repo')
 
     try:
-        sample = Sample(id, body)
-        node = GraphFactory.build(sample)
+        resource = Sample(id, body)
+        node = GraphFactory.build(resource)
         repo.update(node)
     except NotFound:
         return Error(404, 'Not found'), 404
