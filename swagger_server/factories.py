@@ -1,4 +1,6 @@
+from abc import ABC, abstractmethod
 from functools import singledispatchmethod
+from typing import Any
 
 from py2neo.ogm import GraphObject
 
@@ -7,10 +9,23 @@ from swagger_server.models.base_model_ import Model
 from swagger_server.ogm import LeafNode, SampleNode
 
 
-class ModelFactory:
+class BaseFactory(ABC):
+    """
+    Implements the AbstractFactory creational pattern using dynamtic dispatch. The drawback of this method is that the
+    final object's type is not inferable by static checkers.
+    """
+
     @singledispatchmethod
     @staticmethod
-    def build(recipe: GraphObject):
+    @abstractmethod
+    def build(recipe) -> Any:
+        raise NotImplementedError
+
+
+class ModelFactory(BaseFactory):
+    @singledispatchmethod
+    @staticmethod
+    def build(recipe: GraphObject) -> Any:
         raise NotImplementedError
 
     @build.register(SampleNode)
@@ -35,10 +50,10 @@ class ModelFactory:
         return sample
 
 
-class GraphFactory:
+class GraphFactory(BaseFactory):
     @singledispatchmethod
     @staticmethod
-    def build(recipe: Model):
+    def build(recipe: Model) -> Any:
         raise NotImplementedError
 
     @build.register(Sample)

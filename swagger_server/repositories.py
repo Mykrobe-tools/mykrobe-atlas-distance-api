@@ -6,9 +6,15 @@ from py2neo.ogm import GraphObject
 from swagger_server.exceptions import Exists, NotFound
 
 
-class Neo4jRepository:
-    def __init__(self, driver: Graph = None):
-        self.driver = driver or Graph()
+class BaseRepository:
+    """
+    Repositories provide high level abstractions for data persistence operations.
+    """
+
+
+class Neo4jRepository(BaseRepository):
+    def __init__(self, driver: Graph = None, uri: str = None, **connection_settings):
+        self.driver = driver or Graph(uri, **connection_settings)
 
     def create(self, graph_object: GraphObject):
         if self.exists(graph_object):
@@ -22,7 +28,7 @@ class Neo4jRepository:
 
         self.driver.push(graph_object)
 
-    def get(self, graph_object_class: Type[GraphObject], pk):
+    def get(self, graph_object_class: Type[GraphObject], pk) -> GraphObject:
         matched = graph_object_class.match(self.driver, pk).limit(1)
 
         if len(matched) == 0:
@@ -37,8 +43,8 @@ class Neo4jRepository:
 
         return len(existing) > 0
 
-    def delete(self, pk, graph_object: GraphObject):
-        node = self.get(pk, graph_object)
+    def delete(self, graph_object_class: Type[GraphObject], pk):
+        node = self.get(graph_object_class, pk)
         self.driver.delete(node)
 
     def truncate(self):
