@@ -1,6 +1,6 @@
 import connexion
 
-from swagger_server import registry
+from swagger_server import registry, services
 from swagger_server.exceptions import NotFound
 from swagger_server.factories import GraphFactory
 from swagger_server.models import Sample
@@ -24,12 +24,8 @@ def samples_id_nearest_neighbours_put(body, id):  # noqa: E501
     if connexion.request.is_json:
         body = [Neighbour.from_dict(d) for d in connexion.request.get_json()]  # noqa: E501
 
-    repo = registry.get('repo')
-
     try:
-        resource = Sample(id, body)
-        node = GraphFactory.build(resource)
-        repo.update(node)
+        services.update_neighbours(id, body)
     except NotFound:
         return Error(404, 'Not found'), 404
     else:

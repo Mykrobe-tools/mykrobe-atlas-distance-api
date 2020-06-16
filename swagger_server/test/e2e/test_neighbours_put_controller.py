@@ -35,8 +35,8 @@ def test_updating_neighbours(repo, client, sample, neighbours):
 
         path = str(NEIGHBOURS_API_PATH(sample.experiment_id))
         resp = client.open(path)
-        actual = Sample.from_dict(resp.json)
+        actual = [Neighbour.from_dict(x) for x in resp.json]
         for x in sample.nearest_neighbours:
-            assert x in actual.nearest_neighbours
+            assert x in actual
     finally:
         repo.truncate()

@@ -43,8 +43,8 @@ def test_getting_neighbours(repo, client, sample, neighbours):
         resp = client.open(path)
         assert resp.status_code == 200
 
-        actual = Sample.from_dict(resp.json)
+        actual = [Neighbour.from_dict(x) for x in resp.json]
         for x in sample.nearest_neighbours:
-            assert x in actual.nearest_neighbours
+            assert x in actual
     finally:
         repo.truncate()

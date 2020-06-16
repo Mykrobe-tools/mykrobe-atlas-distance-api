@@ -1,8 +1,6 @@
-from swagger_server import registry
+from swagger_server import services
 from swagger_server.exceptions import NotFound
-from swagger_server.factories import ModelFactory
 from swagger_server.models.error import Error  # noqa: E501
-from swagger_server.ogm import SampleNode
 
 
 def samples_id_nearest_neighbours_get(id):  # noqa: E501
@@ -16,14 +14,11 @@ def samples_id_nearest_neighbours_get(id):  # noqa: E501
     :rtype: List[Neighbour]
     """
 
-    repo = registry.get('repo')
-
     try:
-        node = repo.get(SampleNode, id)
-        resource = ModelFactory.build(node)
+        resource = services.get_neighbours(id)
     except NotFound:
         return Error(404, 'Not found'), 404
     else:
-        if not resource.nearest_neighbours:
+        if not resource:
             return Error(404, 'Not found'), 404
-        return resource
+        return resource, 200

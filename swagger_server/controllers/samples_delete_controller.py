@@ -1,8 +1,6 @@
-from swagger_server import registry
+from swagger_server import services
 from swagger_server.exceptions import NotFound
 from swagger_server.models.error import Error  # noqa: E501
-from swagger_server.ogm import SampleNode
-from swagger_server.repositories import Neo4jRepository
 
 
 def samples_id_delete(id):  # noqa: E501
@@ -16,10 +14,8 @@ def samples_id_delete(id):  # noqa: E501
     :rtype: None
     """
 
-    repo = registry.get('repo')
-
     try:
-        repo.delete(SampleNode, id)
+        services.delete_sample(id)
     except NotFound:
         return Error(404, 'Not found'), 404
     else:
