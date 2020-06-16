@@ -17,7 +17,7 @@ def test_getting_non_existent_sample(client, sample):
 
 
 @given(sample=from_type(Sample), nearest_leaf=from_type(NearestLeaf), neighbours=lists(from_type(Neighbour), unique_by=lambda x: x.experiment_id))
-def test_getting_sample(repo, client, sample, nearest_leaf, neighbours):
+def test_getting_sample(neo4j, client, sample, nearest_leaf, neighbours):
     assume(sample.experiment_id not in [x.experiment_id for x in neighbours])
 
     try:
@@ -40,4 +40,4 @@ def test_getting_sample(repo, client, sample, nearest_leaf, neighbours):
             for x in sample.nearest_neighbours:
                 assert x in actual.nearest_neighbours
     finally:
-        repo.truncate()
+        neo4j.truncate()
