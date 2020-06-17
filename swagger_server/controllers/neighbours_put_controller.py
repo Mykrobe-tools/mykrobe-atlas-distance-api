@@ -1,12 +1,9 @@
 import connexion
 
-from swagger_server import registry, services
+from swagger_server import services
 from swagger_server.exceptions import NotFound
-from swagger_server.factories import GraphFactory
-from swagger_server.models import Sample
 from swagger_server.models.error import Error  # noqa: E501
 from swagger_server.models.neighbour import Neighbour  # noqa: E501
-from swagger_server.repositories import Neo4jRepository
 
 
 def samples_id_nearest_neighbours_put(body, id):  # noqa: E501
