@@ -1,5 +1,5 @@
 generate:
-	java -jar scripts/swagger-codegen-cli.jar generate -o . -i swagger.yaml -l python-flask
+	java -jar scripts/openapi-generator.jar generate -i swagger.yaml -g python-flask --additional-properties=packageName=swagger_server
 
 build:
 	docker build -t dist .

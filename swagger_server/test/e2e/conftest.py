@@ -19,9 +19,9 @@ def neo4j():
 @fixture
 def app(neo4j):
     logging.getLogger('connexion.operation').setLevel('ERROR')
-    app = connexion.App(__name__, specification_dir='../../swagger/')
+    app = connexion.App(__name__, specification_dir='../../openapi/')
     app.app.json_encoder = JSONEncoder
-    app.add_api('swagger.yaml')
+    app.add_api('openapi.yaml')
 
     with app.app.app_context():
         registry.register('neo4j', neo4j)

@@ -21,20 +21,20 @@ def samples_id_nearest_leaf_node_get(id):  # noqa: E501
     return 'do some magic!'
 
 
-def samples_id_nearest_leaf_node_put(body, id):  # noqa: E501
+def samples_id_nearest_leaf_node_put(id, nearest_leaf):  # noqa: E501
     """samples_id_nearest_leaf_node_put
 
     Replace the nearest leaf node of a sample based on a sample ID. # noqa: E501
 
-    :param body: New nearest leaf node to replace old one.
-    :type body: dict | bytes
     :param id: 
     :type id: str
+    :param nearest_leaf: New nearest leaf node to replace old one.
+    :type nearest_leaf: dict | bytes
 
     :rtype: NearestLeaf
     """
     if connexion.request.is_json:
-        body = NearestLeaf.from_dict(connexion.request.get_json())  # noqa: E501
+        nearest_leaf = NearestLeaf.from_dict(connexion.request.get_json())  # noqa: E501
     return 'do some magic!'
 
 
@@ -64,16 +64,16 @@ def tree_id_get(id):  # noqa: E501
     return 'do some magic!'
 
 
-def tree_post(body):  # noqa: E501
+def tree_post(leaf):  # noqa: E501
     """tree_post
 
     Create a leaf node for the phylogenetic tree. # noqa: E501
 
-    :param body: Leaf node to be added
-    :type body: dict | bytes
+    :param leaf: Leaf node to be added
+    :type leaf: dict | bytes
 
     :rtype: Leaf
     """
     if connexion.request.is_json:
-        body = Leaf.from_dict(connexion.request.get_json())  # noqa: E501
+        leaf = Leaf.from_dict(connexion.request.get_json())  # noqa: E501
     return 'do some magic!'
