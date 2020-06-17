@@ -1,5 +1,6 @@
 from hypothesis import given, assume, settings
 from hypothesis.strategies import from_type, lists, integers
+from pytest import fail, skip
 
 from swagger_server.models import Sample, NearestLeaf, Neighbour
 from swagger_server.test.e2e.utils import SAMPLES_API_PATH
@@ -63,6 +64,24 @@ def test_create_existing_sample(neo4j, client, sample, neighbours, nearest_leaf)
         assert resp.status_code == 409
         assert resp.json['code'] == 409
         assert resp.json['message'] == 'Already existed'
+    finally:
+        neo4j.truncate()
+
+
+@given(sample=from_type(Sample), neighbours=lists(from_type(Neighbour)), nearest_leaf=from_type(NearestLeaf))
+def test_create_samples_with_existing_lineage(neo4j, client, sample, neighbours, nearest_leaf):
+    skip('until we have leaf creation API')
+    try:
+        fail()
+    finally:
+        neo4j.truncate()
+
+
+@given(sample=from_type(Sample), neighbours=lists(from_type(Neighbour)), nearest_leaf=from_type(NearestLeaf))
+def test_create_samples_with_existing_neighbours(neo4j, client, sample, neighbours, nearest_leaf):
+    skip('until we know what to do')
+    try:
+        fail()
     finally:
         neo4j.truncate()
 

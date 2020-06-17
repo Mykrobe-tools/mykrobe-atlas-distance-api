@@ -1,6 +1,7 @@
 from typing import List
 
 from swagger_server import registry
+from swagger_server.exceptions import NotFound
 from swagger_server.factories import GraphFactory, ModelFactory
 from swagger_server.models import Sample, Neighbour
 from swagger_server.ogm import SampleNode
@@ -36,10 +37,25 @@ def get_neighbours(sample_id: str) -> List[Neighbour]:
     return ModelFactory.build(node).nearest_neighbours
 
 
-def update_neighbours(sample_id: str, neighbours: List[Neighbour]):
+def update_neighbours(sample_id: str, new_neighbours: List[Neighbour]) -> List[Neighbour]:
     repo = registry.get('neo4j')
 
-    resource = Sample(sample_id, neighbours)
-    node = GraphFactory.build(resource)
+    node = repo.get(SampleNode, sample_id)
+
+    node.neighbours.clear()
+    repo.update(node)
+
+    updated = []
+    for neighbour in new_neighbours:
+        try:
+            neighbour_node = repo.get(SampleNode, neighbour.experiment_id)
+        except NotFound:
+            continue
+
+        node.neighbours.add(neighbour_node, distance=neighbour.distance)
+
+        updated.append(neighbour)
 
     repo.update(node)
+
+    return updated

@@ -40,3 +40,4 @@
 /swagger_server/controllers/samples_delete_controller.py
 #/swagger_server/controllers/samples_put_controller.py
 /swagger_server/test/
+/swagger_server/util.py  # Temporary fix: https://github.com/zalando/connexion/issues/739#issuecomment-437398835

@@ -1,4 +1,4 @@
-from hypothesis.strategies import composite, text, integers, characters
+from hypothesis.strategies import composite, text, integers, characters, lists
 
 from swagger_server.models import Sample, Neighbour, NearestLeaf
 
@@ -40,3 +40,17 @@ def nearest_leafs(draw):
         leaf_id=leaf_id,
         distance=distance
     )
+
+
+@composite
+def full_samples(draw):
+    sample = draw(samples())
+    sample.nearest_leaf = draw(nearest_leafs())
+    sample.nearest_neighbours = draw(
+        lists(
+            neighbours().filter(lambda x: x.experiment_id != sample.experiment_id),
+            unique_by=lambda x: x.experiment_id
+        )
+    )
+
+    return sample

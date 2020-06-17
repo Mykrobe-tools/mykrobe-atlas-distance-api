@@ -22,8 +22,8 @@ def samples_id_nearest_neighbours_put(body, id):  # noqa: E501
         body = [Neighbour.from_dict(d) for d in connexion.request.get_json()]  # noqa: E501
 
     try:
-        services.update_neighbours(id, body)
+        updated = services.update_neighbours(id, body)
     except NotFound:
         return Error(404, 'Not found'), 404
     else:
-        return body, 200
+        return updated, 200
