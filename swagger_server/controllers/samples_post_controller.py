@@ -1,27 +1,21 @@
 import connexion
+import six
 
-from swagger_server import services
-from swagger_server.exceptions import Exists
-from swagger_server.models import Error
+from swagger_server.models.error import Error  # noqa: E501
 from swagger_server.models.sample import Sample  # noqa: E501
+from swagger_server import util
 
 
-def samples_post(body):  # noqa: E501
+def samples_post():  # noqa: E501
     """samples_post
 
     Add a new sample. Duplicates are not allowed # noqa: E501
 
-    :param body: Sample to be added
-    :type body: dict | bytes
+    :param sample: Sample to be added
+    :type sample: dict | bytes
 
     :rtype: Sample
     """
     if connexion.request.is_json:
-        body = Sample.from_dict(connexion.request.get_json())  # noqa: E501
-
-    try:
-        services.create_sample(body)
-    except Exists:
-        return Error(409, 'Already existed'), 409
-    else:
-        return body, 201
+        sample = Sample.from_dict(connexion.request.get_json())  # noqa: E501
+    return 'do some magic!'
