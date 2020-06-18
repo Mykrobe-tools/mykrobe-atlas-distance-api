@@ -1,13 +1,12 @@
-import random
-
-from hypothesis import given, assume
+from hypothesis import given, assume, settings
 
 from swagger_server.models import Sample
 from swagger_server.test.strategies import samples, neighbours
 
 
 @given(sample=samples(), neighbour=neighbours())
-def test_duplicated_neighbours(sample, neighbour, create_sample, sample_graph):
+@settings(max_examples=1)
+def test_duplicated_neighbours_are_deduplicated(sample, neighbour, create_sample, sample_graph):
     assume(sample.experiment_id != neighbour.experiment_id)
 
     try:
@@ -25,7 +24,8 @@ def test_duplicated_neighbours(sample, neighbour, create_sample, sample_graph):
 
 
 @given(sample=samples())
-def test_sample_existed(sample, create_sample, sample_graph):
+@settings(max_examples=1)
+def test_creating_existing_sample_returns_409(sample, create_sample, sample_graph):
     try:
         create_sample(sample, ensure=True)
 
@@ -38,27 +38,32 @@ def test_sample_existed(sample, create_sample, sample_graph):
 
 
 @given(sample=samples())
-def test_most_scenarios(sample, create_sample, create_leaf, sample_graph):
-    neighbours_that_exist = []
-    if sample.nearest_neighbours:
-        neighbours_that_exist = random.sample(sample.nearest_neighbours, random.randrange(0, len(sample.nearest_neighbours)))
+def test_a_successful_request_creates_the_sample_and_relationships_with_existing_nodes(sample, create_sample, create_leaf, sample_graph):
+    assume(sample.nearest_leaf_node)
 
     try:
-        if sample.nearest_leaf_node:
-            create_leaf(sample.nearest_leaf_node, ensure=True)
-        for neighbour in neighbours_that_exist:
+        create_leaf(sample.nearest_leaf_node, ensure=True)
+        for neighbour in sample.nearest_neighbours:
             create_sample(neighbour, ensure=True)
 
         response = create_sample(sample)
         created = Sample.from_dict(response.json)
 
         assert response.status_code == 201
+        assert created == sample
+    finally:
+        sample_graph.delete_all()
+
+
+@given(sample=samples())
+def test_a_successful_request_does_not_create_new_leaf_and_neighbour_nodes(sample, create_sample, create_leaf, sample_graph):
+    try:
+        response = create_sample(sample)
+        created = Sample.from_dict(response.json)
+
+        assert response.status_code == 201
         assert created.experiment_id == sample.experiment_id
-        for neighbour in sample.nearest_neighbours:
-            if neighbour in neighbours_that_exist:
-                assert neighbour in created.nearest_neighbours
-            else:
-                assert neighbour not in created.nearest_neighbours
-        assert created.nearest_leaf_node == sample.nearest_leaf_node
+        assert not created.nearest_neighbours
+        assert not created.nearest_leaf_node
     finally:
         sample_graph.delete_all()

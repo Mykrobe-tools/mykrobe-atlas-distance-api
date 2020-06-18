@@ -1,7 +1,7 @@
 from py2neo import Graph
 from py2neo.ogm import GraphObject, Property, RelatedTo
 
-from swagger_server.exceptions import Exists
+from swagger_server.exceptions import Existed
 from swagger_server.models import Sample
 
 
@@ -25,12 +25,12 @@ class SampleNode(BaseGraphObject):
     lineage = RelatedTo(LeafNode, 'LINEAGE')
 
     @classmethod
-    def create(cls, sample: Sample, graph: Graph):
+    def create_from(cls, sample: Sample, graph: Graph):
         node = cls()
         node.experiment_id = sample.experiment_id
 
         if node.exists(graph):
-            raise Exists
+            raise Existed
 
         graph.create(node)
 
