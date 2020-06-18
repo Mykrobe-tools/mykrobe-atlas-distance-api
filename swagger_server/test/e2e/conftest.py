@@ -7,6 +7,7 @@ from py2neo import Graph
 from pytest import fixture
 
 from swagger_server.encoder import JSONEncoder
+from swagger_server.ogm import LeafNode
 
 
 @fixture
@@ -36,8 +37,11 @@ def client(app):
 
 @fixture
 def make_request(client):
-    def request(path, method, json=None):
-        return client.open(path, method=method, json=json)
+    def request(path, method, json=None, ensure=False, success_code=200):
+        response = client.open(path, method=method, json=json)
+        if ensure:
+            assert response.status_code == success_code, response.data.decode()
+        return response
     return request
 
 
@@ -46,15 +50,15 @@ API_ROOT = '/api/v1'
 
 @fixture
 def create_sample(make_request):
-    def request(sample):
-        return make_request(f'{API_ROOT}/samples', 'POST', sample)
+    def request(sample, *args, **kwargs):
+        return make_request(f'{API_ROOT}/samples', 'POST', sample, success_code=201, *args, **kwargs)
     return request
 
 
 @fixture
 def get_sample(make_request):
-    def request(sample):
-        return make_request(f'{API_ROOT}/samples/{sample.experiment_id}', 'GET')
+    def request(sample, *args, **kwargs):
+        return make_request(f'{API_ROOT}/samples/{sample.experiment_id}', 'GET', *args, **kwargs)
     return request
 
 
@@ -67,15 +71,25 @@ def delete_sample(make_request):
 
 @fixture
 def get_neighbours(make_request):
-    def request(sample):
-        return make_request(f'{API_ROOT}/samples/{sample.experiment_id}/nearest-neighbours', 'DELETE')
+    def request(sample, *args, **kwargs):
+        return make_request(f'{API_ROOT}/samples/{sample.experiment_id}/nearest-neighbours', 'DELETE', *args, **kwargs)
     return request
 
 
 @fixture
 def update_neighbours(make_request):
-    def request(sample, neighbours):
-        return make_request(f'{API_ROOT}/samples/{sample.experiment_id}/nearest-neighbours', 'PUT', neighbours)
+    def request(sample, neighbours, *args, **kwargs):
+        return make_request(f'{API_ROOT}/samples/{sample.experiment_id}/nearest-neighbours', 'PUT', neighbours, *args, **kwargs)
+    return request
+
+
+# TODO: Replace with endpoint request
+@fixture
+def create_leaf(sample_graph):
+    def request(leaf, *args, **kwargs):
+        node = LeafNode()
+        node.leaf_id = leaf.leaf_id
+        sample_graph.create(node)
     return request
 
 
