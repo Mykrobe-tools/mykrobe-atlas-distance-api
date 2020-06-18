@@ -6,7 +6,7 @@ from swagger_server.test.strategies import samples, neighbours
 
 @given(sample=samples(), neighbour=neighbours())
 @settings(max_examples=1)
-def test_duplicated_neighbours_are_deduplicated(sample, neighbour, create_sample, sample_graph):
+def test_endpoint_deduplicates_neighbour_relationships(sample, neighbour, create_sample, sample_graph):
     assume(sample.experiment_id != neighbour.experiment_id)
 
     try:
@@ -25,7 +25,7 @@ def test_duplicated_neighbours_are_deduplicated(sample, neighbour, create_sample
 
 @given(sample=samples())
 @settings(max_examples=1)
-def test_creating_existing_sample_returns_409(sample, create_sample, sample_graph):
+def test_endpoint_returns_409_on_duplicated_sample(sample, create_sample, sample_graph):
     try:
         create_sample(sample, ensure=True)
 
@@ -38,7 +38,7 @@ def test_creating_existing_sample_returns_409(sample, create_sample, sample_grap
 
 
 @given(sample=samples())
-def test_a_successful_request_creates_the_sample_and_relationships_with_existing_nodes(sample, create_sample, create_leaf, sample_graph):
+def test_endpoint_creates_non_existent_sample_and_relationships_with_existing_nodes(sample, create_sample, create_leaf, sample_graph):
     assume(sample.nearest_leaf_node)
 
     try:
@@ -56,7 +56,7 @@ def test_a_successful_request_creates_the_sample_and_relationships_with_existing
 
 
 @given(sample=samples())
-def test_a_successful_request_does_not_create_new_leaf_and_neighbour_nodes(sample, create_sample, create_leaf, sample_graph):
+def test_endpoint_does_not_create_new_leaves_and_neighbour_nodes(sample, create_sample, create_leaf, sample_graph):
     try:
         response = create_sample(sample)
         created = Sample.from_dict(response.json)
