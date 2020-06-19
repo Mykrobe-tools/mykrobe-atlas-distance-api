@@ -5,7 +5,7 @@ from swagger_server.exceptions import Existed
 from swagger_server.factories import SampleFactory
 from swagger_server.models.error import Error  # noqa: E501
 from swagger_server.models.sample import Sample  # noqa: E501
-from swagger_server.ogm import SampleNode, LeafNode
+from swagger_server.ogm import SampleNode
 
 
 def samples_post(sample=None):  # noqa: E501

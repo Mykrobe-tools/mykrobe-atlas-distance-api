@@ -32,7 +32,7 @@ class SampleNode(BaseGraphObject):
         if node.exists(graph):
             raise Existed
 
-        graph.create(node)
+        graph.push(node)
 
         if sample.nearest_leaf_node and len(LeafNode.match(graph, sample.nearest_leaf_node.leaf_id)) > 0:
             n = LeafNode()

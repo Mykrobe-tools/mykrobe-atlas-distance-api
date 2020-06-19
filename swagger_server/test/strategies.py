@@ -12,12 +12,17 @@ def int64s():
 
 
 @composite
-def samples(draw):
+def samples(draw, unique_neighbours=False):
     experiment_id = draw(safe_non_empty_strings())
+
+    def neighbours_unique_by(neighbour):
+        return neighbour.experiment_id
+
     nearest_neighbours = draw(one_of(
-        lists(neighbours()),
+        lists(neighbours(), unique_by=neighbours_unique_by if unique_neighbours else None),
         none()
     ))
+
     nearest_leaf = draw(one_of(
         nearest_leafs(),
         none()
