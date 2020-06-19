@@ -14,9 +14,9 @@ def int64s():
 @composite
 def samples(draw):
     experiment_id = draw(safe_non_empty_strings())
-    nearest_neighbours = draw(lists(
-        neighbours().filter(lambda x: x.experiment_id != experiment_id),
-        unique_by=lambda x: x.experiment_id
+    nearest_neighbours = draw(one_of(
+        lists(neighbours()),
+        none()
     ))
     nearest_leaf = draw(one_of(
         nearest_leafs(),

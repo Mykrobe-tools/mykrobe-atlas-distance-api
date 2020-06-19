@@ -41,7 +41,7 @@ class SampleNode(BaseGraphObject):
 
         if sample.nearest_neighbours:
             for neighbour in sample.nearest_neighbours:
-                if len(SampleNode.match(graph, neighbour.experiment_id)) > 0:
+                if neighbour.experiment_id != sample.experiment_id and len(SampleNode.match(graph, neighbour.experiment_id)) > 0:
                     n = SampleNode()
                     n.experiment_id = neighbour.experiment_id
                     node.neighbours.add(n, distance=neighbour.distance)

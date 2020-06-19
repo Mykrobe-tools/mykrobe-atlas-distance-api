@@ -40,7 +40,7 @@ def make_request(client):
     def request(path, method, json=None, ensure=False, success_code=200):
         response = client.open(path, method=method, json=json)
         if ensure:
-            assert response.status_code == success_code, response.data.decode()
+            assert response.status_code == success_code, f'{response.data.decode()}\nPath: {path}\nMethod: {method}\nBody: {json}'
         return response
     return request
 
