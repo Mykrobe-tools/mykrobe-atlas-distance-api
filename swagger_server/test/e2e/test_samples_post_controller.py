@@ -2,7 +2,7 @@ from hypothesis import given, assume, settings, HealthCheck
 from pytest import fixture
 
 from swagger_server.models import Sample
-from swagger_server.test.strategies import samples
+from swagger_server.test.strategies import samples, neighbours
 
 
 class TestSampleExists:
@@ -79,24 +79,23 @@ class TestLeafAndNeighboursExist:
         finally:
             sample_graph.delete_all()
 
-    @given(sample=samples(unique_neighbours=True))
-    def test_self_neighbouring_relationships_are_not_created(self, sample, create_sample, sample_graph):
+    @given(sample=samples(unique_neighbours=True), self_neighbouring_relationship=neighbours())
+    def test_self_neighbouring_relationships_are_not_created(self, sample, self_neighbouring_relationship, create_sample, sample_graph):
         assume(sample.nearest_neighbours)
-
-        valid_neighbours = [x for x in sample.nearest_neighbours if x.experiment_id != sample.experiment_id]
+        assume(sample.experiment_id not in [x.experiment_id for x in sample.nearest_neighbours])
 
         try:
             for neighbour in sample.nearest_neighbours:
-                create_sample(neighbour)
+                create_sample(neighbour, ensure=True)
+
+            self_neighbouring_relationship.experiment_id = sample.experiment_id
+            sample.nearest_neighbours.append(self_neighbouring_relationship)
 
             response = create_sample(sample, ensure=True)
             created = Sample.from_dict(response.json)
 
             assert created.experiment_id == sample.experiment_id
-            assert len(created.nearest_neighbours) == len(valid_neighbours)
-
-            assert len(sample_graph.nodes) == len(valid_neighbours) + 1
-            assert len(sample_graph.relationships) == len(valid_neighbours)
+            assert self_neighbouring_relationship not in created.nearest_neighbours
         finally:
             sample_graph.delete_all()
 

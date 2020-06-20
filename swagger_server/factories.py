@@ -1,5 +1,7 @@
+from py2neo import Graph
+
 from swagger_server.models import Sample, NearestLeaf, Neighbour
-from swagger_server.ogm import SampleNode
+from swagger_server.ogm import SampleNode, LeafNode
 
 
 class SampleFactory:
@@ -22,3 +24,25 @@ class SampleFactory:
                 sample.nearest_neighbours.append(Neighbour(neighbour_node.experiment_id, distance))
 
         return sample
+
+
+class SampleNodeFactory:
+    @staticmethod
+    def build(recipe: Sample, graph: Graph) -> SampleNode:
+        node = SampleNode()
+        node.experiment_id = recipe.experiment_id
+
+        if recipe.nearest_leaf_node:
+            n = LeafNode()
+            n.leaf_id = recipe.nearest_leaf_node.leaf_id
+            if n.exists(graph):
+                node.lineage.add(n, distance=recipe.nearest_leaf_node.distance)
+
+        if recipe.nearest_neighbours:
+            for neighbour in recipe.nearest_neighbours:
+                n = SampleNode()
+                n.experiment_id = neighbour.experiment_id
+                if n.exists(graph):
+                    node.neighbours.add(n, distance=neighbour.distance)
+
+        return node
