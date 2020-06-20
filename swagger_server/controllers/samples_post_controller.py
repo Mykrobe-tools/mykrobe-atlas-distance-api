@@ -23,27 +23,10 @@ def samples_post(sample=None):  # noqa: E501
     sample_graph = g.sample_graph
 
     node = SampleNode()
-    node.experiment_id = sample.experiment_id
+    node.build_from(sample, sample_graph)
 
     if node.exists(sample_graph):
         return Error(409, 'Already existed'), 409
-
-    if sample.nearest_neighbours:
-        sample.nearest_neighbours = [x for x in sample.nearest_neighbours if x.experiment_id != sample.experiment_id]
-
-    if sample.nearest_leaf_node:
-        n = LeafNode()
-        n.leaf_id = sample.nearest_leaf_node.leaf_id
-        if n.exists(sample_graph):
-            node.lineage.add(n, distance=sample.nearest_leaf_node.distance)
-
-    if sample.nearest_neighbours:
-        for neighbour in sample.nearest_neighbours:
-            n = SampleNode()
-            n.experiment_id = neighbour.experiment_id
-            if n.exists(sample_graph):
-                node.neighbours.add(n, distance=neighbour.distance)
-
     sample_graph.push(node)
 
     return SampleFactory.build(node), 201
