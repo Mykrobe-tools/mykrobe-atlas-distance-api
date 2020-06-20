@@ -25,6 +25,9 @@ def samples_post(sample=None):  # noqa: E501
     node = SampleNode()
     node.experiment_id = sample.experiment_id
 
+    if node.exists(sample_graph):
+        return Error(409, 'Already existed'), 409
+
     if sample.nearest_leaf_node:
         n = LeafNode()
         n.leaf_id = sample.nearest_leaf_node.leaf_id
@@ -39,8 +42,6 @@ def samples_post(sample=None):  # noqa: E501
                 if n.exists(sample_graph):
                     node.neighbours.add(n, distance=neighbour.distance)
 
-    if node.exists(sample_graph):
-        return Error(409, 'Already existed'), 409
     sample_graph.push(node)
 
     return SampleFactory.build(node), 201
