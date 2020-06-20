@@ -10,14 +10,14 @@ from swagger_server.encoder import JSONEncoder
 from swagger_server.ogm import LeafNode
 
 
-@fixture
+@fixture(scope='session')
 def sample_graph():
     repo = Graph()
     yield repo
     repo.delete_all()
 
 
-@fixture
+@fixture(scope='session')
 def app(sample_graph):
     logging.getLogger('connexion.operation').setLevel('ERROR')
     app = connexion.App(__name__, specification_dir='../../openapi/')
@@ -29,13 +29,13 @@ def app(sample_graph):
         yield app.app
 
 
-@fixture
+@fixture(scope='session')
 def client(app):
     with app.test_client() as client:
         yield client
 
 
-@fixture
+@fixture(scope='session')
 def make_request(client):
     def request(path, method, json=None, ensure=False, success_code=200):
         response = client.open(path, method=method, json=json)
@@ -48,7 +48,7 @@ def make_request(client):
 API_ROOT = '/api/v1'
 
 
-@fixture
+@fixture(scope='session')
 def create_sample(make_request):
     def request(sample, *args, **kwargs):
         return make_request(f'{API_ROOT}/samples', 'POST', sample, success_code=201, *args, **kwargs)
