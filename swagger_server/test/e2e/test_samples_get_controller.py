@@ -5,12 +5,12 @@ from swagger_server.test.strategies import samples
 
 
 @given(sample=samples())
-def test_endpoint_returns_404_if_sample_does_not_exist(sample, get_sample):
+def test_endpoint_returns_404_if_the_sample_does_not_exist(sample, get_sample):
     assert get_sample(sample).status_code == 404
 
 
 @given(sample=samples(unique_neighbours=True))
-def test_endpoint_returns_sample_and_its_relationships_if_they_exist(sample, get_sample, create_sample, create_leaf, sample_graph):
+def test_endpoint_returns_the_sample_and_its_relationships_if_they_exist(sample, get_sample, create_sample, create_leaf, sample_graph):
     assume(sample.nearest_neighbours)
     assume(sample.nearest_leaf_node)
     assume(sample.experiment_id not in [x.experiment_id for x in sample.nearest_neighbours])
