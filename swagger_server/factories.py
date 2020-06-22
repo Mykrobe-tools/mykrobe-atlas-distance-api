@@ -1,8 +1,18 @@
+from abc import ABC, abstractmethod
+from typing import Any
+
 from swagger_server.models import Sample, NearestLeaf, Neighbour
 from swagger_server.ogm import SampleNode
 
 
-class SampleFactory:
+class Factory(ABC):
+    @staticmethod
+    @abstractmethod
+    def build(recipe) -> Any:
+        raise NotImplementedError
+
+
+class SampleFactory(Factory):
     @staticmethod
     def build(recipe: SampleNode) -> Sample:
         leaf_relationship = recipe.lineage
