@@ -1,32 +1,30 @@
-from hypothesis import given, assume
+from hypothesis import given
 
 from swagger_server.models import Sample
 from swagger_server.test.strategies import samples
 
 
 @given(sample=samples())
-def test_endpoint_returns_404_if_the_sample_does_not_exist(sample, get_sample):
+def test_getting_non_existent_sample(sample, get_sample):
     assert get_sample(sample).status_code == 404
 
 
-@given(sample=samples(has_neighbours=True, unique_neighbours=True, has_leaf=True))
-def test_endpoint_returns_the_sample_and_its_relationships_if_they_exist(sample, get_sample, create_sample, create_leaf, sample_graph):
-    assume(sample.experiment_id not in [x.experiment_id for x in sample.nearest_neighbours])
-
+@given(sample=samples())
+def test_retrieved_sample_matches_created_sample(sample, create_sample, create_leaf, get_sample, sample_graph):
     try:
-        for neighbour in sample.nearest_neighbours:
-            create_sample(neighbour, ensure=True)
-        create_leaf(sample.nearest_leaf_node)
-        create_sample(sample, ensure=True)
+        if sample.nearest_neighbours:
+            for neighbour in sample.nearest_neighbours:
+                if neighbour.experiment_id != sample.experiment_id:
+                    create_sample(neighbour)
+        if sample.nearest_leaf_node:
+            create_leaf(sample.nearest_leaf_node, ensure=True)
 
-        response = get_sample(sample)
-        created = Sample.from_dict(response.json)
+        created = Sample.from_dict(create_sample(sample, ensure=True).json)
+        retrieved = Sample.from_dict(get_sample(sample, ensure=True).json)
 
-        assert response.status_code == 200
-        assert created.experiment_id == sample.experiment_id
-        assert created.nearest_leaf_node == sample.nearest_leaf_node
-        assert len(created.nearest_neighbours) == len(sample.nearest_neighbours)
+        assert created.nearest_leaf_node == retrieved.nearest_leaf_node
+        assert len(created.nearest_neighbours) == len(retrieved.nearest_neighbours)
         for neighbour in created.nearest_neighbours:
-            assert neighbour in sample.nearest_neighbours
+            assert neighbour in retrieved.nearest_neighbours
     finally:
         sample_graph.delete_all()
