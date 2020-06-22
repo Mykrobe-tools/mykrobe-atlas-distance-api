@@ -24,8 +24,6 @@ def samples_post(sample=None):  # noqa: E501
     sample_graph = g.sample_graph
 
     try:
-        node = create_sample(sample, sample_graph)
+        return create_sample(sample, sample_graph), 201
     except Existed:
         return Error(409, 'Already existed'), 409
-    else:
-        return SampleFactory.build(node), 201

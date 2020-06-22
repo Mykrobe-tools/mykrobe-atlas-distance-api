@@ -1,11 +1,12 @@
 from py2neo import Graph
 
-from swagger_server.exceptions import Existed
+from swagger_server.exceptions import Existed, NotFound
+from swagger_server.factories import SampleFactory
 from swagger_server.models import Sample
 from swagger_server.ogm import SampleNode, LeafNode
 
 
-def create_sample(sample: Sample, graph: Graph) -> SampleNode:
+def create_sample(sample: Sample, graph: Graph) -> Sample:
     node = SampleNode()
     node.experiment_id = sample.experiment_id
 
@@ -27,4 +28,13 @@ def create_sample(sample: Sample, graph: Graph) -> SampleNode:
 
     graph.push(node)
 
-    return node
+    return SampleFactory.build(node)
+
+
+def get_sample(experiment_id: str, graph: Graph) -> Sample:
+    samples = SampleNode.match(graph, experiment_id)
+
+    if len(samples) == 0:
+        raise NotFound
+    else:
+        return SampleFactory.build(samples.first())
