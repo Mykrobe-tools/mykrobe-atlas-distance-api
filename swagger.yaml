@@ -46,6 +46,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+        400:
+          description: Ambiguous (duplicated neighbours)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
         default:
           description: Unexpected error
           content:
