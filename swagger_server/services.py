@@ -1,6 +1,6 @@
 from py2neo import Graph
 
-from swagger_server.exceptions import Existed, NotFound
+from swagger_server.exceptions import Existed
 from swagger_server.factories import SampleFactory
 from swagger_server.models import Sample
 from swagger_server.ogm import SampleNode, LeafNode
@@ -32,9 +32,5 @@ def create_sample(sample: Sample, graph: Graph) -> Sample:
 
 
 def get_sample(experiment_id: str, graph: Graph) -> Sample:
-    samples = SampleNode.match(graph, experiment_id)
-
-    if len(samples) == 0:
-        raise NotFound
-    else:
-        return SampleFactory.build(samples.first())
+    node = SampleNode.get(experiment_id, graph)
+    return SampleFactory.build(node)

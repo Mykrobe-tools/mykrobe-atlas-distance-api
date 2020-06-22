@@ -99,11 +99,8 @@ class TestLeafAndNeighboursExist:
         finally:
             sample_graph.delete_all()
 
-    @given(sample=samples(unique_neighbours=True))
-    @settings(suppress_health_check=(HealthCheck.filter_too_much,))
+    @given(sample=samples(has_neighbours=True, unique_neighbours=True, has_leaf=True))
     def test_all_valid_relationships_are_created(self, sample, create_sample, create_leaf, sample_graph):
-        assume(sample.nearest_leaf_node)
-        assume(sample.nearest_neighbours)
         assume(sample.experiment_id not in [x.experiment_id for x in sample.nearest_neighbours])
 
         try:
