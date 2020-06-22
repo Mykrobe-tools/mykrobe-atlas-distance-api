@@ -1,4 +1,4 @@
-from hypothesis import given, assume
+from hypothesis import given
 
 from swagger_server.models import Sample
 from swagger_server.test.strategies import samples
@@ -41,13 +41,12 @@ def test_creating_sample_with_relationships_to_non_existent_nodes(sample, create
 
 @given(sample=samples(has_neighbours=True))
 def test_duplicated_neighbour_relationships_are_not_created(sample, create_sample, sample_graph):
-    assume(sample.experiment_id not in [x.experiment_id for x in sample.nearest_neighbours])
-
     unique_neighbour_ids = set([x.experiment_id for x in sample.nearest_neighbours])
 
     try:
         for neighbour in sample.nearest_neighbours:
-            create_sample(neighbour)
+            if neighbour.experiment_id != sample.experiment_id:
+                create_sample(neighbour)
 
         response = create_sample(sample, ensure=True)
         created = Sample.from_dict(response.json)

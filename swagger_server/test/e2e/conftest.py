@@ -35,7 +35,6 @@ def client(app):
         yield client
 
 
-@fixture(scope='session')
 def make_request(client):
     def request(path, method, json=None, ensure=False, success_code=200):
         response = client.open(path, method=method, json=json)
@@ -48,7 +47,6 @@ def make_request(client):
 API_ROOT = '/api/v1'
 
 
-@fixture(scope='session')
 def create_sample(make_request):
     def request(sample, *args, **kwargs):
         return make_request(f'{API_ROOT}/samples', 'POST', sample, success_code=201, *args, **kwargs)
