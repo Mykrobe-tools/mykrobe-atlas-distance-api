@@ -10,12 +10,11 @@ def test_getting_non_existent_sample(sample, get_sample):
 
 
 @given(sample=samples())
-def test_retrieved_sample_matches_created_sample(sample, create_sample, create_leaf, get_sample, sample_graph):
+def test_getting_existing_sample(sample, create_sample, create_leaf, get_sample, sample_graph):
     try:
         if sample.nearest_neighbours:
             for neighbour in sample.nearest_neighbours:
-                if neighbour.experiment_id != sample.experiment_id:
-                    create_sample(neighbour)
+                create_sample(neighbour, ensure=True)
         if sample.nearest_leaf_node:
             create_leaf(sample.nearest_leaf_node, ensure=True)
 
