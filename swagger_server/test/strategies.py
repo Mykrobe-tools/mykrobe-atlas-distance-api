@@ -3,39 +3,38 @@ from hypothesis.strategies import composite, text, integers, characters, lists, 
 from swagger_server.models import Sample, Neighbour, NearestLeaf
 
 
-def safe_non_empty_strings():
+def experiment_ids():
     return text(alphabet=characters(whitelist_categories=('L', 'N')), min_size=1)
 
 
-def int64s():
+def distances():
     return integers(min_value=-2**63, max_value=2**63-1)
 
 
 @composite
-def samples(draw, has_neighbours=False, unique_neighbours=False, has_leaf=False):
-    def neighbours_unique_by(neighbour):
-        return neighbour.experiment_id
+def samples(draw, must_have_neighbours=False, must_have_leaf=False):
+    experiment_id = draw(experiment_ids())
 
     neighbours_strategy = lists(
-        neighbours(),
-        unique_by=neighbours_unique_by if unique_neighbours else None,
-        min_size=1 if has_neighbours else 0
+        neighbours().filter(lambda x: x.experiment_id != experiment_id),
+        unique_by=lambda x: x.experiment_id,
+        min_size=1 if must_have_neighbours else 0
     )
-    if not has_neighbours:
+    if not must_have_neighbours:
         neighbours_strategy = one_of(
             neighbours_strategy,
             none()
         )
 
     nearest_leaf_strategy = nearest_leafs()
-    if not has_leaf:
+    if not must_have_leaf:
         nearest_leaf_strategy = one_of(
             nearest_leaf_strategy,
             none()
         )
 
     return Sample(
-        experiment_id=draw(safe_non_empty_strings()),
+        experiment_id=experiment_id,
         nearest_neighbours=draw(neighbours_strategy),
         nearest_leaf_node=draw(nearest_leaf_strategy)
     )
@@ -43,8 +42,8 @@ def samples(draw, has_neighbours=False, unique_neighbours=False, has_leaf=False)
 
 @composite
 def neighbours(draw):
-    experiment_id = draw(safe_non_empty_strings())
-    distance = draw(int64s())
+    experiment_id = draw(experiment_ids())
+    distance = draw(distances())
 
     return Neighbour(
         experiment_id=experiment_id,
@@ -54,8 +53,8 @@ def neighbours(draw):
 
 @composite
 def nearest_leafs(draw):
-    leaf_id = draw(safe_non_empty_strings())
-    distance = draw(int64s())
+    leaf_id = draw(experiment_ids())
+    distance = draw(distances())
 
     return NearestLeaf(
         leaf_id=leaf_id,
