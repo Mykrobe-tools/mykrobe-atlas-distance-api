@@ -1,4 +1,4 @@
-from hypothesis import given, assume, settings, HealthCheck
+from hypothesis import given, assume
 from pytest import fixture
 
 from swagger_server.models import Sample
