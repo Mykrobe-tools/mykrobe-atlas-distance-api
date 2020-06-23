@@ -72,7 +72,7 @@ def delete_sample(make_request):
 @fixture
 def get_neighbours(make_request):
     def request(sample, *args, **kwargs):
-        return make_request(f'{API_ROOT}/samples/{sample.experiment_id}/nearest-neighbours', 'DELETE', *args, **kwargs)
+        return make_request(f'{API_ROOT}/samples/{sample.experiment_id}/nearest-neighbours', 'GET', *args, **kwargs)
     return request
 
 

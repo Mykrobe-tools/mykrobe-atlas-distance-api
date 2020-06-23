@@ -43,3 +43,7 @@ def delete_sample(experiment_id: str, graph: Graph):
     if len(match) == 0:
         raise NotFound
     graph.delete(match.first())
+
+
+def get_neighbours(experiment_id: str, graph: Graph) -> Sample:
+    return get_sample(experiment_id, graph).nearest_neighbours
