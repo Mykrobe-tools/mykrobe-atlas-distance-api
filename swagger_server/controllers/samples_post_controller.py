@@ -1,7 +1,7 @@
 import connexion
 from flask import g
 
-from swagger_server.exceptions import Existed
+from swagger_server.exceptions import Exists
 from swagger_server.models.error import Error  # noqa: E501
 from swagger_server.models.sample import Sample  # noqa: E501
 from swagger_server.services import create_sample
@@ -29,5 +29,5 @@ def samples_post(sample=None):  # noqa: E501
 
     try:
         return create_sample(sample, sample_graph), 201
-    except Existed:
+    except Exists:
         return Error(409, 'Already existed'), 409

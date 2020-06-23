@@ -1,4 +1,4 @@
-class Existed(Exception):
+class Exists(Exception):
     pass
 
 

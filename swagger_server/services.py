@@ -1,6 +1,6 @@
 from py2neo import Graph
 
-from swagger_server.exceptions import Existed, NotFound
+from swagger_server.exceptions import Exists, NotFound
 from swagger_server.factories import SampleFactory
 from swagger_server.models import Sample
 from swagger_server.ogm import SampleNode, LeafNode
@@ -11,7 +11,7 @@ def create_sample(sample: Sample, graph: Graph) -> Sample:
     node.experiment_id = sample.experiment_id
 
     if node.exists(graph):
-        raise Existed
+        raise Exists
 
     if sample.nearest_leaf_node:
         n = LeafNode()
