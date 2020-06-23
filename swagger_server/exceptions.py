@@ -1,4 +1,4 @@
-class Exists(Exception):
+class AlreadyExisted(Exception):
     pass
 
 
