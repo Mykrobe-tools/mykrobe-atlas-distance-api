@@ -93,5 +93,16 @@ def create_leaf(sample_graph):
     return request
 
 
+# TODO: Replace with endpoint request
+@fixture
+def get_leaf(sample_graph):
+    def request(leaf, ensure=False, *args, **kwargs):
+        node = LeafNode.match(sample_graph, leaf.leaf_id).limit(1)
+        if ensure:
+            assert len(node) > 0
+        return node.first()
+    return request
+
+
 settings.register_profile('e2e', deadline=None)
 settings.load_profile('e2e')

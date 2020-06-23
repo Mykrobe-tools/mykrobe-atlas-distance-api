@@ -36,3 +36,10 @@ def get_sample(experiment_id: str, graph: Graph) -> Sample:
     if len(match) == 0:
         raise NotFound
     return SampleFactory.build(match.first())
+
+
+def delete_sample(experiment_id: str, graph: Graph):
+    match = SampleNode.match(graph, experiment_id).limit(1)
+    if len(match) == 0:
+        raise NotFound
+    graph.delete(match.first())
