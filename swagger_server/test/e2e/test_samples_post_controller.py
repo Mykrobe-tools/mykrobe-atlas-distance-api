@@ -37,7 +37,7 @@ def test_creating_samples_with_existing_experiment_ids(a_sample, a_different_sam
 
 
 @given(sample=samples(must_have_neighbours=True, must_have_leaf=True))
-def test_only_relationships_to_existing_nodes_are_created(sample, create_sample, create_leaf, sample_graph):
+def test_only_relationships_to_existing_nodes_are_created(sample, create_sample, create_leaf, get_sample, sample_graph):
     existing_neighbours = random.sample(sample.nearest_neighbours, random.randrange(0, len(sample.nearest_neighbours)))
 
     try:
@@ -54,5 +54,11 @@ def test_only_relationships_to_existing_nodes_are_created(sample, create_sample,
         assert len(created.nearest_neighbours) == len(existing_neighbours)
         for neighbour in existing_neighbours:
             assert neighbour in created.nearest_neighbours
+
+        retrieved = Sample.from_dict(get_sample(sample, ensure=True).json)
+        assert created.nearest_leaf_node == retrieved.nearest_leaf_node
+        assert len(created.nearest_neighbours) == len(retrieved.nearest_neighbours)
+        for neighbour in created.nearest_neighbours:
+            assert neighbour in retrieved.nearest_neighbours
     finally:
         sample_graph.delete_all()
