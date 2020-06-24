@@ -1,6 +1,7 @@
 from flask import g
 
 from swagger_server.exceptions import NotFound
+from swagger_server.factories import NeighboursFactory
 from swagger_server.models import Error
 from swagger_server.services import get_neighbours
 
@@ -19,6 +20,8 @@ def samples_id_nearest_neighbours_get(id):  # noqa: E501
     sample_graph = g.sample_graph
 
     try:
-        return get_neighbours(id, sample_graph)
+        relationships = get_neighbours(id, sample_graph)
     except NotFound:
         return Error(404, 'Not found'), 404
+    else:
+        return NeighboursFactory.build(relationships), 200

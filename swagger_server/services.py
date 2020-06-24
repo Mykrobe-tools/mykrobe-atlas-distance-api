@@ -1,12 +1,12 @@
 from py2neo import Graph
+from py2neo.ogm import RelatedObjects
 
 from swagger_server.exceptions import AlreadyExisted, NotFound
-from swagger_server.factories import SampleFactory
 from swagger_server.models import Sample
 from swagger_server.ogm import SampleNode, LeafNode
 
 
-def create_sample(sample: Sample, graph: Graph) -> Sample:
+def create_sample(sample: Sample, graph: Graph) -> SampleNode:
     node = SampleNode()
     node.experiment_id = sample.experiment_id
 
@@ -28,22 +28,19 @@ def create_sample(sample: Sample, graph: Graph) -> Sample:
 
     graph.push(node)
 
-    return SampleFactory.build(node)
+    return node
 
 
-def get_sample(experiment_id: str, graph: Graph) -> Sample:
+def get_sample(experiment_id: str, graph: Graph) -> SampleNode:
     match = SampleNode.match(graph, experiment_id).limit(1)
     if len(match) == 0:
         raise NotFound
-    return SampleFactory.build(match.first())
+    return match.first()
 
 
 def delete_sample(experiment_id: str, graph: Graph):
-    match = SampleNode.match(graph, experiment_id).limit(1)
-    if len(match) == 0:
-        raise NotFound
-    graph.delete(match.first())
+    graph.delete(get_sample(experiment_id, graph))
 
 
-def get_neighbours(experiment_id: str, graph: Graph) -> Sample:
-    return get_sample(experiment_id, graph).nearest_neighbours
+def get_neighbours(experiment_id: str, graph: Graph) -> RelatedObjects:
+    return get_sample(experiment_id, graph).neighbours

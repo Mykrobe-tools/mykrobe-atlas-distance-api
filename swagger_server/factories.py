@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
-from typing import Any
+from typing import Any, List
+
+from py2neo.ogm import RelatedObjects
 
 from swagger_server.models import Sample, NearestLeaf, Neighbour
 from swagger_server.ogm import SampleNode
@@ -19,16 +21,24 @@ class SampleFactory(Factory):
         neighbour_relationships = recipe.neighbours
 
         sample = Sample(recipe.experiment_id)
-        sample.nearest_neighbours = []
 
         if len(leaf_relationship) > 0:
             leaf_node = next(iter(leaf_relationship))
             distance = recipe.lineage.get(leaf_node, 'distance')
             sample.nearest_leaf_node = NearestLeaf(leaf_node.leaf_id, distance)
 
-        if len(neighbour_relationships) > 0:
-            for neighbour_node in neighbour_relationships:
-                distance = recipe.neighbours.get(neighbour_node, 'distance')
-                sample.nearest_neighbours.append(Neighbour(neighbour_node.experiment_id, distance))
+        sample.nearest_neighbours = NeighboursFactory.build(neighbour_relationships)
 
         return sample
+
+
+class NeighboursFactory(Factory):
+    @staticmethod
+    def build(recipe: RelatedObjects) -> List[Neighbour]:
+        neighbours = []
+
+        for neighbour_node in recipe:
+            distance = recipe.get(neighbour_node, 'distance')
+            neighbours.append(Neighbour(neighbour_node.experiment_id, distance))
+
+        return neighbours
