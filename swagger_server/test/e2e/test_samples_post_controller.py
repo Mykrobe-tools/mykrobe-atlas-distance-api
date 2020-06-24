@@ -55,7 +55,7 @@ def test_only_relationships_to_existing_nodes_are_created(sample, create_sample,
         for neighbour in existing_neighbours:
             assert neighbour in created.nearest_neighbours
 
-        retrieved = Sample.from_dict(get_sample(sample, ensure=True).json)
+        retrieved = Sample.from_dict(get_sample(sample.experiment_id, ensure=True).json)
         assert created.nearest_leaf_node == retrieved.nearest_leaf_node
         assert len(created.nearest_neighbours) == len(retrieved.nearest_neighbours)
         for neighbour in created.nearest_neighbours:

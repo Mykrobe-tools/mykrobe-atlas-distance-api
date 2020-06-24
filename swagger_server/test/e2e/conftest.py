@@ -57,22 +57,22 @@ def create_sample(make_request):
 
 @fixture
 def get_sample(make_request):
-    def request(sample, *args, **kwargs):
-        return make_request(f'{API_ROOT}/samples/{sample.experiment_id}', 'GET', *args, **kwargs)
+    def request(experiment_id, *args, **kwargs):
+        return make_request(f'{API_ROOT}/samples/{experiment_id}', 'GET', *args, **kwargs)
     return request
 
 
 @fixture
 def delete_sample(make_request):
-    def request(sample):
-        return make_request(f'{API_ROOT}/samples/{sample.experiment_id}', 'DELETE')
+    def request(experiment_id):
+        return make_request(f'{API_ROOT}/samples/{experiment_id}', 'DELETE')
     return request
 
 
 @fixture
 def get_neighbours(make_request):
-    def request(sample, *args, **kwargs):
-        return make_request(f'{API_ROOT}/samples/{sample.experiment_id}/nearest-neighbours', 'GET', *args, **kwargs)
+    def request(experiment_id, *args, **kwargs):
+        return make_request(f'{API_ROOT}/samples/{experiment_id}/nearest-neighbours', 'GET', *args, **kwargs)
     return request
 
 
@@ -96,8 +96,8 @@ def create_leaf(sample_graph):
 # TODO: Replace with endpoint request
 @fixture
 def get_leaf(sample_graph):
-    def request(leaf, ensure=False, *args, **kwargs):
-        node = LeafNode.match(sample_graph, leaf.leaf_id).limit(1)
+    def request(leaf_id, ensure=False, *args, **kwargs):
+        node = LeafNode.match(sample_graph, leaf_id).limit(1)
         if ensure:
             assert len(node) > 0
         return node.first()
