@@ -4,7 +4,7 @@ from typing import Any, List
 from py2neo.ogm import RelatedObjects
 
 from swagger_server.models import Sample, NearestLeaf, Neighbour
-from swagger_server.ogm import SampleNode
+from swagger_server.ogm import SampleNode, LeafNode
 
 
 class Factory(ABC):
@@ -42,3 +42,10 @@ class NeighboursFactory(Factory):
             neighbours.append(Neighbour(neighbour_node.experiment_id, distance))
 
         return neighbours
+
+
+class NearestLeafFactory(Factory):
+    @staticmethod
+    def build(recipe: RelatedObjects) -> NearestLeaf:
+        node = next(iter(recipe))
+        return NearestLeaf(node.leaf_id, recipe.get(node, 'distance'))
