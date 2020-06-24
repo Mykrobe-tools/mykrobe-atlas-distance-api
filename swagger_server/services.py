@@ -1,8 +1,11 @@
+from typing import List
+
 from py2neo import Graph
 from py2neo.ogm import RelatedObjects
 
 from swagger_server.exceptions import AlreadyExisted, NotFound
-from swagger_server.models import Sample
+from swagger_server.factories import SampleFactory
+from swagger_server.models import Sample, Neighbour
 from swagger_server.ogm import SampleNode, LeafNode
 
 
@@ -44,3 +47,20 @@ def delete_sample(experiment_id: str, graph: Graph):
 
 def get_neighbours(experiment_id: str, graph: Graph) -> RelatedObjects:
     return get_sample(experiment_id, graph).neighbours
+
+
+def update_neighbours(experiment_id: str, new_neighbours: List[Neighbour], graph: Graph) -> RelatedObjects:
+    node = get_sample(experiment_id, graph)
+
+    node.neighbours.clear()
+
+    if new_neighbours:
+        for neighbour in new_neighbours:
+            n = SampleNode()
+            n.experiment_id = neighbour.experiment_id
+            if n.exists(graph):
+                node.neighbours.add(n, distance=neighbour.distance)
+
+    graph.push(node)
+
+    return node.neighbours

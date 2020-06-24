@@ -78,8 +78,8 @@ def get_neighbours(make_request):
 
 @fixture
 def update_neighbours(make_request):
-    def request(sample, neighbours, *args, **kwargs):
-        return make_request(f'{API_ROOT}/samples/{sample.experiment_id}/nearest-neighbours', 'PUT', neighbours, *args, **kwargs)
+    def request(experiment_id, neighbours, *args, **kwargs):
+        return make_request(f'{API_ROOT}/samples/{experiment_id}/nearest-neighbours', 'PUT', neighbours, *args, **kwargs)
     return request
 
 
