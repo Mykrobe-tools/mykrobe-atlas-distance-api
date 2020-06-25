@@ -1,7 +1,7 @@
 from hypothesis import given
 from hypothesis.strategies import lists
 
-from swagger_server.models import Neighbour
+from swagger_server.models import Neighbour, NearestLeaf
 from swagger_server.test.strategies import neighbours, experiment_ids, samples
 
 
@@ -47,9 +47,10 @@ def test_updating_never_touches_lineages(sample, new_neighbours, create_sample, 
         if new_neighbours:
             for neighbour in new_neighbours:
                 create_sample(neighbour)
-
         update_neighbours(sample.experiment_id, new_neighbours, ensure=True)
 
-        assert get_nearest_leaf(sample.experiment_id, ensure=True) == sample.nearest_leaf_node
+        leaf = NearestLeaf.from_dict(get_nearest_leaf(sample.experiment_id, ensure=True).json)
+
+        assert leaf == sample.nearest_leaf_node
     finally:
         sample_graph.delete_all()

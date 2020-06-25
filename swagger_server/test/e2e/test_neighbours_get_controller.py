@@ -10,11 +10,20 @@ def test_getting_neighbours_of_non_existent_sample(experiment_id, get_neighbours
 
 
 @given(sample=samples())
+def test_getting_non_existent_neighbours(sample, create_sample, get_neighbours, sample_graph):
+    try:
+        create_sample(sample, ensure=True)
+
+        assert get_neighbours(sample.experiment_id).status_code == 404
+    finally:
+        sample_graph.delete_all()
+
+
+@given(sample=samples(must_have_neighbours=True))
 def test_getting_neighbours_of_existing_sample(sample, create_sample, get_neighbours, sample_graph):
     try:
-        if sample.nearest_neighbours:
-            for neighbour in sample.nearest_neighbours:
-                create_sample(neighbour, ensure=True)
+        for neighbour in sample.nearest_neighbours:
+            create_sample(neighbour, ensure=True)
 
         created = Sample.from_dict(create_sample(sample, ensure=True).json)
         retrieved = [Neighbour.from_dict(x) for x in get_neighbours(sample.experiment_id, ensure=True).json]

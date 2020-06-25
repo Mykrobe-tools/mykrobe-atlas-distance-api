@@ -187,6 +187,8 @@ paths:
                 $ref: '#/components/schemas/Error'
   /samples/{id}/nearest-leaf-node:
     get:
+      tags:
+        - leaf_get
       description: Return the nearest leaf node of a sample based on a sample ID.
       parameters:
         - name: id

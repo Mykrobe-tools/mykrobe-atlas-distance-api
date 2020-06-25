@@ -105,14 +105,10 @@ def get_leaf(sample_graph):
     return request
 
 
-# TODO: Replace with endpoint request
 @fixture
-def get_nearest_leaf(sample_graph):
-    def request(experiment_id, ensure=False, *args, **kwargs):
-        node = SampleNode.match(sample_graph, experiment_id).limit(1)
-        if ensure:
-            assert len(node) > 0
-        return NearestLeafFactory.build(node.first().lineage)
+def get_nearest_leaf(make_request):
+    def request(experiment_id, *args, **kwargs):
+        return make_request(f'{API_ROOT}/samples/{experiment_id}/nearest-leaf-node', 'GET', *args, **kwargs)
     return request
 
 

@@ -142,7 +142,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: Unexpected error
-      x-openapi-router-controller: swagger_server.controllers.default_controller
+      tags:
+      - leaf_get
+      x-openapi-router-controller: swagger_server.controllers.leaf_get_controller
     put:
       description: Replace the nearest leaf node of a sample based on a sample ID.
       operationId: samples_id_nearest_leaf_node_put
