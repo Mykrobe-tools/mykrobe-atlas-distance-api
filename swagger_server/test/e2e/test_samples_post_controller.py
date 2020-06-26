@@ -16,22 +16,19 @@ def test_creating_samples_with_multiple_distances_to_one_neighbour(sample, neigh
     assert create_sample(sample).status_code == 400
 
     assert len(sample_graph.nodes) == 0
-    assert len(sample_graph.relationships) == 0
 
 
-@given(a_sample=samples(), a_different_sample=samples())
-def test_creating_samples_with_existing_experiment_ids(a_sample, a_different_sample, create_sample, sample_graph):
+@given(sample_1=samples(), sample_2=samples())
+def test_creating_samples_with_existing_experiment_ids(sample_1, sample_2, create_sample, sample_graph):
+    sample_2.experiment_id = sample_1.experiment_id
+
     try:
-        create_sample(a_sample, ensure=True)
+        create_sample(sample_1, ensure=True)
 
-        a_different_sample.experiment_id = a_sample.experiment_id
-
-        response = create_sample(a_different_sample)
+        response = create_sample(sample_2)
 
         assert response.status_code == 409
-
         assert len(sample_graph.nodes) == 1
-        assert len(sample_graph.relationships) == 0
     finally:
         sample_graph.delete_all()
 
