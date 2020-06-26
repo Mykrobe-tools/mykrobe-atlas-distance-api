@@ -26,7 +26,7 @@ def samples(draw, must_have_neighbours=False, must_have_leaf=False):
             none()
         )
 
-    nearest_leaf_strategy = nearest_leafs()
+    nearest_leaf_strategy = nearest_leaves()
     if not must_have_leaf:
         nearest_leaf_strategy = one_of(
             nearest_leaf_strategy,
@@ -52,7 +52,7 @@ def neighbours(draw):
 
 
 @composite
-def nearest_leafs(draw):
+def nearest_leaves(draw):
     leaf_id = draw(experiment_ids())
     distance = draw(distances())
 

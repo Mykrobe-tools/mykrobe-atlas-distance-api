@@ -112,5 +112,12 @@ def get_nearest_leaf(make_request):
     return request
 
 
+@fixture
+def update_nearest_leaf(make_request):
+    def request(experiment_id, nearest_leaf, *args, **kwargs):
+        return make_request(f'{API_ROOT}/samples/{experiment_id}/nearest-leaf-node', 'PUT', nearest_leaf, *args, **kwargs)
+    return request
+
+
 settings.register_profile('e2e', deadline=None)
 settings.load_profile('e2e')

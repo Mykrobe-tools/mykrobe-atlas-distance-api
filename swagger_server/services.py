@@ -4,7 +4,7 @@ from py2neo import Graph
 from py2neo.ogm import RelatedObjects
 
 from swagger_server.exceptions import AlreadyExisted, NotFound
-from swagger_server.models import Sample, Neighbour
+from swagger_server.models import Sample, Neighbour, NearestLeaf
 from swagger_server.ogm import SampleNode, LeafNode
 
 
@@ -73,3 +73,19 @@ def get_nearest_leaf(experiment_id: str, graph: Graph) -> RelatedObjects:
     if len(sample.lineage) == 0:
         raise NotFound
     return sample.lineage
+
+
+def update_nearest_leaf(experiment_id: str, new_nearest_leaf: NearestLeaf, graph: Graph) -> RelatedObjects:
+    node = get_sample(experiment_id, graph)
+
+    node.lineage.clear()
+
+    if new_nearest_leaf:
+        n = LeafNode()
+        n.leaf_id = new_nearest_leaf.leaf_id
+        if n.exists(graph):
+            node.lineage.add(n, distance=new_nearest_leaf.distance)
+
+    graph.push(node)
+
+    return node.lineage

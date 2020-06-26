@@ -3,26 +3,8 @@ import six
 
 from swagger_server.models.error import Error  # noqa: E501
 from swagger_server.models.leaf import Leaf  # noqa: E501
-from swagger_server.models.nearest_leaf import NearestLeaf  # noqa: E501
 from swagger_server.models.neighbour import Neighbour  # noqa: E501
 from swagger_server import util
-
-
-def samples_id_nearest_leaf_node_put(id, nearest_leaf):  # noqa: E501
-    """samples_id_nearest_leaf_node_put
-
-    Replace the nearest leaf node of a sample based on a sample ID. # noqa: E501
-
-    :param id: 
-    :type id: str
-    :param nearest_leaf: New nearest leaf node to replace old one.
-    :type nearest_leaf: dict | bytes
-
-    :rtype: NearestLeaf
-    """
-    if connexion.request.is_json:
-        nearest_leaf = NearestLeaf.from_dict(connexion.request.get_json())  # noqa: E501
-    return 'do some magic!'
 
 
 def tree_id_delete(id):  # noqa: E501

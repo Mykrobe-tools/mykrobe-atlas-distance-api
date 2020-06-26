@@ -183,7 +183,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: Unexpected error
-      x-openapi-router-controller: swagger_server.controllers.default_controller
+      tags:
+      - leaf_put
+      x-openapi-router-controller: swagger_server.controllers.leaf_put_controller
   /samples/{id}/nearest-neighbours:
     get:
       description: Return the list of nearest neighbours of a sample based on a sample
