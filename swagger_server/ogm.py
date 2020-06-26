@@ -16,6 +16,18 @@ class BaseGraphObject(GraphObject):
         return True
 
     @classmethod
+    def create(cls, pk, graph: Graph) -> 'BaseGraphObject':
+        node = cls()
+        setattr(node, node.__primarykey__, pk)
+
+        if node.exists(graph):
+            raise AlreadyExisted
+
+        graph.push(node)
+
+        return node
+
+    @classmethod
     def get(cls, experiment_id: str, graph: Graph) -> 'BaseGraphObject':
         match = cls.match(graph, experiment_id).limit(1)
         if len(match) == 0:
@@ -43,11 +55,7 @@ class SampleNode(BaseGraphObject):
 
     @classmethod
     def create(cls, sample: Sample, graph: Graph) -> 'SampleNode':
-        node = cls()
-        node.experiment_id = sample.experiment_id
-
-        if node.exists(graph):
-            raise AlreadyExisted
+        node = super().create(sample.experiment_id, graph)
 
         if sample.nearest_leaf_node:
             n = LeafNode()
