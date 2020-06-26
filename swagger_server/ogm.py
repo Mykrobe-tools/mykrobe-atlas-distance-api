@@ -9,7 +9,22 @@ from swagger_server.models import Sample, NearestLeaf, Neighbour
 
 class BaseGraphObject(GraphObject):
     def exists(self, graph: Graph) -> bool:
-        return len(self.match(graph, self.__primaryvalue__).limit(1)) > 0
+        try:
+            self.get(self.__primaryvalue__, graph)
+        except NotFound:
+            return False
+        return True
+
+    @classmethod
+    def get(cls, experiment_id: str, graph: Graph) -> 'BaseGraphObject':
+        match = cls.match(graph, experiment_id).limit(1)
+        if len(match) == 0:
+            raise NotFound
+        return match.first()
+
+    @classmethod
+    def delete(cls, experiment_id: str, graph: Graph):
+        graph.delete(cls.get(experiment_id, graph))
 
 
 class LeafNode(BaseGraphObject):
@@ -50,17 +65,6 @@ class SampleNode(BaseGraphObject):
         graph.push(node)
 
         return node
-
-    @classmethod
-    def get(cls, experiment_id: str, graph: Graph) -> 'SampleNode':
-        match = cls.match(graph, experiment_id).limit(1)
-        if len(match) == 0:
-            raise NotFound
-        return match.first()
-
-    @classmethod
-    def delete(cls, experiment_id: str, graph: Graph):
-        graph.delete(cls.get(experiment_id, graph))
 
     @classmethod
     def update(cls, experiment_id: str, graph: Graph, neighbours: List[Neighbour] = None, leaf: NearestLeaf = None) -> 'SampleNode':
