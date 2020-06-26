@@ -1,10 +1,9 @@
 from flask import g
 
 from swagger_server.exceptions import NotFound
-from swagger_server.factories import SampleFactory
 from swagger_server.models.error import Error  # noqa: E501
 from swagger_server.models.sample import Sample  # noqa: E501
-from swagger_server.services import get_sample
+from swagger_server.ogm import SampleNode
 
 
 def samples_id_get(id):  # noqa: E501
@@ -21,8 +20,8 @@ def samples_id_get(id):  # noqa: E501
     sample_graph = g.sample_graph
 
     try:
-        node = get_sample(id, sample_graph)
+        node = SampleNode.get(id, sample_graph)
     except NotFound:
         return Error(404, 'Not found'), 404
     else:
-        return SampleFactory.build(node), 200
+        return node.to_model(), 200

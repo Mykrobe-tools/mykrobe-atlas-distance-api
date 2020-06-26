@@ -7,8 +7,7 @@ from py2neo import Graph
 from pytest import fixture
 
 from swagger_server.encoder import JSONEncoder
-from swagger_server.factories import NearestLeafFactory
-from swagger_server.ogm import LeafNode, SampleNode
+from swagger_server.ogm import LeafNode
 
 
 @fixture(scope='session')

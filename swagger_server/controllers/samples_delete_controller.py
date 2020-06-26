@@ -2,7 +2,7 @@ from flask import g
 
 from swagger_server.exceptions import NotFound
 from swagger_server.models import Error
-from swagger_server.services import delete_sample
+from swagger_server.ogm import SampleNode
 
 
 def samples_id_delete(id):  # noqa: E501
@@ -19,7 +19,7 @@ def samples_id_delete(id):  # noqa: E501
     sample_graph = g.sample_graph
 
     try:
-        delete_sample(id, sample_graph)
+        SampleNode.delete(id, sample_graph)
     except NotFound:
         return Error(404, 'Not found'), 404
     else:

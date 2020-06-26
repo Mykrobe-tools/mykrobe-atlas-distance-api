@@ -2,10 +2,9 @@ import connexion
 from flask import g
 
 from swagger_server.exceptions import NotFound
-from swagger_server.factories import NeighboursFactory
 from swagger_server.models.error import Error  # noqa: E501
 from swagger_server.models.neighbour import Neighbour  # noqa: E501
-from swagger_server.services import update_neighbours
+from swagger_server.ogm import SampleNode
 
 
 def samples_id_nearest_neighbours_put(id, neighbour=None):  # noqa: E501
@@ -26,8 +25,8 @@ def samples_id_nearest_neighbours_put(id, neighbour=None):  # noqa: E501
     sample_graph = g.sample_graph
 
     try:
-        updated_relationships = update_neighbours(id, neighbour, sample_graph)
+        updated = SampleNode.update(id, sample_graph, neighbours=neighbour)
     except NotFound:
         return Error(404, 'Not found'), 404
     else:
-        return NeighboursFactory.build(updated_relationships), 200
+        return updated.to_model().nearest_neighbours, 200

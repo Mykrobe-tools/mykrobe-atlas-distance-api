@@ -1,9 +1,7 @@
 import random
 from random import randrange, choice
 
-from swagger_server.factories import GraphFactory
 from swagger_server.models import Sample, Neighbour, NearestLeaf
-from swagger_server.repositories import Neo4jRepository
 
 if __name__ == '__main__':
     repo = Neo4jRepository()

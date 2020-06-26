@@ -2,10 +2,9 @@ import connexion
 from flask import g
 
 from swagger_server.exceptions import NotFound
-from swagger_server.factories import NearestLeafFactory
 from swagger_server.models import Error
 from swagger_server.models.nearest_leaf import NearestLeaf  # noqa: E501
-from swagger_server.services import update_nearest_leaf
+from swagger_server.ogm import SampleNode
 
 
 def samples_id_nearest_leaf_node_put(id, nearest_leaf=None):  # noqa: E501
@@ -26,8 +25,8 @@ def samples_id_nearest_leaf_node_put(id, nearest_leaf=None):  # noqa: E501
     sample_graph = g.sample_graph
 
     try:
-        relationship = update_nearest_leaf(id, nearest_leaf, sample_graph)
+        updated = SampleNode.update(id, sample_graph, leaf=nearest_leaf)
     except NotFound:
         return Error(404, 'Not found'), 404
     else:
-        return NearestLeafFactory.build(relationship), 200
+        return updated.to_model().nearest_leaf_node, 200

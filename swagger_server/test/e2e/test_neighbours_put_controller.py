@@ -33,6 +33,23 @@ def test_updating_ensures_a_sample_neighbours_set_to_be_the_new_one(sample, new_
         sample_graph.delete_all()
 
 
+@given(sample=samples())
+def test_clear_neighbours(sample, create_sample, update_neighbours, sample_graph):
+    try:
+        if sample.nearest_neighbours:
+            for neighbour in sample.nearest_neighbours:
+                create_sample(neighbour)
+        create_sample(sample, ensure=True)
+
+        response = update_neighbours(sample.experiment_id, [])
+        updated_neighbours = [Neighbour.from_dict(x) for x in response.json]
+
+        assert response.status_code == 200
+        assert not updated_neighbours
+    finally:
+        sample_graph.delete_all()
+
+
 @given(sample=samples(must_have_leaf=True), new_neighbours=lists(neighbours()))
 def test_updating_never_touches_lineages(sample, new_neighbours, create_sample, update_neighbours, create_leaf,
                                          get_nearest_leaf, sample_graph):
