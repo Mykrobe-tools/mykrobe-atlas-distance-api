@@ -16,6 +16,9 @@ class BaseGraphObject(GraphObject):
             return False
         return True
 
+    def to_model(self) -> Model:
+        return self.model_class(self.__primaryvalue__)
+
     @classmethod
     def create(cls, model: Model, graph: Graph) -> 'BaseGraphObject':
         primary_value = getattr(model, cls.__primarykey__)
@@ -49,8 +52,7 @@ class LeafNode(BaseGraphObject):
 
     leaf_id = Property()
 
-    def to_model(self) -> Leaf:
-        return Leaf(self.__primaryvalue__)
+    model_class = Leaf
 
 
 class SampleNode(BaseGraphObject):
@@ -60,6 +62,8 @@ class SampleNode(BaseGraphObject):
 
     neighbours = RelatedTo('SampleNode', 'NEIGHBOUR')
     lineage = RelatedTo(LeafNode, 'LINEAGE')
+
+    model_class = Sample
 
     @classmethod
     def create(cls, sample: Sample, graph: Graph) -> 'SampleNode':
@@ -111,7 +115,8 @@ class SampleNode(BaseGraphObject):
         leaf_relationship = self.lineage
         neighbour_relationships = self.neighbours
 
-        sample = Sample(self.experiment_id, nearest_neighbours=[])
+        sample: Sample = super().to_model()
+        sample.nearest_neighbours = []
 
         if len(leaf_relationship) > 0:
             leaf_node = next(iter(leaf_relationship))

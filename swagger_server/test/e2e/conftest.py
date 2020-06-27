@@ -84,6 +84,20 @@ def update_neighbours(make_request):
 
 
 @fixture
+def get_nearest_leaf(make_request):
+    def request(experiment_id, *args, **kwargs):
+        return make_request(f'{API_ROOT}/samples/{experiment_id}/nearest-leaf-node', 'GET', *args, **kwargs)
+    return request
+
+
+@fixture
+def update_nearest_leaf(make_request):
+    def request(experiment_id, nearest_leaf, *args, **kwargs):
+        return make_request(f'{API_ROOT}/samples/{experiment_id}/nearest-leaf-node', 'PUT', nearest_leaf, *args, **kwargs)
+    return request
+
+
+@fixture
 def create_leaf(make_request):
     def request(leaf, *args, **kwargs):
         return make_request(f'{API_ROOT}/tree', 'POST', leaf, success_code=201, *args, **kwargs)
@@ -98,16 +112,9 @@ def get_leaf(make_request):
 
 
 @fixture
-def get_nearest_leaf(make_request):
-    def request(experiment_id, *args, **kwargs):
-        return make_request(f'{API_ROOT}/samples/{experiment_id}/nearest-leaf-node', 'GET', *args, **kwargs)
-    return request
-
-
-@fixture
-def update_nearest_leaf(make_request):
-    def request(experiment_id, nearest_leaf, *args, **kwargs):
-        return make_request(f'{API_ROOT}/samples/{experiment_id}/nearest-leaf-node', 'PUT', nearest_leaf, *args, **kwargs)
+def delete_leaf(make_request):
+    def request(leaf_id):
+        return make_request(f'{API_ROOT}/tree/{leaf_id}', 'DELETE')
     return request
 
 
