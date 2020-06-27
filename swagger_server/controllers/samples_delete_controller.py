@@ -1,5 +1,4 @@
-from flask import g
-
+from swagger_server.db import get_db
 from swagger_server.exceptions import NotFound
 from swagger_server.models import Error
 from swagger_server.ogm import SampleNode
@@ -16,7 +15,7 @@ def samples_id_delete(id):  # noqa: E501
     :rtype: None
     """
 
-    sample_graph = g.sample_graph
+    sample_graph = get_db()
 
     try:
         SampleNode.delete(id, sample_graph)

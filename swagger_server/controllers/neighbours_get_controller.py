@@ -1,5 +1,4 @@
-from flask import g
-
+from swagger_server.db import get_db
 from swagger_server.exceptions import NotFound
 from swagger_server.models import Error
 from swagger_server.ogm import SampleNode
@@ -16,7 +15,7 @@ def samples_id_nearest_neighbours_get(id):  # noqa: E501
     :rtype: List[Neighbour]
     """
 
-    sample_graph = g.sample_graph
+    sample_graph = get_db()
 
     try:
         node = SampleNode.get(id, sample_graph)

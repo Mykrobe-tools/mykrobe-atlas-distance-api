@@ -1,10 +1,13 @@
 import random
 from random import randrange, choice
 
+from py2neo import Graph
+
 from swagger_server.models import Sample, Neighbour, NearestLeaf
+from swagger_server.ogm import SampleNode
 
 if __name__ == '__main__':
-    repo = Neo4jRepository()
+    repo = Graph()
 
     samples = []
 
@@ -15,8 +18,7 @@ if __name__ == '__main__':
             sample = Sample(experiment_id)
             sample.nearest_neighbours = []
 
-            node = GraphFactory.build(sample)
-            repo.create(node)
+            SampleNode.create(sample, repo)
 
             samples.append(sample)
 
@@ -33,5 +35,4 @@ if __name__ == '__main__':
 
         sample.nearest_leaf_node = choice(leaves)
 
-        node = GraphFactory.build(sample)
-        repo.update(node)
+        SampleNode.update(sample.experiment_id, repo, neighbours=sample.nearest_neighbours, leaf=sample.nearest_leaf_node)

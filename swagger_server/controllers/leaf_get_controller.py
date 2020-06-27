@@ -1,5 +1,4 @@
-from flask import g
-
+from swagger_server.db import get_db
 from swagger_server.exceptions import NotFound
 from swagger_server.models import Error
 from swagger_server.models.nearest_leaf import NearestLeaf  # noqa: E501
@@ -17,7 +16,7 @@ def samples_id_nearest_leaf_node_get(id):  # noqa: E501
     :rtype: NearestLeaf
     """
 
-    sample_graph = g.sample_graph
+    sample_graph = get_db()
 
     try:
         node = SampleNode.get(id, sample_graph)

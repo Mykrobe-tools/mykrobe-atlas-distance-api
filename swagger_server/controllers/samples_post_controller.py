@@ -1,6 +1,6 @@
 import connexion
-from flask import g
 
+from swagger_server.db import get_db
 from swagger_server.exceptions import AlreadyExisted
 from swagger_server.models.error import Error  # noqa: E501
 from swagger_server.models.sample import Sample  # noqa: E501
@@ -25,7 +25,7 @@ def samples_post(sample=None):  # noqa: E501
     if not valid:
         return Error(400, error), 400
 
-    sample_graph = g.sample_graph
+    sample_graph = get_db()
 
     try:
         node = SampleNode.create(sample, sample_graph)

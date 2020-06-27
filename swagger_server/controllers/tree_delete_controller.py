@@ -1,5 +1,6 @@
 from flask import g
 
+from swagger_server.db import get_db
 from swagger_server.exceptions import NotFound
 from swagger_server.models.error import Error  # noqa: E501
 from swagger_server.ogm import LeafNode
@@ -16,7 +17,7 @@ def tree_id_delete(id):  # noqa: E501
     :rtype: None
     """
 
-    sample_graph = g.sample_graph
+    sample_graph = get_db()
 
     try:
         LeafNode.delete(id, sample_graph)

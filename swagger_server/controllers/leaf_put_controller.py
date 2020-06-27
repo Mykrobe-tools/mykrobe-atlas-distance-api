@@ -1,6 +1,6 @@
 import connexion
-from flask import g
 
+from swagger_server.db import get_db
 from swagger_server.exceptions import NotFound
 from swagger_server.models import Error
 from swagger_server.models.nearest_leaf import NearestLeaf  # noqa: E501
@@ -22,7 +22,7 @@ def samples_id_nearest_leaf_node_put(id, nearest_leaf=None):  # noqa: E501
     if connexion.request.is_json:
         nearest_leaf = NearestLeaf.from_dict(connexion.request.get_json())  # noqa: E501
 
-    sample_graph = g.sample_graph
+    sample_graph = get_db()
 
     try:
         updated = SampleNode.update(id, sample_graph, leaf=nearest_leaf)

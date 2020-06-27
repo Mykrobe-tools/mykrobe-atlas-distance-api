@@ -1,13 +1,11 @@
 import logging
 
 import connexion
-from flask import g
 from hypothesis import settings
 from py2neo import Graph
 from pytest import fixture
 
 from swagger_server.encoder import JSONEncoder
-from swagger_server.ogm import LeafNode
 
 
 @fixture(scope='session')
@@ -24,9 +22,7 @@ def app(sample_graph):
     app.app.json_encoder = JSONEncoder
     app.add_api('openapi.yaml')
 
-    with app.app.app_context():
-        g.sample_graph = sample_graph
-        yield app.app
+    return app.app
 
 
 @fixture(scope='session')

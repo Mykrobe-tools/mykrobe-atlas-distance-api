@@ -1,6 +1,6 @@
 import connexion
-from flask import g
 
+from swagger_server.db import get_db
 from swagger_server.exceptions import AlreadyExisted
 from swagger_server.models.error import Error  # noqa: E501
 from swagger_server.models.leaf import Leaf  # noqa: E501
@@ -20,7 +20,7 @@ def tree_post(leaf=None):  # noqa: E501
     if connexion.request.is_json:
         leaf = Leaf.from_dict(connexion.request.get_json())  # noqa: E501
 
-    sample_graph = g.sample_graph
+    sample_graph = get_db()
 
     try:
         node = LeafNode.create(leaf, sample_graph)
