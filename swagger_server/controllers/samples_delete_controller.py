@@ -1,7 +1,7 @@
 from swagger_server.db import get_db
 from swagger_server.exceptions import NotFound
 from swagger_server.models import Error
-from swagger_server.ogm import SampleNode
+from swagger_server.ogm.sample_node import SampleNode
 
 
 def samples_id_delete(id):  # noqa: E501

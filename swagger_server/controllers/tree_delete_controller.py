@@ -3,7 +3,7 @@ from flask import g
 from swagger_server.db import get_db
 from swagger_server.exceptions import NotFound
 from swagger_server.models.error import Error  # noqa: E501
-from swagger_server.ogm import LeafNode
+from swagger_server.ogm.leaf_node import LeafNode
 
 
 def tree_id_delete(id):  # noqa: E501
