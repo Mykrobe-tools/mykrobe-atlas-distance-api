@@ -1,9 +1,13 @@
 from hypothesis.strategies import composite, text, integers, characters, lists, one_of, none
 
-from swagger_server.models import Sample, Neighbour, NearestLeaf
+from swagger_server.models import Sample, Neighbour, NearestLeaf, Leaf
 
 
 def experiment_ids():
+    return text(alphabet=characters(whitelist_categories=('L', 'N')), min_size=1)
+
+
+def leaf_ids():
     return text(alphabet=characters(whitelist_categories=('L', 'N')), min_size=1)
 
 
@@ -59,4 +63,13 @@ def nearest_leaves(draw):
     return NearestLeaf(
         leaf_id=leaf_id,
         distance=distance
+    )
+
+
+@composite
+def leaves(draw):
+    leaf_id = draw(leaf_ids())
+
+    return Leaf(
+        leaf_id=leaf_id
     )

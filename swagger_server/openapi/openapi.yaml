@@ -299,7 +299,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: Unexpected error
-      x-openapi-router-controller: swagger_server.controllers.default_controller
+      tags:
+      - tree_post
+      x-openapi-router-controller: swagger_server.controllers.tree_post_controller
   /tree/{id}:
     delete:
       description: Delete a leaf node based on an ID.
@@ -327,7 +329,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: Unexpected error
-      x-openapi-router-controller: swagger_server.controllers.default_controller
+      tags:
+      - tree_delete
+      x-openapi-router-controller: swagger_server.controllers.tree_delete_controller
     get:
       description: Return the list of nearest samples of a tree node based on an ID.
       operationId: tree_id_get
@@ -360,7 +364,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: Unexpected error
-      x-openapi-router-controller: swagger_server.controllers.default_controller
+      tags:
+      - tree_get
+      x-openapi-router-controller: swagger_server.controllers.tree_get_controller
 components:
   schemas:
     Sample:

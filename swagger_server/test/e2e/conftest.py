@@ -83,13 +83,10 @@ def update_neighbours(make_request):
     return request
 
 
-# TODO: Replace with endpoint request
 @fixture
-def create_leaf(sample_graph):
+def create_leaf(make_request):
     def request(leaf, *args, **kwargs):
-        node = LeafNode()
-        node.leaf_id = leaf.leaf_id
-        sample_graph.create(node)
+        return make_request(f'{API_ROOT}/tree', 'POST', leaf, success_code=201, *args, **kwargs)
     return request
 
 
