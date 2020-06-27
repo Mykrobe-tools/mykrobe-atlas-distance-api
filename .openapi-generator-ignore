@@ -41,3 +41,6 @@
 /swagger_server/controllers/samples_delete_controller.py
 /swagger_server/controllers/leaf_get_controller.py
 /swagger_server/controllers/leaf_put_controller.py
+/swagger_server/controllers/tree_post_controller.py
+/swagger_server/controllers/tree_get_controller.py
+/swagger_server/controllers/tree_delete_controller.py

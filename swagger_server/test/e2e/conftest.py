@@ -90,14 +90,10 @@ def create_leaf(make_request):
     return request
 
 
-# TODO: Replace with endpoint request
 @fixture
-def get_leaf(sample_graph):
-    def request(leaf_id, ensure=False, *args, **kwargs):
-        node = LeafNode.match(sample_graph, leaf_id).limit(1)
-        if ensure:
-            assert len(node) > 0
-        return node.first()
+def get_leaf(make_request):
+    def request(leaf_id, *args, **kwargs):
+        return make_request(f'{API_ROOT}/tree/{leaf_id}', 'GET', *args, **kwargs)
     return request
 
 
