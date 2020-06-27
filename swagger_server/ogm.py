@@ -3,7 +3,7 @@ from typing import List
 from py2neo import Graph
 from py2neo.ogm import GraphObject, Property, RelatedTo
 
-from swagger_server.exceptions import AlreadyExisted, NotFound
+from swagger_server.exceptions import AlreadyExisted, NotFound, MultipleFound
 from swagger_server.models import Sample, NearestLeaf, Neighbour
 
 
@@ -29,9 +29,11 @@ class BaseGraphObject(GraphObject):
 
     @classmethod
     def get(cls, experiment_id: str, graph: Graph) -> 'BaseGraphObject':
-        match = cls.match(graph, experiment_id).limit(1)
+        match = cls.match(graph, experiment_id)
         if len(match) == 0:
             raise NotFound
+        if len(match) > 1:
+            raise MultipleFound
         return match.first()
 
     @classmethod

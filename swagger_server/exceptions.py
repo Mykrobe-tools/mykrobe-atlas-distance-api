@@ -4,3 +4,7 @@ class AlreadyExisted(Exception):
 
 class NotFound(Exception):
     pass
+
+
+class MultipleFound(Exception):
+    pass
