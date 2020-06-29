@@ -3,6 +3,7 @@ from typing import List
 from py2neo import Graph
 from py2neo.ogm import Property, RelatedTo
 
+from swagger_server.exceptions import NotFound
 from swagger_server.models import Sample, Neighbour, NearestLeaf
 from swagger_server.ogm.base import BaseGraphObject
 from swagger_server.ogm.leaf_node import LeafNode
@@ -59,6 +60,8 @@ class SampleNode(BaseGraphObject):
             n.leaf_id = leaf.leaf_id
             if n.exists(graph):
                 node.lineage.add(n, distance=leaf.distance)
+            else:
+                raise NotFound
 
         graph.push(node)
 

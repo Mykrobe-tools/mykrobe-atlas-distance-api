@@ -5,9 +5,20 @@ from swagger_server.test.strategies import experiment_ids, samples, nearest_leav
 
 
 @given(experiment_id=experiment_ids(), nearest_leaf=nearest_leaves())
-def test_updating_leaf_of_non_existent_samples(experiment_id, nearest_leaf, update_nearest_leaf, sample_graph):
+def test_updating_leaves_of_non_existent_samples(experiment_id, nearest_leaf, update_nearest_leaf, sample_graph):
     response = update_nearest_leaf(experiment_id, nearest_leaf)
-    assert response.status_code == 404, response.data.decode()
+    assert response.status_code == 404
+
+
+@given(sample=samples(), nearest_leaf=nearest_leaves())
+def test_updating_leaves_to_non_existent_ones(sample, nearest_leaf, create_sample, update_nearest_leaf, sample_graph):
+    try:
+        create_sample(sample, ensure=True)
+
+        response = update_nearest_leaf(sample.experiment_id, nearest_leaf)
+        assert response.status_code == 404
+    finally:
+        sample_graph.delete_all()
 
 
 @given(sample=samples(), nearest_leaf=nearest_leaves())
