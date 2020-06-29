@@ -23,7 +23,7 @@ If you want to restore the sample data, simply delete `./data` and run `./script
 
 ## Tail application's logs
 ```shell script
-./scripts/tail_app_logs.sh
+make logs
 ```
 
 ## View the toy graph
@@ -60,7 +60,6 @@ docker stop dist
 
 ## Run tests
 ```shell script
-./scripts/start_test_db.sh
-python3 -m unittest
-docker stop test_neo4j
+make test_db
+make test
 ```

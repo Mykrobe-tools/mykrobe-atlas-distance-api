@@ -1,0 +1,442 @@
+openapi: 3.0.1
+info:
+  description: |-
+    <p>An API for CRUD of two types of distances <li> between a sample and its closest samples <li> between a sample and its closest phylogenetic tree node
+    <p>This API is intended to satisfy the following user stories <li> as a user, I want to add my new sample and its close neighbours so that I can retrieve them later <li> as a user, I want to query a sample for its close neighbours and its nearest node in a phylogenetic tree <li> as a user, I want to query a sample for its close neighbours so that I can do my analysis <li> as a user, I want to query a sample for its nearest node in a phylogenetic tree so that I can do my analysis <li> as a user, I want to update a sample with new list of close neighbours so that they are correct <li> as a user, I want to update a sample with new nearest leaf node in a phylogenetic tree so that it is correct <li> as a user, I want to remove a sample so that it is no longer available to any users <li> as a user, I want to add a new leaf node to the phylogenetic tree <li> as a user, I want to remove a leaf node from the phylogenetic tree <li> as a user, I want to query a tree node for a list of samples which have this as nearest tree node
+  title: Distance API
+  version: 1.0.0
+servers:
+- url: http://distance-api-service/api/v1
+paths:
+  /samples:
+    post:
+      description: Add a new sample. Duplicates are not allowed
+      operationId: samples_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Sample'
+        description: Sample to be added
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sample'
+          description: Created. Maybe partially satisfied, the response body contains
+            the created resource.
+        "409":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Already existed
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Ambiguous (duplicated neighbours)
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unexpected error
+      tags:
+      - samples_post
+      x-openapi-router-controller: swagger_server.controllers.samples_post_controller
+  /samples/{id}:
+    delete:
+      description: Delete a sample based on a sample ID.
+      operationId: samples_id_delete
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Not found
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unexpected error
+      tags:
+      - samples_delete
+      x-openapi-router-controller: swagger_server.controllers.samples_delete_controller
+    get:
+      description: Return a sample based on a sample ID.
+      operationId: samples_id_get
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sample'
+          description: OK
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Not found
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unexpected error
+      tags:
+      - samples_get
+      x-openapi-router-controller: swagger_server.controllers.samples_get_controller
+  /samples/{id}/nearest-leaf-node:
+    get:
+      description: Return the nearest leaf node of a sample based on a sample ID.
+      operationId: samples_id_nearest_leaf_node_get
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NearestLeaf'
+          description: OK
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Not found
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unexpected error
+      tags:
+      - leaf_get
+      x-openapi-router-controller: swagger_server.controllers.leaf_get_controller
+    put:
+      description: Replace the nearest leaf node of a sample based on a sample ID.
+      operationId: samples_id_nearest_leaf_node_put
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NearestLeaf'
+        description: New nearest leaf node to replace old one.
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NearestLeaf'
+          description: OK. Maybe partially satisfied, the response body contains the
+            updated resource.
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Not found
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unexpected error
+      tags:
+      - leaf_put
+      x-openapi-router-controller: swagger_server.controllers.leaf_put_controller
+  /samples/{id}/nearest-neighbours:
+    get:
+      description: Return the list of nearest neighbours of a sample based on a sample
+        ID.
+      operationId: samples_id_nearest_neighbours_get
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Neighbour'
+                type: array
+          description: OK
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Not found
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unexpected error
+      tags:
+      - neighbours_get
+      x-openapi-router-controller: swagger_server.controllers.neighbours_get_controller
+    put:
+      description: Replace the list of nearest neighbours of a sample based on a sample
+        ID.
+      operationId: samples_id_nearest_neighbours_put
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              items:
+                $ref: '#/components/schemas/Neighbour'
+              type: array
+        description: New list of nearest neighbours to replace old one.
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Neighbour'
+                type: array
+          description: OK. Maybe partially satisfied, the response body contains the
+            updated resource.
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Not found
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unexpected error
+      tags:
+      - neighbours_put
+      x-openapi-router-controller: swagger_server.controllers.neighbours_put_controller
+  /tree:
+    post:
+      description: Create a leaf node for the phylogenetic tree.
+      operationId: tree_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Leaf'
+        description: Leaf node to be added
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Leaf'
+          description: Created. The response body contains the created resource.
+        "409":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Already existed
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unexpected error
+      tags:
+      - tree_post
+      x-openapi-router-controller: swagger_server.controllers.tree_post_controller
+  /tree/{id}:
+    delete:
+      description: Delete a leaf node based on an ID.
+      operationId: tree_id_delete
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Not found
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unexpected error
+      tags:
+      - tree_delete
+      x-openapi-router-controller: swagger_server.controllers.tree_delete_controller
+    get:
+      description: Return the list of nearest samples of a tree node based on an ID.
+      operationId: tree_id_get
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Neighbour'
+                type: array
+          description: OK
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Not found
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unexpected error
+      tags:
+      - tree_get
+      x-openapi-router-controller: swagger_server.controllers.tree_get_controller
+components:
+  schemas:
+    Sample:
+      example:
+        experiment_id: experiment_id
+        nearest-leaf-node:
+          distance: 6
+          leaf_id: leaf_id
+        nearest-neighbours:
+        - distance: 0
+          experiment_id: experiment_id
+        - distance: 0
+          experiment_id: experiment_id
+      properties:
+        experiment_id:
+          type: string
+        nearest-neighbours:
+          items:
+            $ref: '#/components/schemas/Neighbour'
+          type: array
+        nearest-leaf-node:
+          $ref: '#/components/schemas/NearestLeaf'
+      required:
+      - experiment_id
+      type: object
+    Neighbour:
+      example:
+        distance: 0
+        experiment_id: experiment_id
+      properties:
+        experiment_id:
+          type: string
+        distance:
+          format: int32
+          type: integer
+      required:
+      - distance
+      - experiment_id
+      type: object
+    Leaf:
+      example:
+        leaf_id: leaf_id
+      properties:
+        leaf_id:
+          type: string
+      required:
+      - leaf_id
+      type: object
+    NearestLeaf:
+      example:
+        distance: 6
+        leaf_id: leaf_id
+      properties:
+        leaf_id:
+          type: string
+        distance:
+          format: int32
+          type: integer
+      required:
+      - distance
+      - leaf_id
+      type: object
+    Error:
+      properties:
+        code:
+          format: int32
+          type: integer
+        message:
+          type: string
+      required:
+      - code
+      - message
+      type: object

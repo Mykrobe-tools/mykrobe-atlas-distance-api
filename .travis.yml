@@ -1,7 +1,7 @@
 # ref: https://docs.travis-ci.com/user/languages/python
 language: python
 python:
-  - "3.6"
+  - "3.8"
 
 dist: bionic
 
@@ -26,4 +26,5 @@ before_script:
   - sudo systemctl restart neo4j
   - sleep 10
 
-script: python -m unittest
+script:
+  - pytest
