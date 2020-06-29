@@ -7,12 +7,12 @@ from swagger_server.ogm.leaf_node import LeafNode
 def tree_id_get(id):  # noqa: E501
     """tree_id_get
 
-    Return the list of nearest samples of a tree node based on an ID. # noqa: E501
+    Return a tree node based on an ID. # noqa: E501
 
     :param id:
     :type id: str
 
-    :rtype: List[Neighbour]
+    :rtype: Leaf
     """
 
     sample_graph = get_db()
