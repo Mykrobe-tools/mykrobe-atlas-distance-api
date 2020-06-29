@@ -286,7 +286,7 @@ paths:
     get:
       tags:
         - tree_get
-      description: Return the list of nearest samples of a tree node based on an ID.
+      description: Return a tree node based on an ID.
       parameters:
         - name: id
           in: path
@@ -301,7 +301,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Neighbour'
+                  $ref: '#/components/schemas/Leaf'
         404:
           description: Not found
           content:
