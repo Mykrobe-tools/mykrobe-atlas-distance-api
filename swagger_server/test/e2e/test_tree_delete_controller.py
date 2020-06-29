@@ -1,6 +1,6 @@
 from hypothesis import given
 
-from swagger_server.test.strategies import samples, experiment_ids, leaf_ids, leaves
+from swagger_server.test.strategies import leaf_ids, leaves
 
 
 @given(leaf_id=leaf_ids())
@@ -9,7 +9,7 @@ def test_deleting_non_existent_leaves(leaf_id, delete_leaf):
 
 
 @given(leaf=leaves())
-def test_deleting_existing_samples(leaf, create_leaf, delete_leaf, get_leaf, sample_graph):
+def test_deleting_existing_leaves(leaf, create_leaf, delete_leaf, get_leaf, sample_graph):
     try:
         create_leaf(leaf, ensure=True)
 

@@ -1,5 +1,3 @@
-from flask import g
-
 from swagger_server.db import get_db
 from swagger_server.exceptions import NotFound
 from swagger_server.models.error import Error  # noqa: E501

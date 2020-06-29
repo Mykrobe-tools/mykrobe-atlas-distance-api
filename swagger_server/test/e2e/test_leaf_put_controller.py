@@ -1,5 +1,4 @@
 from hypothesis import given
-from pytest import skip
 
 from swagger_server.models import NearestLeaf
 from swagger_server.test.strategies import experiment_ids, samples, nearest_leaves
