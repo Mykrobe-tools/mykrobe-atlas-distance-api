@@ -94,6 +94,13 @@ def update_nearest_leaf(make_request):
 
 
 @fixture
+def delete_nearest_leaf(make_request):
+    def request(experiment_id):
+        return make_request(f'{API_ROOT}/samples/{experiment_id}/nearest-leaf-node', 'DELETE')
+    return request
+
+
+@fixture
 def create_leaf(make_request):
     def request(leaf, *args, **kwargs):
         return make_request(f'{API_ROOT}/tree', 'POST', leaf, success_code=201, *args, **kwargs)

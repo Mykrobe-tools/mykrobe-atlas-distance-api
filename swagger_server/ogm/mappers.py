@@ -81,6 +81,10 @@ class SampleNode(BaseGraphObject):
 
         return node
 
+    def detach_lineage(self, graph: Graph):
+        self.lineage.clear()
+        graph.push(self)
+
     def to_model(self) -> Sample:
         leaf_relationship = self.lineage
         neighbour_relationships = self.neighbours
