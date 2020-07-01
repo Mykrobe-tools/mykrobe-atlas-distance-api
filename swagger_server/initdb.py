@@ -4,7 +4,7 @@ from random import randrange, choice
 from py2neo import Graph
 
 from swagger_server.models import Sample, Neighbour, NearestLeaf
-from swagger_server.ogm.sample_node import SampleNode
+from swagger_server.ogm.mappers import SampleNode
 
 if __name__ == '__main__':
     repo = Graph()

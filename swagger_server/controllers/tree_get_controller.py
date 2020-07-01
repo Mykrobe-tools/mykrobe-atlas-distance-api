@@ -1,7 +1,7 @@
 from swagger_server.db import get_db
 from swagger_server.exceptions import NotFound
 from swagger_server.models.error import Error  # noqa: E501
-from swagger_server.ogm.leaf_node import LeafNode
+from swagger_server.ogm.mappers import LeafNode
 
 
 def tree_id_get(id):  # noqa: E501

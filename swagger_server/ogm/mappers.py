@@ -1,12 +1,26 @@
 from typing import List
 
 from py2neo import Graph
-from py2neo.ogm import Property, RelatedTo
+from py2neo.ogm import Property, RelatedTo, RelatedFrom
 
 from swagger_server.exceptions import NotFound
-from swagger_server.models import Sample, Neighbour, NearestLeaf
+from swagger_server.models import Sample, Neighbour, NearestLeaf, Leaf
 from swagger_server.ogm.base import BaseGraphObject
-from swagger_server.ogm.leaf_node import LeafNode
+
+NEIGHBOUR_REL_TYPE = 'NEIGHBOUR'
+LINEAGE_REL_TYPE = 'LINEAGE'
+
+
+
+class LeafNode(BaseGraphObject):
+    __primarykey__ = 'leaf_id'
+
+    leaf_id = Property()
+
+    samples = RelatedFrom('SampleNode', LINEAGE_REL_TYPE)
+
+    model_class = Leaf
+
 
 
 class SampleNode(BaseGraphObject):
@@ -14,8 +28,8 @@ class SampleNode(BaseGraphObject):
 
     experiment_id = Property()
 
-    neighbours = RelatedTo('SampleNode', 'NEIGHBOUR')
-    lineage = RelatedTo(LeafNode, 'LINEAGE')
+    neighbours = RelatedTo('SampleNode', NEIGHBOUR_REL_TYPE)
+    lineage = RelatedTo(LeafNode, LINEAGE_REL_TYPE)
 
     model_class = Sample
 

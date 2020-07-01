@@ -114,5 +114,12 @@ def delete_leaf(make_request):
     return request
 
 
+@fixture
+def get_samples_of_leaf(make_request):
+    def request(leaf_id):
+        return make_request(f'{API_ROOT}/tree/{leaf_id}/samples', 'GET')
+    return request
+
+
 settings.register_profile('e2e', deadline=None)
 settings.load_profile('e2e')

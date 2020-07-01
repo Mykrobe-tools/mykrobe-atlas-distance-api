@@ -4,7 +4,7 @@ from swagger_server.db import get_db
 from swagger_server.exceptions import NotFound
 from swagger_server.models.error import Error  # noqa: E501
 from swagger_server.models.neighbour import Neighbour  # noqa: E501
-from swagger_server.ogm.sample_node import SampleNode
+from swagger_server.ogm.mappers import SampleNode
 
 
 def samples_id_nearest_neighbours_put(id, neighbour=None):  # noqa: E501

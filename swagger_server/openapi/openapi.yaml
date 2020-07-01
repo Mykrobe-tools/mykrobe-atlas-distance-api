@@ -2,7 +2,7 @@ openapi: 3.0.1
 info:
   description: |-
     <p>An API for CRUD of two types of distances <li> between a sample and its closest samples <li> between a sample and its closest phylogenetic tree node
-    <p>This API is intended to satisfy the following user stories <li> as a user, I want to add my new sample and its close neighbours so that I can retrieve them later <li> as a user, I want to query a sample for its close neighbours and its nearest node in a phylogenetic tree <li> as a user, I want to query a sample for its close neighbours so that I can do my analysis <li> as a user, I want to query a sample for its nearest node in a phylogenetic tree so that I can do my analysis <li> as a user, I want to update a sample with new list of close neighbours so that they are correct <li> as a user, I want to update a sample with new nearest leaf node in a phylogenetic tree so that it is correct <li> as a user, I want to remove a sample so that it is no longer available to any users <li> as a user, I want to add a new leaf node to the phylogenetic tree <li> as a user, I want to remove a leaf node from the phylogenetic tree <li> as a user, I want to query a tree node for a list of samples which have this as nearest tree node
+    <p>This API is intended to satisfy the following user stories <li> as a user, I want to add my new sample and its close neighbours so that I can retrieve them later <li> as a user, I want to query a sample for its close neighbours and its nearest node in a phylogenetic tree <li> as a user, I want to query a sample for its close neighbours so that I can do my analysis <li> as a user, I want to query a sample for its nearest node in a phylogenetic tree so that I can do my analysis <li> as a user, I want to update a sample with new list of close neighbours so that they are correct <li> as a user, I want to update a sample with new nearest leaf node in a phylogenetic tree so that it is correct <li> as a user, I want to remove the nearest leaf node in a phylogenetic tree from a sample so that it is correct <li> as a user, I want to remove a sample so that it is no longer available to any users <li> as a user, I want to add a new leaf node to the phylogenetic tree <li> as a user, I want to remove a leaf node from the phylogenetic tree <li> as a user, I want to query a tree node for a list of samples which have this as nearest tree node
   title: Distance API
   version: 1.0.0
 servers:
@@ -112,6 +112,36 @@ paths:
       - samples_get
       x-openapi-router-controller: swagger_server.controllers.samples_get_controller
   /samples/{id}/nearest-leaf-node:
+    delete:
+      description: Delete the nearest leaf node associated with a sample based on
+        a sample ID.
+      operationId: samples_id_nearest_leaf_node_delete
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Not found
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unexpected error
+      tags:
+      - leaf_delete
+      x-openapi-router-controller: swagger_server.controllers.leaf_delete_controller
     get:
       description: Return the nearest leaf node of a sample based on a sample ID.
       operationId: samples_id_nearest_leaf_node_get
@@ -333,8 +363,44 @@ paths:
       - tree_delete
       x-openapi-router-controller: swagger_server.controllers.tree_delete_controller
     get:
-      description: Return the list of nearest samples of a tree node based on an ID.
+      description: Return a tree node based on an ID.
       operationId: tree_id_get
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Leaf'
+                type: array
+          description: OK
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Not found
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unexpected error
+      tags:
+      - tree_get
+      x-openapi-router-controller: swagger_server.controllers.tree_get_controller
+  /tree/{id}/samples:
+    get:
+      description: Return the list of nearest samples of a tree node based on an ID.
+      operationId: tree_id_samples_get
       parameters:
       - explode: false
         in: path
@@ -365,8 +431,8 @@ paths:
                 $ref: '#/components/schemas/Error'
           description: Unexpected error
       tags:
-      - tree_get
-      x-openapi-router-controller: swagger_server.controllers.tree_get_controller
+      - tree_samples_get
+      x-openapi-router-controller: swagger_server.controllers.tree_samples_get_controller
 components:
   schemas:
     Sample:

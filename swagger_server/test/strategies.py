@@ -16,7 +16,7 @@ def distances():
 
 
 @composite
-def samples(draw, must_have_neighbours=False, must_have_leaf=False):
+def samples(draw, must_have_neighbours=False, must_have_leaf=False, leaf_id=None):
     experiment_id = draw(experiment_ids())
 
     neighbours_strategy = lists(
@@ -30,7 +30,7 @@ def samples(draw, must_have_neighbours=False, must_have_leaf=False):
             none()
         )
 
-    nearest_leaf_strategy = nearest_leaves()
+    nearest_leaf_strategy = nearest_leaves(leaf_id)
     if not must_have_leaf:
         nearest_leaf_strategy = one_of(
             nearest_leaf_strategy,
@@ -56,8 +56,8 @@ def neighbours(draw):
 
 
 @composite
-def nearest_leaves(draw):
-    leaf_id = draw(experiment_ids())
+def nearest_leaves(draw, leaf_id=None):
+    leaf_id = leaf_id or draw(experiment_ids())
     distance = draw(distances())
 
     return NearestLeaf(
@@ -73,3 +73,11 @@ def leaves(draw):
     return Leaf(
         leaf_id=leaf_id
     )
+
+
+@composite
+def trees(draw):
+    leaf = draw(leaves())
+    sample_list = draw(lists(samples(must_have_leaf=True, leaf_id=leaf.leaf_id), unique_by=lambda x: x.experiment_id))
+
+    return leaf, sample_list

@@ -4,7 +4,7 @@ from swagger_server.db import get_db
 from swagger_server.exceptions import AlreadyExisted
 from swagger_server.models.error import Error  # noqa: E501
 from swagger_server.models.sample import Sample  # noqa: E501
-from swagger_server.ogm.sample_node import SampleNode
+from swagger_server.ogm.mappers import SampleNode
 from swagger_server.validators import SampleValidator
 
 
