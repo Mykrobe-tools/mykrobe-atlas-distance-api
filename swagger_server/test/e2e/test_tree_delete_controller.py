@@ -14,7 +14,7 @@ def test_deleting_existing_leaves(leaf, create_leaf, delete_leaf, get_leaf, samp
         create_leaf(leaf, ensure=True)
 
         response = delete_leaf(leaf.leaf_id)
-        assert response.status_code == 200
+        assert response.status_code == 204
 
         assert get_leaf(leaf.leaf_id).status_code == 404
     finally:

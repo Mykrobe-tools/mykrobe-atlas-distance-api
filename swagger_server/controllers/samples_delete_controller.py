@@ -22,4 +22,4 @@ def samples_id_delete(id):  # noqa: E501
     except NotFound:
         return Error(404, 'Not found'), 404
     else:
-        return '', 200
+        return '', 204

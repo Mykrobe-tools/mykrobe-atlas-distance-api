@@ -20,7 +20,7 @@ def test_deleting_existing_samples(sample, create_sample, create_leaf, delete_sa
         create_sample(sample, ensure=True)
 
         response = delete_sample(sample.experiment_id)
-        assert response.status_code == 200
+        assert response.status_code == 204
 
         assert get_sample(sample.experiment_id).status_code == 404
         if sample.nearest_neighbours:
