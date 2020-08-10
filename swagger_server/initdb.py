@@ -35,4 +35,5 @@ if __name__ == '__main__':
 
         sample.nearest_leaf_node = choice(leaves)
 
-        SampleNode.update(sample.experiment_id, repo, neighbours=sample.nearest_neighbours, leaf=sample.nearest_leaf_node)
+        SampleNode.update(sample.experiment_id, repo, neighbours=sample.nearest_neighbours,
+                          leaf=sample.nearest_leaf_node)

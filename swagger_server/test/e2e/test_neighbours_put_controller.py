@@ -13,7 +13,8 @@ def test_updating_neighbours_of_non_existent_samples(experiment_id, new_neighbou
 
 
 @given(sample=samples(), new_neighbours=lists(neighbours(), unique_by=lambda x: x.experiment_id))
-def test_updating_ensures_a_sample_neighbours_set_to_be_the_new_one(sample, new_neighbours, create_sample, update_neighbours, sample_graph):
+def test_updating_ensures_a_sample_neighbours_set_to_be_the_new_one(sample, new_neighbours, create_sample,
+                                                                    update_neighbours, sample_graph):
     assume(sample.experiment_id not in [x.experiment_id for x in new_neighbours])
 
     try:

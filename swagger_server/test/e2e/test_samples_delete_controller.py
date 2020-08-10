@@ -9,7 +9,8 @@ def test_deleting_non_existent_samples(experiment_id, delete_sample):
 
 
 @given(sample=samples())
-def test_deleting_existing_samples(sample, create_sample, create_leaf, delete_sample, get_sample, get_leaf, sample_graph):
+def test_deleting_existing_samples(sample, create_sample, create_leaf, delete_sample, get_sample, get_leaf,
+                                   sample_graph):
     try:
         if sample.nearest_neighbours:
             for neighbour in sample.nearest_neighbours:

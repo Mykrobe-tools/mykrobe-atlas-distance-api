@@ -7,7 +7,8 @@ from swagger_server.test.strategies import samples, experiment_ids, distances
 
 
 @given(sample=samples(), neighbour_id=experiment_ids(), d1=distances(), d2=distances())
-def test_creating_samples_with_multiple_distances_to_one_neighbour(sample, neighbour_id, d1, d2, create_sample, sample_graph):
+def test_creating_samples_with_multiple_distances_to_one_neighbour(sample, neighbour_id, d1, d2, create_sample,
+                                                                   sample_graph):
     sample.nearest_neighbours = [
         Neighbour(neighbour_id, d1),
         Neighbour(neighbour_id, d2)

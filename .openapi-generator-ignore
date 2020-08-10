@@ -34,13 +34,16 @@
 /swagger_server/__main__.py
 /swagger_server/test/
 
-/swagger_server/controllers/neighbours_get_controller.py
-/swagger_server/controllers/neighbours_put_controller.py
-/swagger_server/controllers/samples_post_controller.py
-/swagger_server/controllers/samples_get_controller.py
-/swagger_server/controllers/samples_delete_controller.py
+/swagger_server/controllers/leaf_delete_controller.py
 /swagger_server/controllers/leaf_get_controller.py
 /swagger_server/controllers/leaf_put_controller.py
-/swagger_server/controllers/tree_post_controller.py
-/swagger_server/controllers/tree_get_controller.py
+/swagger_server/controllers/neighbours_get_controller.py
+/swagger_server/controllers/neighbours_put_controller.py
+/swagger_server/controllers/samples_delete_controller.py
+/swagger_server/controllers/samples_get_controller.py
+/swagger_server/controllers/samples_get_ids_controller.py
+/swagger_server/controllers/samples_post_controller.py
 /swagger_server/controllers/tree_delete_controller.py
+/swagger_server/controllers/tree_get_controller.py
+/swagger_server/controllers/tree_post_controller.py
+/swagger_server/controllers/tree_samples_get_controller.py

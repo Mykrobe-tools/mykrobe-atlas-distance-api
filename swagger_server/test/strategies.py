@@ -12,7 +12,7 @@ def leaf_ids():
 
 
 def distances():
-    return integers(min_value=-2**63, max_value=2**63-1)
+    return integers(min_value=-2 ** 63, max_value=2 ** 63 - 1)
 
 
 @composite

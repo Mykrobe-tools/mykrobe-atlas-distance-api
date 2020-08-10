@@ -22,7 +22,8 @@ def test_updating_leaves_to_non_existent_ones(sample, nearest_leaf, create_sampl
 
 
 @given(sample=samples(), nearest_leaf=nearest_leaves())
-def test_updating_ensures_a_sample_lineage_to_be_the_new_one(sample, nearest_leaf, create_leaf, create_sample, update_nearest_leaf, sample_graph):
+def test_updating_ensures_a_sample_lineage_to_be_the_new_one(sample, nearest_leaf, create_leaf, create_sample,
+                                                             update_nearest_leaf, sample_graph):
     try:
         if sample.nearest_leaf_node:
             create_leaf(sample.nearest_leaf_node, ensure=True)
