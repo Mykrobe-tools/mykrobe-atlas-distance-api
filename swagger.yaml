@@ -9,7 +9,7 @@ info:
 
     <p>This API is intended to satisfy the following user stories
       <li> as a user, I want to add my new sample and its close neighbours so that I can retrieve them later
-      <li> as a user, I want to query a sample for its close neighbours and its nearest node in a phylogenetic tree
+      <li> as a user, I want to query a sample for its close neighbours and their nearest nodes in a phylogenetic tree
       <li> as a user, I want to query a sample for its close neighbours so that I can do my analysis
       <li> as a user, I want to query a sample for its nearest node in a phylogenetic tree so that I can do my analysis
       <li> as a user, I want to update a sample with new list of close neighbours so that they are correct
@@ -49,6 +49,42 @@ paths:
                 $ref: '#/components/schemas/Error'
         400:
           description: Ambiguous (duplicated neighbours)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    get:
+      tags:
+        - samples_get_ids
+      description: Return one or more samples based on IDs
+      parameters:
+        - name: ids
+          in: query
+          description: A comma-separated list of sample IDs
+          schema:
+            type: array
+            items:
+              type: string
+            minItems: 1
+          explode: false
+          style: form
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Sample'
+        404:
+          description: Not found
           content:
             application/json:
               schema:
