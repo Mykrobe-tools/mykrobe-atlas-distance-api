@@ -30,7 +30,7 @@ def samples(draw, must_have_neighbours=False, must_have_leaf=False, leaf_id=None
             neighbours_strategy,
             none()
         )
-    if not must_not_have_neighbours:
+    if must_not_have_neighbours:
         neighbours_strategy = none()
 
     nearest_leaf_strategy = nearest_leaves(leaf_id)
@@ -39,7 +39,7 @@ def samples(draw, must_have_neighbours=False, must_have_leaf=False, leaf_id=None
             nearest_leaf_strategy,
             none()
         )
-    if not must_not_have_leaf:
+    if must_not_have_leaf:
         nearest_leaf_strategy = none()
 
     return Sample(
