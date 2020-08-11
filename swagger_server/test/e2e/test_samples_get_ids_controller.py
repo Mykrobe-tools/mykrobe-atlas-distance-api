@@ -1,4 +1,3 @@
-import json
 from hypothesis import given, strategies as st
 
 from swagger_server.models import Sample
@@ -9,12 +8,12 @@ def test_samples_get_without_any_id(get_sample_by_ids):
     assert get_sample_by_ids('').status_code == 404
 
 
-@given(sample_ids=st.lists(min_size=1, max_size=10, elements=experiment_ids()))
+@given(sample_ids=st.lists(min_size=1, max_size=5, elements=experiment_ids()))
 def test_samples_get_non_existent_ids(sample_ids, get_sample_by_ids):
     assert get_sample_by_ids(",".join(sample_ids)).status_code == 404
 
 
-@given(samples_with_ids=st.lists(min_size=1, max_size=10, elements=samples(), unique_by=lambda x: x.experiment_id))
+@given(samples_with_ids=st.lists(min_size=1, max_size=5, elements=samples(), unique_by=lambda x: x.experiment_id))
 def test_samples_get_existing_ids(samples_with_ids, create_sample, create_leaf, get_sample_by_ids, sample_graph):
     try:
         created_ids = []
@@ -36,7 +35,9 @@ def test_samples_get_existing_ids(samples_with_ids, create_sample, create_leaf, 
         sample_graph.delete_all()
 
 
-@given(samples_with_ids=st.lists(min_size=2, max_size=10, elements=samples(), unique_by=lambda x: x.experiment_id))
+@given(samples_with_ids=st.lists(min_size=2, max_size=5,
+                                 elements=samples(must_not_have_neighbours=True, must_not_have_leaf=True),
+                                 unique_by=lambda x: x.experiment_id))
 def test_samples_get_partially_existing_ids(samples_with_ids, create_sample, create_leaf, get_sample_by_ids, sample_graph):
     try:
         generated_ids = []
