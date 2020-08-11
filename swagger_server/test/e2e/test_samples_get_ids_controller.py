@@ -46,12 +46,7 @@ def test_samples_get_partially_existing_ids(samples_with_ids, create_sample, cre
             generated_ids.append(sample.experiment_id)
             if index % 2 == 0:
                 continue
-            if sample.nearest_neighbours:
-                for neighbour in sample.nearest_neighbours:
-                    create_sample(neighbour)
-            if sample.nearest_leaf_node:
-                create_leaf(sample.nearest_leaf_node)
-            create_sample(sample)
+            create_sample(sample, ensure=True)
             created_ids.append(sample.experiment_id)
 
         response = get_sample_by_ids(",".join(generated_ids), ensure=True)
