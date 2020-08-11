@@ -54,6 +54,14 @@ def create_sample(make_request):
 
 
 @fixture(scope="session")
+def get_sample_by_ids(make_request):
+    def request(sample_ids, *args, **kwargs):
+        return make_request(f'{API_ROOT}/samples?ids={sample_ids}', 'GET', *args, **kwargs)
+
+    return request
+
+
+@fixture(scope="session")
 def get_sample(make_request):
     def request(experiment_id, *args, **kwargs):
         return make_request(f'{API_ROOT}/samples/{experiment_id}', 'GET', *args, **kwargs)

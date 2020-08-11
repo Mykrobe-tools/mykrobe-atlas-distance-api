@@ -1,9 +1,7 @@
-import connexion
-import six
-
+from swagger_server.db import get_db
+from swagger_server.exceptions import NotFound
 from swagger_server.models.error import Error  # noqa: E501
-from swagger_server.models.sample import Sample  # noqa: E501
-from swagger_server import util
+from swagger_server.ogm.mappers import SampleNode
 
 
 def samples_get(ids=None):  # noqa: E501
@@ -16,4 +14,19 @@ def samples_get(ids=None):  # noqa: E501
 
     :rtype: List[Sample]
     """
-    return 'do some magic!'
+
+    sample_graph = get_db()
+
+    samples = []
+    for sample_id in ids:
+        try:
+            node = SampleNode.get(sample_id, sample_graph)
+        except NotFound:
+            pass
+        else:
+            samples.append(node.to_model())
+
+    if samples:
+        return samples, 200
+
+    return Error(404, 'Not found'), 404

@@ -11,7 +11,6 @@ NEIGHBOUR_REL_TYPE = 'NEIGHBOUR'
 LINEAGE_REL_TYPE = 'LINEAGE'
 
 
-
 class LeafNode(BaseGraphObject):
     __primarykey__ = 'leaf_id'
 
@@ -20,7 +19,6 @@ class LeafNode(BaseGraphObject):
     samples = RelatedFrom('SampleNode', LINEAGE_REL_TYPE)
 
     model_class = Leaf
-
 
 
 class SampleNode(BaseGraphObject):
@@ -55,7 +53,8 @@ class SampleNode(BaseGraphObject):
         return node
 
     @classmethod
-    def update(cls, experiment_id: str, graph: Graph, neighbours: List[Neighbour] = None, leaf: NearestLeaf = None) -> 'SampleNode':
+    def update(cls, experiment_id: str, graph: Graph, neighbours: List[Neighbour] = None,
+               leaf: NearestLeaf = None) -> 'SampleNode':
         node = cls.get(experiment_id, graph)
 
         if neighbours is not None:
