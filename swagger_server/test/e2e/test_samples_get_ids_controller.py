@@ -1,6 +1,5 @@
-from hypothesis import given, strategies as st
+from hypothesis import given, strategies as st, reproduce_failure
 
-from swagger_server.models import Sample
 from swagger_server.test.strategies import samples, experiment_ids
 
 
@@ -23,7 +22,8 @@ def test_samples_get_existing_ids(samples_with_ids, create_sample, create_leaf, 
                     create_sample(neighbour)
             if sample.nearest_leaf_node:
                 create_leaf(sample.nearest_leaf_node)
-            created_ids.append(Sample.from_dict(create_sample(sample).json).experiment_id)
+            create_sample(sample)
+            created_ids.append(sample.experiment_id)
 
         response = get_sample_by_ids(",".join(created_ids), ensure=True)
 
@@ -51,7 +51,8 @@ def test_samples_get_partially_existing_ids(samples_with_ids, create_sample, cre
                     create_sample(neighbour)
             if sample.nearest_leaf_node:
                 create_leaf(sample.nearest_leaf_node)
-            created_ids.append(Sample.from_dict(create_sample(sample).json).experiment_id)
+            create_sample(sample)
+            created_ids.append(sample.experiment_id)
 
         response = get_sample_by_ids(",".join(generated_ids), ensure=True)
 
