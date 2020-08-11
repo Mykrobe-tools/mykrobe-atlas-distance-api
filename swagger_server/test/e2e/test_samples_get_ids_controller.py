@@ -20,10 +20,10 @@ def test_samples_get_existing_ids(samples_with_ids, create_sample, create_leaf, 
         for sample in samples_with_ids:
             if sample.nearest_neighbours:
                 for neighbour in sample.nearest_neighbours:
-                    create_sample(neighbour, ensure=True)
+                    create_sample(neighbour)
             if sample.nearest_leaf_node:
-                create_leaf(sample.nearest_leaf_node, ensure=True)
-            created_ids.append(Sample.from_dict(create_sample(sample, ensure=True).json).experiment_id)
+                create_leaf(sample.nearest_leaf_node)
+            created_ids.append(Sample.from_dict(create_sample(sample).json).experiment_id)
 
         response = get_sample_by_ids(",".join(created_ids), ensure=True)
 
@@ -48,10 +48,10 @@ def test_samples_get_partially_existing_ids(samples_with_ids, create_sample, cre
                 continue
             if sample.nearest_neighbours:
                 for neighbour in sample.nearest_neighbours:
-                    create_sample(neighbour, ensure=True)
+                    create_sample(neighbour)
             if sample.nearest_leaf_node:
-                create_leaf(sample.nearest_leaf_node, ensure=True)
-            created_ids.append(Sample.from_dict(create_sample(sample, ensure=True).json).experiment_id)
+                create_leaf(sample.nearest_leaf_node)
+            created_ids.append(Sample.from_dict(create_sample(sample).json).experiment_id)
 
         response = get_sample_by_ids(",".join(generated_ids), ensure=True)
 
