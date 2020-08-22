@@ -18,24 +18,31 @@ def test_updating_ensures_a_sample_neighbours_set_to_be_the_new_one(sample, new_
     assume(sample.experiment_id not in [x.experiment_id for x in new_neighbours])
 
     try:
+        existing_neighbours = []
         if sample.nearest_neighbours:
             for neighbour in sample.nearest_neighbours:
-                create_sample(neighbour)
+                create_sample(neighbour, ensure=True)
+                existing_neighbours.append(neighbour)
         create_sample(sample, ensure=True)
 
-        existing_neighbours = []
+        expected_updated_neighbours = []
         if new_neighbours:
-            existing_neighbours = random.sample(new_neighbours, random.randrange(0, len(new_neighbours)))
-            for neighbour in existing_neighbours:
+            expected_updated_neighbours = random.sample(new_neighbours, random.randrange(0, len(new_neighbours)))
+            for neighbour in expected_updated_neighbours:
                 create_sample(neighbour)
+            for neighbour in existing_neighbours:
+                if neighbour in new_neighbours and neighbour not in expected_updated_neighbours:
+                    expected_updated_neighbours.append(neighbour)
 
         response = update_neighbours(sample.experiment_id, new_neighbours)
-        updated_neighbours = [Neighbour.from_dict(x) for x in response.json]
+        actual_updated_neighbours = [Neighbour.from_dict(x) for x in response.json]
 
         assert response.status_code == 200
-        assert len(updated_neighbours) == len(existing_neighbours)
-        for neighbour in existing_neighbours:
-            assert neighbour in updated_neighbours
+        assert len(actual_updated_neighbours) == len(expected_updated_neighbours)
+        for neighbour in expected_updated_neighbours:
+            assert neighbour in actual_updated_neighbours
+        for neighbour in actual_updated_neighbours:
+            assert neighbour in expected_updated_neighbours
     finally:
         sample_graph.delete_all()
 
