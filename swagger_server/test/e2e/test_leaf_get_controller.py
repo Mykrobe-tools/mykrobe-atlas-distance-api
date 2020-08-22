@@ -6,7 +6,7 @@ from swagger_server.test.strategies import samples, experiment_ids
 
 @given(experiment_id=experiment_ids())
 def test_getting_leaf_of_non_existent_sample(experiment_id, get_nearest_leaf):
-    assert get_nearest_leaf(experiment_id).status_code != 404
+    assert get_nearest_leaf(experiment_id).status_code == 404
 
 
 @given(sample=samples())
