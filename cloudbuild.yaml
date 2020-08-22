@@ -43,7 +43,7 @@ steps:
   # Run tests
   - name: gcr.io/cloud-builders/docker
     args: ['run', '-d', '--name=test-neo4j', '--network=cloudbuild', '--env=NEO4J_AUTH=none', 'neo4j']
-  - name: 'python:3.8'
+  - name: 'python:3.8-slim-buster'
     entrypoint: "bash"
     args:
       - "-c"
