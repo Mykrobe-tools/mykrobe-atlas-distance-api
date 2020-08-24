@@ -1,4 +1,3 @@
-timeout: 1200s
 # Access the id_github file from Secret Manager
 steps:
   - name: gcr.io/cloud-builders/gcloud
