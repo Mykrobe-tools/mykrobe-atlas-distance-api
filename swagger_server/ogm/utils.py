@@ -1,21 +1,25 @@
-def with_retry(method, max_retries=3):
+def with_retry(method, exception_class, max_retries=3):
     def wrapper(instance, *args, **kwargs):
-        done = False
+        try:
+            return method(instance, *args, **kwargs)
+        except exception_class:
+            if max_retries == 0:
+                raise
 
-        for count in range(max_retries):
-            if done:
-                break
+            done = False
 
-            while True:
-                try:
-                    method(instance, *args, **kwargs)
-                except BufferError:
-                    if count == max_retries - 1:
-                        raise
+            for count in range(max_retries):
+                if done:
+                    break
 
-                    count += 1
-                    continue
+                while True:
+                    try:
+                        return method(instance, *args, **kwargs)
+                    except exception_class:
+                        if count == max_retries - 1:
+                            raise
 
-                break
+                        count += 1
+                        continue
 
     return wrapper
