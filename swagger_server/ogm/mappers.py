@@ -6,6 +6,7 @@ from py2neo.ogm import Property, RelatedTo, RelatedFrom
 from swagger_server.exceptions import NotFound
 from swagger_server.models import Sample, Neighbour, NearestLeaf, Leaf
 from swagger_server.ogm.base import BaseGraphObject
+from swagger_server.ogm.utils import with_retry
 
 NEIGHBOUR_REL_TYPE = 'NEIGHBOUR'
 LINEAGE_REL_TYPE = 'LINEAGE'
@@ -87,6 +88,7 @@ class SampleNode(BaseGraphObject):
         self.lineage.clear()
         graph.push(self)
 
+    @with_retry(exception_class=BufferError)
     def to_model(self) -> Sample:
         leaf_relationship = self.lineage
         neighbour_relationships = self.neighbours
