@@ -43,3 +43,20 @@ def test_retry_decorator_with_no_error(mocker):
         assert instance.method_to_test.call_count == 1
 
     inner()
+
+
+def test_retry_decorator_with_unhandled_error(mocker):
+    @given(max_retries=integers())
+    def inner(max_retries):
+        handled_exception_class = BufferError
+        unhandled_exception_class = ValueError
+
+        instance = mocker.MagicMock()
+        instance.method_to_test = mocker.MagicMock(side_effect=unhandled_exception_class)
+
+        with raises(unhandled_exception_class):
+            with_retry(handled_exception_class, max_retries=max_retries)(instance.method_to_test)(instance)
+
+        assert instance.method_to_test.call_count == 1
+
+    inner()
