@@ -88,7 +88,7 @@ class SampleNode(BaseGraphObject):
         self.lineage.clear()
         graph.push(self)
 
-    @with_retry
+    @with_retry(exception_class=BufferError)
     def to_model(self) -> Sample:
         leaf_relationship = self.lineage
         neighbour_relationships = self.neighbours

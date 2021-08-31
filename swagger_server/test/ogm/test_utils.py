@@ -11,7 +11,7 @@ def test_retry_decorator_calls_method_at_least_once(mocker):
     instance.method_to_test = mocker.MagicMock(side_effect=exception_class)
 
     with raises(exception_class):
-        with_retry(instance.method_to_test, exception_class, max_retries=0)(instance)
+        with_retry(exception_class, max_retries=0)(instance.method_to_test)(instance)
 
     assert instance.method_to_test.call_count == 1
 
@@ -24,7 +24,7 @@ def test_retry_decorator(mocker):
         instance.method_to_test = mocker.MagicMock(side_effect=exception_class)
 
         with raises(exception_class):
-            with_retry(instance.method_to_test, exception_class, max_retries=max_retries)(instance)
+            with_retry(exception_class, max_retries=max_retries)(instance.method_to_test)(instance)
 
         assert instance.method_to_test.call_count == max_retries + 1
 
@@ -38,7 +38,7 @@ def test_retry_decorator_with_no_error(mocker):
         instance = mocker.MagicMock()
         instance.method_to_test = mocker.MagicMock()
 
-        with_retry(instance.method_to_test, exception_class, max_retries=max_retries)(instance)
+        with_retry(exception_class, max_retries=max_retries)(instance.method_to_test)(instance)
 
         assert instance.method_to_test.call_count == 1
 
